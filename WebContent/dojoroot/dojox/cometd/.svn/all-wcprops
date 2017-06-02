@@ -1,0 +1,65 @@
+K 25
+svn:wc:ra_dav:version-url
+V 58
+/bagels/!svn/ver/40/trunk/WebContent/dojoroot/dojox/cometd
+END
+RestChannels.js
+K 25
+svn:wc:ra_dav:version-url
+V 74
+/bagels/!svn/ver/40/trunk/WebContent/dojoroot/dojox/cometd/RestChannels.js
+END
+_base.js
+K 25
+svn:wc:ra_dav:version-url
+V 67
+/bagels/!svn/ver/40/trunk/WebContent/dojoroot/dojox/cometd/_base.js
+END
+longPollTransportFormEncoded.js
+K 25
+svn:wc:ra_dav:version-url
+V 90
+/bagels/!svn/ver/40/trunk/WebContent/dojoroot/dojox/cometd/longPollTransportFormEncoded.js
+END
+HttpChannels.js
+K 25
+svn:wc:ra_dav:version-url
+V 74
+/bagels/!svn/ver/40/trunk/WebContent/dojoroot/dojox/cometd/HttpChannels.js
+END
+timesync.js
+K 25
+svn:wc:ra_dav:version-url
+V 70
+/bagels/!svn/ver/40/trunk/WebContent/dojoroot/dojox/cometd/timesync.js
+END
+longPollTransportJsonEncoded.js
+K 25
+svn:wc:ra_dav:version-url
+V 90
+/bagels/!svn/ver/40/trunk/WebContent/dojoroot/dojox/cometd/longPollTransportJsonEncoded.js
+END
+callbackPollTransport.js
+K 25
+svn:wc:ra_dav:version-url
+V 83
+/bagels/!svn/ver/40/trunk/WebContent/dojoroot/dojox/cometd/callbackPollTransport.js
+END
+README
+K 25
+svn:wc:ra_dav:version-url
+V 65
+/bagels/!svn/ver/40/trunk/WebContent/dojoroot/dojox/cometd/README
+END
+longPollTransport.js
+K 25
+svn:wc:ra_dav:version-url
+V 79
+/bagels/!svn/ver/40/trunk/WebContent/dojoroot/dojox/cometd/longPollTransport.js
+END
+timestamp.js
+K 25
+svn:wc:ra_dav:version-url
+V 71
+/bagels/!svn/ver/40/trunk/WebContent/dojoroot/dojox/cometd/timestamp.js
+END

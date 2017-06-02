@@ -1,0 +1,305 @@
+K 25
+svn:wc:ra_dav:version-url
+V 35
+/bagels/!svn/ver/54/trunk/src/bales
+END
+GraphEdgeInt.java
+K 25
+svn:wc:ra_dav:version-url
+V 53
+/bagels/!svn/ver/37/trunk/src/bales/GraphEdgeInt.java
+END
+Minimizer.java
+K 25
+svn:wc:ra_dav:version-url
+V 50
+/bagels/!svn/ver/37/trunk/src/bales/Minimizer.java
+END
+GraphEvent.java
+K 25
+svn:wc:ra_dav:version-url
+V 51
+/bagels/!svn/ver/37/trunk/src/bales/GraphEvent.java
+END
+NodeSortByDegree.java
+K 25
+svn:wc:ra_dav:version-url
+V 57
+/bagels/!svn/ver/37/trunk/src/bales/NodeSortByDegree.java
+END
+ScreenDisplay.java
+K 25
+svn:wc:ra_dav:version-url
+V 54
+/bagels/!svn/ver/37/trunk/src/bales/ScreenDisplay.java
+END
+WriterData.java
+K 25
+svn:wc:ra_dav:version-url
+V 51
+/bagels/!svn/ver/17/trunk/src/bales/WriterData.java
+END
+WriterDataGraphicsDISP.java
+K 25
+svn:wc:ra_dav:version-url
+V 63
+/bagels/!svn/ver/37/trunk/src/bales/WriterDataGraphicsDISP.java
+END
+getPubs.java
+K 25
+svn:wc:ra_dav:version-url
+V 48
+/bagels/!svn/ver/42/trunk/src/bales/getPubs.java
+END
+GraphEdgeString.java
+K 25
+svn:wc:ra_dav:version-url
+V 56
+/bagels/!svn/ver/37/trunk/src/bales/GraphEdgeString.java
+END
+ReaderDataGraph.java
+K 25
+svn:wc:ra_dav:version-url
+V 56
+/bagels/!svn/ver/37/trunk/src/bales/ReaderDataGraph.java
+END
+JobStatus.java
+K 25
+svn:wc:ra_dav:version-url
+V 50
+/bagels/!svn/ver/41/trunk/src/bales/JobStatus.java
+END
+ServletUtilities.java
+K 25
+svn:wc:ra_dav:version-url
+V 57
+/bagels/!svn/ver/37/trunk/src/bales/ServletUtilities.java
+END
+eleph1nt.java
+K 25
+svn:wc:ra_dav:version-url
+V 49
+/bagels/!svn/ver/55/trunk/src/bales/eleph1nt.java
+END
+WriterDataRSF.java
+K 25
+svn:wc:ra_dav:version-url
+V 54
+/bagels/!svn/ver/37/trunk/src/bales/WriterDataRSF.java
+END
+WriterDataLAYBrief.java
+K 25
+svn:wc:ra_dav:version-url
+V 59
+/bagels/!svn/ver/37/trunk/src/bales/WriterDataLAYBrief.java
+END
+Testrand.java
+K 25
+svn:wc:ra_dav:version-url
+V 49
+/bagels/!svn/ver/37/trunk/src/bales/Testrand.java
+END
+WriterDataLAYL.java
+K 25
+svn:wc:ra_dav:version-url
+V 55
+/bagels/!svn/ver/37/trunk/src/bales/WriterDataLAYL.java
+END
+ReaderDataGraphRSF.java
+K 25
+svn:wc:ra_dav:version-url
+V 59
+/bagels/!svn/ver/37/trunk/src/bales/ReaderDataGraphRSF.java
+END
+NodeSortByType.java
+K 25
+svn:wc:ra_dav:version-url
+V 55
+/bagels/!svn/ver/37/trunk/src/bales/NodeSortByType.java
+END
+ReaderDataGraphCVS.java
+K 25
+svn:wc:ra_dav:version-url
+V 59
+/bagels/!svn/ver/37/trunk/src/bales/ReaderDataGraphCVS.java
+END
+bundleKMZ.java
+K 25
+svn:wc:ra_dav:version-url
+V 50
+/bagels/!svn/ver/53/trunk/src/bales/bundleKMZ.java
+END
+CCVisu.java
+K 25
+svn:wc:ra_dav:version-url
+V 47
+/bagels/!svn/ver/47/trunk/src/bales/CCVisu.java
+END
+GraphVertex.java
+K 25
+svn:wc:ra_dav:version-url
+V 52
+/bagels/!svn/ver/37/trunk/src/bales/GraphVertex.java
+END
+File_Settings.java
+K 25
+svn:wc:ra_dav:version-url
+V 54
+/bagels/!svn/ver/54/trunk/src/bales/File_Settings.java
+END
+controll3r.java
+K 25
+svn:wc:ra_dav:version-url
+V 51
+/bagels/!svn/ver/54/trunk/src/bales/controll3r.java
+END
+ClusterReaderWriter.java
+K 25
+svn:wc:ra_dav:version-url
+V 60
+/bagels/!svn/ver/37/trunk/src/bales/ClusterReaderWriter.java
+END
+CCVisuGUI.java
+K 25
+svn:wc:ra_dav:version-url
+V 50
+/bagels/!svn/ver/37/trunk/src/bales/CCVisuGUI.java
+END
+ReaderDataLAY.java
+K 25
+svn:wc:ra_dav:version-url
+V 54
+/bagels/!svn/ver/37/trunk/src/bales/ReaderDataLAY.java
+END
+SortHashtable.java
+K 25
+svn:wc:ra_dav:version-url
+V 54
+/bagels/!svn/ver/39/trunk/src/bales/SortHashtable.java
+END
+ProcSP.java
+K 25
+svn:wc:ra_dav:version-url
+V 47
+/bagels/!svn/ver/37/trunk/src/bales/ProcSP.java
+END
+MarkerScript.java
+K 25
+svn:wc:ra_dav:version-url
+V 53
+/bagels/!svn/ver/37/trunk/src/bales/MarkerScript.java
+END
+FileServer.java
+K 25
+svn:wc:ra_dav:version-url
+V 51
+/bagels/!svn/ver/37/trunk/src/bales/FileServer.java
+END
+PrepLinks.java
+K 25
+svn:wc:ra_dav:version-url
+V 50
+/bagels/!svn/ver/37/trunk/src/bales/PrepLinks.java
+END
+WriterDataGraphicsSVG.java
+K 25
+svn:wc:ra_dav:version-url
+V 62
+/bagels/!svn/ver/37/trunk/src/bales/WriterDataGraphicsSVG.java
+END
+GraphEventListener.java
+K 25
+svn:wc:ra_dav:version-url
+V 59
+/bagels/!svn/ver/37/trunk/src/bales/GraphEventListener.java
+END
+Job.java
+K 25
+svn:wc:ra_dav:version-url
+V 44
+/bagels/!svn/ver/44/trunk/src/bales/Job.java
+END
+Eleph1ntJob.java
+K 25
+svn:wc:ra_dav:version-url
+V 52
+/bagels/!svn/ver/53/trunk/src/bales/Eleph1ntJob.java
+END
+ProcFC.java
+K 25
+svn:wc:ra_dav:version-url
+V 47
+/bagels/!svn/ver/55/trunk/src/bales/ProcFC.java
+END
+ClusterManager.java
+K 25
+svn:wc:ra_dav:version-url
+V 55
+/bagels/!svn/ver/37/trunk/src/bales/ClusterManager.java
+END
+WriterDataLAY.java
+K 25
+svn:wc:ra_dav:version-url
+V 54
+/bagels/!svn/ver/37/trunk/src/bales/WriterDataLAY.java
+END
+MinimizerBarnesHut.java
+K 25
+svn:wc:ra_dav:version-url
+V 59
+/bagels/!svn/ver/47/trunk/src/bales/MinimizerBarnesHut.java
+END
+ProcMesh.java
+K 25
+svn:wc:ra_dav:version-url
+V 49
+/bagels/!svn/ver/37/trunk/src/bales/ProcMesh.java
+END
+Cluster.java
+K 25
+svn:wc:ra_dav:version-url
+V 48
+/bagels/!svn/ver/37/trunk/src/bales/Cluster.java
+END
+Marker.java
+K 25
+svn:wc:ra_dav:version-url
+V 47
+/bagels/!svn/ver/37/trunk/src/bales/Marker.java
+END
+GetStatus.java
+K 25
+svn:wc:ra_dav:version-url
+V 50
+/bagels/!svn/ver/47/trunk/src/bales/GetStatus.java
+END
+WriterDataGraphics.java
+K 25
+svn:wc:ra_dav:version-url
+V 59
+/bagels/!svn/ver/37/trunk/src/bales/WriterDataGraphics.java
+END
+WriterDataGraphicsVRML.java
+K 25
+svn:wc:ra_dav:version-url
+V 63
+/bagels/!svn/ver/37/trunk/src/bales/WriterDataGraphicsVRML.java
+END
+CVResults.java
+K 25
+svn:wc:ra_dav:version-url
+V 50
+/bagels/!svn/ver/53/trunk/src/bales/CVResults.java
+END
+GraphData.java
+K 25
+svn:wc:ra_dav:version-url
+V 50
+/bagels/!svn/ver/37/trunk/src/bales/GraphData.java
+END
+ReaderData.java
+K 25
+svn:wc:ra_dav:version-url
+V 51
+/bagels/!svn/ver/37/trunk/src/bales/ReaderData.java
+END

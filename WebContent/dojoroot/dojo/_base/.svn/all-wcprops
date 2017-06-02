@@ -1,0 +1,95 @@
+K 25
+svn:wc:ra_dav:version-url
+V 56
+/bagels/!svn/ver/40/trunk/WebContent/dojoroot/dojo/_base
+END
+html.js
+K 25
+svn:wc:ra_dav:version-url
+V 64
+/bagels/!svn/ver/40/trunk/WebContent/dojoroot/dojo/_base/html.js
+END
+query.js
+K 25
+svn:wc:ra_dav:version-url
+V 65
+/bagels/!svn/ver/40/trunk/WebContent/dojoroot/dojo/_base/query.js
+END
+window.js
+K 25
+svn:wc:ra_dav:version-url
+V 66
+/bagels/!svn/ver/40/trunk/WebContent/dojoroot/dojo/_base/window.js
+END
+json.js
+K 25
+svn:wc:ra_dav:version-url
+V 64
+/bagels/!svn/ver/40/trunk/WebContent/dojoroot/dojo/_base/json.js
+END
+fx.js
+K 25
+svn:wc:ra_dav:version-url
+V 62
+/bagels/!svn/ver/40/trunk/WebContent/dojoroot/dojo/_base/fx.js
+END
+Color.js
+K 25
+svn:wc:ra_dav:version-url
+V 65
+/bagels/!svn/ver/40/trunk/WebContent/dojoroot/dojo/_base/Color.js
+END
+array.js
+K 25
+svn:wc:ra_dav:version-url
+V 65
+/bagels/!svn/ver/40/trunk/WebContent/dojoroot/dojo/_base/array.js
+END
+Deferred.js
+K 25
+svn:wc:ra_dav:version-url
+V 68
+/bagels/!svn/ver/40/trunk/WebContent/dojoroot/dojo/_base/Deferred.js
+END
+NodeList.js
+K 25
+svn:wc:ra_dav:version-url
+V 68
+/bagels/!svn/ver/40/trunk/WebContent/dojoroot/dojo/_base/NodeList.js
+END
+event.js
+K 25
+svn:wc:ra_dav:version-url
+V 65
+/bagels/!svn/ver/40/trunk/WebContent/dojoroot/dojo/_base/event.js
+END
+lang.js
+K 25
+svn:wc:ra_dav:version-url
+V 64
+/bagels/!svn/ver/40/trunk/WebContent/dojoroot/dojo/_base/lang.js
+END
+browser.js
+K 25
+svn:wc:ra_dav:version-url
+V 67
+/bagels/!svn/ver/40/trunk/WebContent/dojoroot/dojo/_base/browser.js
+END
+connect.js
+K 25
+svn:wc:ra_dav:version-url
+V 67
+/bagels/!svn/ver/40/trunk/WebContent/dojoroot/dojo/_base/connect.js
+END
+declare.js
+K 25
+svn:wc:ra_dav:version-url
+V 67
+/bagels/!svn/ver/40/trunk/WebContent/dojoroot/dojo/_base/declare.js
+END
+xhr.js
+K 25
+svn:wc:ra_dav:version-url
+V 63
+/bagels/!svn/ver/40/trunk/WebContent/dojoroot/dojo/_base/xhr.js
+END

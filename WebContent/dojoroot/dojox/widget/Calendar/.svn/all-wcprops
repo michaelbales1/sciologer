@@ -1,0 +1,35 @@
+K 25
+svn:wc:ra_dav:version-url
+V 67
+/bagels/!svn/ver/40/trunk/WebContent/dojoroot/dojox/widget/Calendar
+END
+Calendar.css
+K 25
+svn:wc:ra_dav:version-url
+V 80
+/bagels/!svn/ver/40/trunk/WebContent/dojoroot/dojox/widget/Calendar/Calendar.css
+END
+CalendarMonth.html
+K 25
+svn:wc:ra_dav:version-url
+V 86
+/bagels/!svn/ver/40/trunk/WebContent/dojoroot/dojox/widget/Calendar/CalendarMonth.html
+END
+CalendarDay.html
+K 25
+svn:wc:ra_dav:version-url
+V 84
+/bagels/!svn/ver/40/trunk/WebContent/dojoroot/dojox/widget/Calendar/CalendarDay.html
+END
+Calendar.html
+K 25
+svn:wc:ra_dav:version-url
+V 81
+/bagels/!svn/ver/40/trunk/WebContent/dojoroot/dojox/widget/Calendar/Calendar.html
+END
+CalendarYear.html
+K 25
+svn:wc:ra_dav:version-url
+V 85
+/bagels/!svn/ver/40/trunk/WebContent/dojoroot/dojox/widget/Calendar/CalendarYear.html
+END

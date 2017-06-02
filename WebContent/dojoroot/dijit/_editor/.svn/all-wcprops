@@ -1,0 +1,35 @@
+K 25
+svn:wc:ra_dav:version-url
+V 59
+/bagels/!svn/ver/40/trunk/WebContent/dojoroot/dijit/_editor
+END
+html.js
+K 25
+svn:wc:ra_dav:version-url
+V 67
+/bagels/!svn/ver/40/trunk/WebContent/dojoroot/dijit/_editor/html.js
+END
+selection.js
+K 25
+svn:wc:ra_dav:version-url
+V 72
+/bagels/!svn/ver/40/trunk/WebContent/dojoroot/dijit/_editor/selection.js
+END
+RichText.js
+K 25
+svn:wc:ra_dav:version-url
+V 71
+/bagels/!svn/ver/40/trunk/WebContent/dojoroot/dijit/_editor/RichText.js
+END
+range.js
+K 25
+svn:wc:ra_dav:version-url
+V 68
+/bagels/!svn/ver/40/trunk/WebContent/dojoroot/dijit/_editor/range.js
+END
+_Plugin.js
+K 25
+svn:wc:ra_dav:version-url
+V 70
+/bagels/!svn/ver/40/trunk/WebContent/dojoroot/dijit/_editor/_Plugin.js
+END

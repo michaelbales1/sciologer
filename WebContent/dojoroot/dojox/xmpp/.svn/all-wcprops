@@ -1,0 +1,59 @@
+K 25
+svn:wc:ra_dav:version-url
+V 56
+/bagels/!svn/ver/40/trunk/WebContent/dojoroot/dojox/xmpp
+END
+PresenceService.js
+K 25
+svn:wc:ra_dav:version-url
+V 75
+/bagels/!svn/ver/40/trunk/WebContent/dojoroot/dojox/xmpp/PresenceService.js
+END
+xmppSession.js
+K 25
+svn:wc:ra_dav:version-url
+V 71
+/bagels/!svn/ver/40/trunk/WebContent/dojoroot/dojox/xmpp/xmppSession.js
+END
+util.js
+K 25
+svn:wc:ra_dav:version-url
+V 64
+/bagels/!svn/ver/40/trunk/WebContent/dojoroot/dojox/xmpp/util.js
+END
+RosterService.js
+K 25
+svn:wc:ra_dav:version-url
+V 73
+/bagels/!svn/ver/40/trunk/WebContent/dojoroot/dojox/xmpp/RosterService.js
+END
+UserService.js
+K 25
+svn:wc:ra_dav:version-url
+V 71
+/bagels/!svn/ver/40/trunk/WebContent/dojoroot/dojox/xmpp/UserService.js
+END
+ChatService.js
+K 25
+svn:wc:ra_dav:version-url
+V 71
+/bagels/!svn/ver/40/trunk/WebContent/dojoroot/dojox/xmpp/ChatService.js
+END
+TransportSession.js
+K 25
+svn:wc:ra_dav:version-url
+V 76
+/bagels/!svn/ver/40/trunk/WebContent/dojoroot/dojox/xmpp/TransportSession.js
+END
+README
+K 25
+svn:wc:ra_dav:version-url
+V 63
+/bagels/!svn/ver/40/trunk/WebContent/dojoroot/dojox/xmpp/README
+END
+sasl.js
+K 25
+svn:wc:ra_dav:version-url
+V 64
+/bagels/!svn/ver/40/trunk/WebContent/dojoroot/dojox/xmpp/sasl.js
+END

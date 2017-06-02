@@ -1,0 +1,71 @@
+K 25
+svn:wc:ra_dav:version-url
+V 54
+/bagels/!svn/ver/40/trunk/WebContent/dojoroot/dojo/dnd
+END
+move.js
+K 25
+svn:wc:ra_dav:version-url
+V 62
+/bagels/!svn/ver/40/trunk/WebContent/dojoroot/dojo/dnd/move.js
+END
+autoscroll.js
+K 25
+svn:wc:ra_dav:version-url
+V 68
+/bagels/!svn/ver/40/trunk/WebContent/dojoroot/dojo/dnd/autoscroll.js
+END
+Mover.js
+K 25
+svn:wc:ra_dav:version-url
+V 63
+/bagels/!svn/ver/40/trunk/WebContent/dojoroot/dojo/dnd/Mover.js
+END
+common.js
+K 25
+svn:wc:ra_dav:version-url
+V 64
+/bagels/!svn/ver/40/trunk/WebContent/dojoroot/dojo/dnd/common.js
+END
+Manager.js
+K 25
+svn:wc:ra_dav:version-url
+V 65
+/bagels/!svn/ver/40/trunk/WebContent/dojoroot/dojo/dnd/Manager.js
+END
+Moveable.js
+K 25
+svn:wc:ra_dav:version-url
+V 66
+/bagels/!svn/ver/40/trunk/WebContent/dojoroot/dojo/dnd/Moveable.js
+END
+TimedMoveable.js
+K 25
+svn:wc:ra_dav:version-url
+V 71
+/bagels/!svn/ver/40/trunk/WebContent/dojoroot/dojo/dnd/TimedMoveable.js
+END
+Avatar.js
+K 25
+svn:wc:ra_dav:version-url
+V 64
+/bagels/!svn/ver/40/trunk/WebContent/dojoroot/dojo/dnd/Avatar.js
+END
+Selector.js
+K 25
+svn:wc:ra_dav:version-url
+V 66
+/bagels/!svn/ver/40/trunk/WebContent/dojoroot/dojo/dnd/Selector.js
+END
+Source.js
+K 25
+svn:wc:ra_dav:version-url
+V 64
+/bagels/!svn/ver/40/trunk/WebContent/dojoroot/dojo/dnd/Source.js
+END
+Container.js
+K 25
+svn:wc:ra_dav:version-url
+V 67
+/bagels/!svn/ver/40/trunk/WebContent/dojoroot/dojo/dnd/Container.js
+END

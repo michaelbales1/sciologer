@@ -1,0 +1,113 @@
+K 25
+svn:wc:ra_dav:version-url
+V 56
+/bagels/!svn/ver/40/trunk/WebContent/dojoroot/dojox/grid
+END
+_ViewManager.js
+K 25
+svn:wc:ra_dav:version-url
+V 72
+/bagels/!svn/ver/40/trunk/WebContent/dojoroot/dojox/grid/_ViewManager.js
+END
+_RowSelector.js
+K 25
+svn:wc:ra_dav:version-url
+V 72
+/bagels/!svn/ver/40/trunk/WebContent/dojoroot/dojox/grid/_RowSelector.js
+END
+_FocusManager.js
+K 25
+svn:wc:ra_dav:version-url
+V 73
+/bagels/!svn/ver/40/trunk/WebContent/dojoroot/dojox/grid/_FocusManager.js
+END
+_View.js
+K 25
+svn:wc:ra_dav:version-url
+V 65
+/bagels/!svn/ver/40/trunk/WebContent/dojoroot/dojox/grid/_View.js
+END
+_Layout.js
+K 25
+svn:wc:ra_dav:version-url
+V 67
+/bagels/!svn/ver/40/trunk/WebContent/dojoroot/dojox/grid/_Layout.js
+END
+util.js
+K 25
+svn:wc:ra_dav:version-url
+V 64
+/bagels/!svn/ver/40/trunk/WebContent/dojoroot/dojox/grid/util.js
+END
+DataGrid.js
+K 25
+svn:wc:ra_dav:version-url
+V 68
+/bagels/!svn/ver/40/trunk/WebContent/dojoroot/dojox/grid/DataGrid.js
+END
+DataSelection.js
+K 25
+svn:wc:ra_dav:version-url
+V 73
+/bagels/!svn/ver/40/trunk/WebContent/dojoroot/dojox/grid/DataSelection.js
+END
+_EditManager.js
+K 25
+svn:wc:ra_dav:version-url
+V 72
+/bagels/!svn/ver/40/trunk/WebContent/dojoroot/dojox/grid/_EditManager.js
+END
+README
+K 25
+svn:wc:ra_dav:version-url
+V 63
+/bagels/!svn/ver/40/trunk/WebContent/dojoroot/dojox/grid/README
+END
+_Grid.js
+K 25
+svn:wc:ra_dav:version-url
+V 65
+/bagels/!svn/ver/40/trunk/WebContent/dojoroot/dojox/grid/_Grid.js
+END
+_Scroller.js
+K 25
+svn:wc:ra_dav:version-url
+V 69
+/bagels/!svn/ver/40/trunk/WebContent/dojoroot/dojox/grid/_Scroller.js
+END
+Grid.js
+K 25
+svn:wc:ra_dav:version-url
+V 64
+/bagels/!svn/ver/40/trunk/WebContent/dojoroot/dojox/grid/Grid.js
+END
+Selection.js
+K 25
+svn:wc:ra_dav:version-url
+V 69
+/bagels/!svn/ver/40/trunk/WebContent/dojoroot/dojox/grid/Selection.js
+END
+VirtualGrid.js
+K 25
+svn:wc:ra_dav:version-url
+V 71
+/bagels/!svn/ver/40/trunk/WebContent/dojoroot/dojox/grid/VirtualGrid.js
+END
+_RowManager.js
+K 25
+svn:wc:ra_dav:version-url
+V 71
+/bagels/!svn/ver/40/trunk/WebContent/dojoroot/dojox/grid/_RowManager.js
+END
+cells.js
+K 25
+svn:wc:ra_dav:version-url
+V 65
+/bagels/!svn/ver/40/trunk/WebContent/dojoroot/dojox/grid/cells.js
+END
+_Events.js
+K 25
+svn:wc:ra_dav:version-url
+V 67
+/bagels/!svn/ver/40/trunk/WebContent/dojoroot/dojox/grid/_Events.js
+END

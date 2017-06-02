@@ -1,0 +1,119 @@
+K 25
+svn:wc:ra_dav:version-url
+V 56
+/bagels/!svn/ver/40/trunk/WebContent/dojoroot/dijit/form
+END
+_FormWidget.js
+K 25
+svn:wc:ra_dav:version-url
+V 71
+/bagels/!svn/ver/40/trunk/WebContent/dojoroot/dijit/form/_FormWidget.js
+END
+NumberTextBox.js
+K 25
+svn:wc:ra_dav:version-url
+V 73
+/bagels/!svn/ver/40/trunk/WebContent/dojoroot/dijit/form/NumberTextBox.js
+END
+ComboBox.js
+K 25
+svn:wc:ra_dav:version-url
+V 68
+/bagels/!svn/ver/40/trunk/WebContent/dojoroot/dijit/form/ComboBox.js
+END
+CurrencyTextBox.js
+K 25
+svn:wc:ra_dav:version-url
+V 75
+/bagels/!svn/ver/40/trunk/WebContent/dojoroot/dijit/form/CurrencyTextBox.js
+END
+ValidationTextBox.js
+K 25
+svn:wc:ra_dav:version-url
+V 77
+/bagels/!svn/ver/40/trunk/WebContent/dojoroot/dijit/form/ValidationTextBox.js
+END
+_DateTimeTextBox.js
+K 25
+svn:wc:ra_dav:version-url
+V 76
+/bagels/!svn/ver/40/trunk/WebContent/dojoroot/dijit/form/_DateTimeTextBox.js
+END
+Button.js
+K 25
+svn:wc:ra_dav:version-url
+V 66
+/bagels/!svn/ver/40/trunk/WebContent/dojoroot/dijit/form/Button.js
+END
+TimeTextBox.js
+K 25
+svn:wc:ra_dav:version-url
+V 71
+/bagels/!svn/ver/40/trunk/WebContent/dojoroot/dijit/form/TimeTextBox.js
+END
+_Spinner.js
+K 25
+svn:wc:ra_dav:version-url
+V 68
+/bagels/!svn/ver/40/trunk/WebContent/dojoroot/dijit/form/_Spinner.js
+END
+Textarea.js
+K 25
+svn:wc:ra_dav:version-url
+V 68
+/bagels/!svn/ver/40/trunk/WebContent/dojoroot/dijit/form/Textarea.js
+END
+Slider.js
+K 25
+svn:wc:ra_dav:version-url
+V 66
+/bagels/!svn/ver/40/trunk/WebContent/dojoroot/dijit/form/Slider.js
+END
+FilteringSelect.js
+K 25
+svn:wc:ra_dav:version-url
+V 75
+/bagels/!svn/ver/40/trunk/WebContent/dojoroot/dijit/form/FilteringSelect.js
+END
+CheckBox.js
+K 25
+svn:wc:ra_dav:version-url
+V 68
+/bagels/!svn/ver/40/trunk/WebContent/dojoroot/dijit/form/CheckBox.js
+END
+NumberSpinner.js
+K 25
+svn:wc:ra_dav:version-url
+V 73
+/bagels/!svn/ver/40/trunk/WebContent/dojoroot/dijit/form/NumberSpinner.js
+END
+SimpleTextarea.js
+K 25
+svn:wc:ra_dav:version-url
+V 74
+/bagels/!svn/ver/40/trunk/WebContent/dojoroot/dijit/form/SimpleTextarea.js
+END
+MultiSelect.js
+K 25
+svn:wc:ra_dav:version-url
+V 71
+/bagels/!svn/ver/40/trunk/WebContent/dojoroot/dijit/form/MultiSelect.js
+END
+DateTextBox.js
+K 25
+svn:wc:ra_dav:version-url
+V 71
+/bagels/!svn/ver/40/trunk/WebContent/dojoroot/dijit/form/DateTextBox.js
+END
+TextBox.js
+K 25
+svn:wc:ra_dav:version-url
+V 67
+/bagels/!svn/ver/40/trunk/WebContent/dojoroot/dijit/form/TextBox.js
+END
+Form.js
+K 25
+svn:wc:ra_dav:version-url
+V 64
+/bagels/!svn/ver/40/trunk/WebContent/dojoroot/dijit/form/Form.js
+END

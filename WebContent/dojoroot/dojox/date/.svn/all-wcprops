@@ -1,0 +1,35 @@
+K 25
+svn:wc:ra_dav:version-url
+V 56
+/bagels/!svn/ver/40/trunk/WebContent/dojoroot/dojox/date
+END
+php.js
+K 25
+svn:wc:ra_dav:version-url
+V 63
+/bagels/!svn/ver/40/trunk/WebContent/dojoroot/dojox/date/php.js
+END
+HebrewDate.js
+K 25
+svn:wc:ra_dav:version-url
+V 70
+/bagels/!svn/ver/40/trunk/WebContent/dojoroot/dojox/date/HebrewDate.js
+END
+IslamicDate.js
+K 25
+svn:wc:ra_dav:version-url
+V 71
+/bagels/!svn/ver/40/trunk/WebContent/dojoroot/dojox/date/IslamicDate.js
+END
+README
+K 25
+svn:wc:ra_dav:version-url
+V 63
+/bagels/!svn/ver/40/trunk/WebContent/dojoroot/dojox/date/README
+END
+posix.js
+K 25
+svn:wc:ra_dav:version-url
+V 65
+/bagels/!svn/ver/40/trunk/WebContent/dojoroot/dojox/date/posix.js
+END

@@ -1,0 +1,134 @@
+package bales;
+
+import java.io.*;
+import java.util.StringTokenizer;
+
+import javax.servlet.*;
+import javax.servlet.http.*;
+
+import org.apache.log4j.BasicConfigurator;
+import org.apache.log4j.Logger;
+
+/********************************************************* 
+ * CVResults is a servlet that reads the user's query from the
+ * form data, and runs static main methods of various routines
+ * in sequence, writing output to disk, based on the parameters
+ * specified on the simple or the advanced search screen.
+ ********************************************************/
+
+public class CVResults extends HttpServlet 
+{
+	static Logger logger = Logger.getLogger(CVResults.class);
+	private static final String QUERY_COUNT_NAME="QueryCount";
+	public static final String SESSION_JOB_NAME="JOB";
+
+	public void init()
+	{
+		BasicConfigurator.configure();
+		logger.debug("Log configured");	
+	}
+	public void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException 
+	{
+		String includeLinks="";
+		response.setContentType("text/html");
+		PrintWriter out = response.getWriter();
+		
+		//Start session
+		HttpSession session = request.getSession();
+		Integer i = (Integer)session.getAttribute(QUERY_COUNT_NAME);
+		if (i == null)
+		{
+			logger.info("New user. Creating session");
+			session.setAttribute(QUERY_COUNT_NAME, new Integer(0));
+		}
+		else
+		{
+			int prev_count = i.intValue();
+			logger.info("User has been here " + prev_count + " previous times.");
+			session.setAttribute(QUERY_COUNT_NAME, new Integer(prev_count+1));
+		}
+		
+		// Get the user's query
+		String userQuery=request.getParameter("formQuery");
+		
+		if (userQuery == null || userQuery.equals("null"))
+		{
+			out.println("Cannot query for null.");
+		}
+		else
+		{
+			
+			if(request.getParameter("includeLinks")==null)
+				System.out.println("includeLinks is null.");
+			else
+				includeLinks=request.getParameter("includeLinks");
+	//		System.out.println("includeLinks="+includeLinks+"-");
+			String docType =
+				"<!DOCTYPE HTML PUBLIC \"-//W3C//DTD HTML 4.0 " +
+				"Transitional//EN\">\n";
+	
+			// TODO: Try query via e-utils to determine how many results are returned
+	
+			// Now build parameters for controll3r
+			String bcp="";
+			int bcount=0;
+			// Add the query to the parameters string
+			bcp=bcp+"-q "; bcount++;
+			bcp=bcp+userQuery.replaceAll(" ","_")+" "; bcount++;
+	
+			// REINSTANTIATE THIS LINE TO FIX CODE FOR NEXT USE. REMOVED BEFORE INTERVIEW ON 12-15-08
+			// if(includeLinks.equals("true"))
+			if(true)
+			{
+	//			System.out.println("CVResults says includeLinks is true; box was checked on search form.");
+				bcp=bcp+"-includeLinks";
+				bcount++;
+			} 
+			System.out.println("bcp="+ bcp);
+			// Now tokenize controll3r parameters into a String array
+			String[] CParams=new String[bcount];
+			int CPPos=0;
+			StringTokenizer t= new StringTokenizer(bcp," ");
+			while(t.hasMoreTokens())
+			{
+				CParams[CPPos]=t.nextToken().replaceAll("_"," ");
+				System.out.println("CParams=" + CParams[CPPos]);
+				CPPos++;
+			}
+			
+			Job job = new Job(userQuery);
+			session.setAttribute(SESSION_JOB_NAME, job);
+						
+			// Now run controll3r's main class with this query
+//			controll3r myController = new controll3r(userQuery.replaceAll(" ","_"), out, "", null, null, seed);
+			//controll3r myController = new controll3r(userQuery, out, "", null, null, seed);
+			controll3r myController = new controll3r(job);
+			
+			// Report that query was successful
+			String title = "Query successful";
+			String filename = job.getKMZFileName();
+			String explanation = "Your file has been written to " + File_Settings.outputPath + filename;
+			out.println(explanation);
+	
+			out.println("<META http-equiv='refresh' content='0;URL=getFile?filename="+ filename +"'/>");
+			
+			out.println(docType +
+					"<html>\n" +
+					"<head><title>" + title + "</title></head>\n" +
+					"<body>\n" +
+					"<h1>" + title + "</h1>\n" +
+					"<h2>" + explanation + "</h2>\n" +
+					"<h2><a href=\"index.html\">Search again</a></h2>\n" +
+					/* "<UL>\n" +
+	" <LI><B>param1</B>: "
+	+ request.getParameter("param1") + "\n" +
+	" <LI><B>param2</B>: "
+	+ request.getParameter("param2") + "\n" +
+	" <LI><B>param3</B>: "
+	+ request.getParameter("param3") + "\n" +
+	"</UL>\n" +
+					 */
+			"</BODY></HTML>");
+		}// null check
+	} //doGet
+}// class

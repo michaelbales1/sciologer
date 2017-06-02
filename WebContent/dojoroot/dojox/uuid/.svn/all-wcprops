@@ -1,0 +1,35 @@
+K 25
+svn:wc:ra_dav:version-url
+V 56
+/bagels/!svn/ver/40/trunk/WebContent/dojoroot/dojox/uuid
+END
+Uuid.js
+K 25
+svn:wc:ra_dav:version-url
+V 64
+/bagels/!svn/ver/40/trunk/WebContent/dojoroot/dojox/uuid/Uuid.js
+END
+_base.js
+K 25
+svn:wc:ra_dav:version-url
+V 65
+/bagels/!svn/ver/40/trunk/WebContent/dojoroot/dojox/uuid/_base.js
+END
+generateTimeBasedUuid.js
+K 25
+svn:wc:ra_dav:version-url
+V 81
+/bagels/!svn/ver/40/trunk/WebContent/dojoroot/dojox/uuid/generateTimeBasedUuid.js
+END
+README
+K 25
+svn:wc:ra_dav:version-url
+V 63
+/bagels/!svn/ver/40/trunk/WebContent/dojoroot/dojox/uuid/README
+END
+generateRandomUuid.js
+K 25
+svn:wc:ra_dav:version-url
+V 78
+/bagels/!svn/ver/40/trunk/WebContent/dojoroot/dojox/uuid/generateRandomUuid.js
+END

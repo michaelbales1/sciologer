@@ -1,0 +1,26 @@
+<html>
+  <head>
+    <title>Statis Page Test</title>
+
+
+  </head>
+
+  <body class="tundra">
+ 	<pre>
+ 		<div id='status'>
+  			Data to be replaced
+  		</div>
+  	</pre>
+  <button dojoType="dijit.form.Button" id="helloButton">Hello World!</button>
+  
+  <script>
+     GetStatus();
+</script>
+
+  <script type="text/javascript">
+
+  </script>
+
+
+  </body>
+</html>

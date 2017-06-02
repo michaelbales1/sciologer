@@ -1,0 +1,23 @@
+K 25
+svn:wc:ra_dav:version-url
+V 59
+/bagels/!svn/ver/40/trunk/WebContent/dojoroot/dojo/cldr/nls
+END
+number.js
+K 25
+svn:wc:ra_dav:version-url
+V 69
+/bagels/!svn/ver/40/trunk/WebContent/dojoroot/dojo/cldr/nls/number.js
+END
+currency.js
+K 25
+svn:wc:ra_dav:version-url
+V 71
+/bagels/!svn/ver/40/trunk/WebContent/dojoroot/dojo/cldr/nls/currency.js
+END
+gregorian.js
+K 25
+svn:wc:ra_dav:version-url
+V 72
+/bagels/!svn/ver/40/trunk/WebContent/dojoroot/dojo/cldr/nls/gregorian.js
+END

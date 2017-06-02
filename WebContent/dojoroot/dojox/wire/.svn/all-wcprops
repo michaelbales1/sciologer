@@ -1,0 +1,59 @@
+K 25
+svn:wc:ra_dav:version-url
+V 56
+/bagels/!svn/ver/40/trunk/WebContent/dojoroot/dojox/wire
+END
+TextAdapter.js
+K 25
+svn:wc:ra_dav:version-url
+V 71
+/bagels/!svn/ver/40/trunk/WebContent/dojoroot/dojox/wire/TextAdapter.js
+END
+Wire.js
+K 25
+svn:wc:ra_dav:version-url
+V 64
+/bagels/!svn/ver/40/trunk/WebContent/dojoroot/dojox/wire/Wire.js
+END
+XmlWire.js
+K 25
+svn:wc:ra_dav:version-url
+V 67
+/bagels/!svn/ver/40/trunk/WebContent/dojoroot/dojox/wire/XmlWire.js
+END
+TableAdapter.js
+K 25
+svn:wc:ra_dav:version-url
+V 72
+/bagels/!svn/ver/40/trunk/WebContent/dojoroot/dojox/wire/TableAdapter.js
+END
+CompositeWire.js
+K 25
+svn:wc:ra_dav:version-url
+V 73
+/bagels/!svn/ver/40/trunk/WebContent/dojoroot/dojox/wire/CompositeWire.js
+END
+_base.js
+K 25
+svn:wc:ra_dav:version-url
+V 65
+/bagels/!svn/ver/40/trunk/WebContent/dojoroot/dojox/wire/_base.js
+END
+DataWire.js
+K 25
+svn:wc:ra_dav:version-url
+V 68
+/bagels/!svn/ver/40/trunk/WebContent/dojoroot/dojox/wire/DataWire.js
+END
+TreeAdapter.js
+K 25
+svn:wc:ra_dav:version-url
+V 71
+/bagels/!svn/ver/40/trunk/WebContent/dojoroot/dojox/wire/TreeAdapter.js
+END
+README
+K 25
+svn:wc:ra_dav:version-url
+V 63
+/bagels/!svn/ver/40/trunk/WebContent/dojoroot/dojox/wire/README
+END

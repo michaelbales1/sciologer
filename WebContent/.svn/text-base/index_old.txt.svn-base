@@ -1,0 +1,15 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN">
+<HTML>
+<HEAD>
+  <TITLE>Sciologer</TITLE>
+</HEAD>
+<BODY>
+<h1>
+Sciologer is a prototype search system for visualizing and exploring scientific communities.
+</h1>
+<FORM ACTION="servlet/bales.CVResults">
+  Your query:  <INPUT TYPE="TEXT" NAME="formQuery" SIZE=100>
+    <INPUT TYPE="SUBMIT">
+</FORM>
+</BODY>
+</HTML>

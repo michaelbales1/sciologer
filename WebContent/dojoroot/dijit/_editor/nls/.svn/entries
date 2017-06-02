@@ -1,0 +1,211 @@
+9
+
+dir
+54
+http://www.sciologer.com/bagels/trunk/WebContent/dojoroot/dijit/_editor/nls
+http://www.sciologer.com/bagels
+
+
+
+2009-01-15T00:06:41.196688Z
+40
+williamkruse
+
+
+svn:special svn:externals svn:needs-lock
+
+
+
+
+
+
+
+
+
+
+
+ed7f81db-b055-4d39-b2a3-a8293e5c9048
+
+zh
+dir
+
+ca
+dir
+
+pt
+dir
+
+da
+dir
+
+tr
+dir
+
+ru
+dir
+
+LinkDialog.js
+file
+
+
+
+
+2009-01-15T01:45:51.531250Z
+b4d7e289378496befda9544d5033e615
+2009-01-15T00:06:41.196688Z
+40
+williamkruse
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+124
+
+de
+dir
+
+sv
+dir
+
+ja
+dir
+
+FontChoice.js
+file
+
+
+
+
+2009-01-15T01:45:51.546875Z
+3d60c2c01811108f127168e5ecca781c
+2009-01-15T00:06:41.196688Z
+40
+williamkruse
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+356
+
+he
+dir
+
+fi
+dir
+
+nb
+dir
+
+el
+dir
+
+ar
+dir
+
+pt-pt
+dir
+
+cs
+dir
+
+fr
+dir
+
+es
+dir
+
+ko
+dir
+
+nl
+dir
+
+zh-tw
+dir
+
+pl
+dir
+
+th
+dir
+
+it
+dir
+
+hu
+dir
+
+commands.js
+file
+
+
+
+
+2009-01-15T01:45:51.546875Z
+80b6f76ab8516f2dd311ffd99b546b52
+2009-01-15T00:06:41.196688Z
+40
+williamkruse
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+1292
+
+sk
+dir
+
+sl
+dir
+

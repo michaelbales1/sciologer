@@ -1,0 +1,400 @@
+package bales;
+/*
+ * controll3r is a tool to calculate network node position data for a directory
+ * of files using CCVisu, then combine position data with nodedata using eleph1nt.
+ * 
+ * Copyright 2008 Michael Bales (firstname.lastname@dbmi.columbia.edu)
+ * All rights reserved
+ * 
+ * controll3r.java
+ * 
+ * Requires a directory containing adjacency lists in the RSF format used in CCVisu
+ * CCVisu is available here:
+ * http://www.cs.sfu.ca/~dbeyer/CCVisu/
+ * 
+ * Michael Bales (firstname.lastname@dbmi.columbia.edu)
+ * Columbia University, New York, NY
+ */
+
+import java.io.BufferedReader;
+import java.io.BufferedWriter;
+import java.io.File;
+import java.io.FileReader;
+import java.io.FileWriter;
+import java.io.IOException;
+import java.util.StringTokenizer;
+
+import bales.File_Settings;
+import java.io.PrintWriter;
+
+import org.apache.log4j.Logger;
+import org.apache.log4j.PropertyConfigurator;
+import org.apache.log4j.BasicConfigurator;
+
+public class controll3r 
+{
+	static Logger logger = Logger.getLogger(controll3r.class);
+	
+	/*****************************************************************
+	 * Controll3r program.
+	 * 
+	 * Required parameters: adjacency list folder, node data folder, output folder
+	 * 
+	 * Performs the following steps:
+	 * - Parses and handles the command line options.
+	 * - Runs getPubs to run a PubMed query
+	 * - Runs ProcFC to process the results of the PubMed query and create adjacency list
+	 * - Invokes CCVisu on the adjacency list (RSF file)
+	 * - Creates a positions folder
+	 * - Puts the results in the positions folder
+	 * - Invokes PrepLinks to prepare links data by combining position and adjacency data
+	 * - Invokes eleph1nt
+	 * 
+	 * For now, parameters for eleph1nt are changed manually below.
+	 *****************************************************************/
+
+	// End of line varies from one operating system to the next
+	// endl is appropriate line separator for user's system
+	public final static String endl = System.getProperty("line.separator");
+
+	// Format identifiers.
+	/** CVS log format (only input).*/
+	public final static int NODEDATA = 0;
+	/** Node data specifying size, shape, color, label, texture in vertical bar delimited format*/
+	public final static int X3D = 1;
+	/** Graph layout in X3D format.*/
+	public final static int POV = 2;
+	/** Graph layout in POV format.*/
+	
+	// This can be reset if user specifies with -a flag, followed by the string.
+	private String includeLinks="";
+
+	private Job job;
+	
+	public static void main(String args[])
+	{
+		BasicConfigurator.configure();
+		logger.debug("Log configured");
+
+		if (args.length == 0) {
+			printHelp();
+			//	 //System.exit(0);
+		}
+
+		int toProcessFullCitations;
+		String fcFldr="", adjFldr="", myQuery="null", includeLinks;
+		PrintWriter out = new PrintWriter(System.out);
+		
+		// Parse command-line options.
+		for (int i = 0; i < args.length; ++i)
+		{
+			if (args[i].equalsIgnoreCase("-fc")) 
+			{
+				toProcessFullCitations=1; // Turn on flag indicating that there are full citations
+				// to be processed; and the presence of this flag instructs ProcFC to run later.
+				// Update: Now ProcFC runs by default. This flag is no longer necessary.
+				// A previous command line was:
+				// -q "Bales ME[au] AND 2000:2008[DP]" -a c:\e\a -fc c:\e\fc
+				// Have recoded so that toProcessFullCitations is not evaluated.
+				// So command line now looks like:
+				// -q "Bales ME[au] AND 2000:2008[DP]"
+				i++;
+				chkAvail(args, i, out);
+				fcFldr = args[i];
+			}
+			if (args[i].equalsIgnoreCase("-a")) // Specify location of associations folder
+				// [and the presence of this flag instructs CCVisu to run.]
+				// Update: Now CCVisu is set to run every time.
+				// The -a flag now only serves to override the default associations folder.
+			{
+				i++;
+				chkAvail(args, i, out);
+				adjFldr = args[i];
+			}
+			if (args[i].equalsIgnoreCase("-q"))
+				// Query can be passed in manually or from browser post command.
+			{
+				i++;
+				chkAvail(args, i, out);
+				myQuery = args[i];	
+			}
+			if (args[i].equalsIgnoreCase("-s"))
+				// Numeric seed to differentiate queries with same name.
+			{
+			}
+
+			if (args[i].equalsIgnoreCase("-includeLinks"))
+				includeLinks="true";
+			else
+				includeLinks="false";
+
+		} // Done parsing command-line options
+		
+		Job job = new Job(myQuery);
+
+		//TODO: Validate arguments
+		controll3r myController = new controll3r(job);
+		//controll3r myController = new controll3r(myQuery, fcFldr, adjFldr, seed);
+
+	}
+	
+	public controll3r(Job job)
+	{
+		this.job = job;
+		
+		run();
+	}
+	
+	public controll3r(String query, String fcFldr, String adjFldr, String seed)
+	{	
+		if (query == null || query.equals("null"))
+		{
+			logger.error("Query is null!");
+			job.getStatus().println("Cannot query for null!");
+		}
+		else
+		{
+			info("Query is " + query);
+
+/*			if (fcFldr != null)
+				this.fcFldr = fcFldr;
+			if (adjFldr != null)
+				this.adjFldr = adjFldr;	
+*/
+			if (job == null)
+			{
+				job = new Job(query);
+			}
+			
+			run();
+		}
+	}
+		
+	public void run()
+	{
+		try
+		// Run getPubs on the query
+		{
+			// First, build parameters of getPubs
+			String[] GPParams=new String[4];
+			GPParams[0]="-query";
+			GPParams[1]=job.getQuery();
+			GPParams[2]="-seed";
+			GPParams[3]=job.getSeed();
+			info("calling getPubs with '"+job.getQuery()+"' and '"+job.getSeed()+"'");
+			getPubs.main(GPParams);
+		}
+		catch (Exception e) 
+		{
+			logger.error("Error occurred while running controll3r:" + e);
+		}
+
+		String fileName=job.getQuery().replaceAll("\"","'").replaceAll(":","-").replaceAll("\\*","-WC-")+job.getSeed();
+
+		logger.debug("Filename: " + fileName);
+		
+		 // If length is greater than 245 characters; maximum file name length is 255 when .txt and .kml extensions are included
+		if(fileName.length() > 245)
+		{
+			//	 fileName=(fileName.substring(0,245)+".txt");
+			fileName=(fileName.substring(0,245)+"");
+		}
+		
+		try
+		{
+			// Now run ProcFC on the file
+			// First, build parameters of ProcFC
+			String[] FCParams=new String[3];
+//			FCParams[0]=File_Settings.fullCitationsPath + fileName.substring(4,fileName.length());
+			// Exclude the seed
+//			FCParams[0]=File_Settings.fullCitationsPath + fileName.substring(0,fileName.length()-4);
+			FCParams[0]=File_Settings.fullCitationsPath + fileName;
+			FCParams[1]=fileName; // For procfc_util
+			FCParams[2]=File_Settings.adjacenciesPath + fileName;
+			//	 System.out.println("FCParams[1]=" +FCParams[1]);
+			ProcFC.main(FCParams);
+
+			// Done parsing the full citations
+			// Now each file is sequentially numbered and in the output directory
+		}
+		catch (Exception e) 
+		{
+			e.printStackTrace();
+			error("An internal system error occurred while running full citation processor.");
+			error("Please contact the system administrator so that the error can be corrected.");
+			error(""+e);
+			//	 //System.exit(1);
+		}
+		
+		// Now run CCVisu on the file
+		try 
+		{
+			//_P("trying first at ccvisu 1 "+adjFldr);
+			//	 adjFldr = args[i];
+			//	 in = new BufferedReader(new FileReader(args[i]));
+			//_P("trying first at ccvisu 2 ");
+			// System.out.println(files.length);
+
+			// System.out.print(j);
+			// Note: here is an example of what CCVisu params look like:
+			// -i c:\myrsf_NMDA.txt -dim 3 -attrExp 4 -outformat LAYB -o c:\positions_NMDA.txt
+
+			//	 if(files[j].isFile())
+			//	 System.out.println("Got a file to process with network layout program.");
+			info("Running network layout program...");
+
+			// Now run CCVisu for the file
+			// Use -outformat LAY, which is the only one being maintained 
+			String[] CCParams=new String[12];
+			CCParams[0]="-i";
+			//CCParams[1]="c:\\e\\a\\" + fileName;
+			CCParams[1]=File_Settings.adjacenciesPath + fileName;
+			CCParams[2]="-dim";
+			CCParams[3]="3";
+			CCParams[4]="-attrExp";
+			CCParams[5]="1.8";
+			//	 CCParams[5]="2";
+			CCParams[6]="-outformat";
+			CCParams[7]="LAY";
+			CCParams[8]="-iter";
+
+			// CHANGE CCVisu NUMBER OF ITERATIONS HERE
+			CCParams[9]="25";
+			//	 CCParams[7]="LAYB";
+			//	 CCParams[7]="LAYL";
+			//	 CCParams[7]="DISP";
+			CCParams[10]="-o";
+			CCParams[11]=File_Settings.positionsPath + fileName;
+			//	 System.out.println("Running network layout program.");
+			//CCVisu.main(CCParams);
+			
+			CCVisu myCCVisu = new CCVisu(CCParams, job);
+			
+			// Note: here is an example of what eleph1nt params look like:
+			// -nd c:\nodedata_NMDA.txt -pd c:\positions_NMDA.txt -outFormat POV -o c:\NMDA_MB.pov
+
+			// Now run NodeSortByType on the file
+			String[]NodeSortByTypeParams=new String[2];
+			NodeSortByTypeParams[0]=File_Settings.positionsPath + fileName;
+			NodeSortByTypeParams[1]=File_Settings.orderedPositionsByTypePath + fileName;
+			NodeSortByType.main(NodeSortByTypeParams);
+
+			// Now run NodeSortByDegree on the file to sort nodes by node degree (number of links per node)
+			// and assign a color bin
+
+
+			String[]NodeSortByDegreeParams=new String[2];
+			NodeSortByDegreeParams[0]=File_Settings.orderedPositionsByTypePath + fileName;
+			NodeSortByDegreeParams[1]=File_Settings.orderedPositionsByDegreePath + fileName;
+			NodeSortByDegree.main(NodeSortByDegreeParams);
+
+
+			// Now run PrepLinks on the file to prepare the x,y,z coordinates of each end of line segments
+
+			String[]prepLinksParams=new String[3];
+			prepLinksParams[0]=File_Settings.positionsPath + fileName;
+			prepLinksParams[1]=File_Settings.adjacenciesPath + fileName;
+			prepLinksParams[2]=File_Settings.linksPath + fileName;
+			PrepLinks.main(prepLinksParams);
+			// Now run eleph1nt for the file
+
+			// First build parameters for eleph1nt
+			String ep=""; // eleph1nt parameters
+			int ecount=0;
+			// Add the run flag to the parameters string
+			ep=ep+"-r "; ecount++;
+			// Add the location of the position data
+			ep=ep+"-pd "; ecount++;
+			ep=ep+File_Settings.orderedPositionsByDegreePath + fileName.replaceAll(" ","_") + " "; ecount++;
+			// Add the location of the links data
+			ep=ep+"-ld "; ecount++;
+			ep=ep+File_Settings.linksPath + fileName.replaceAll(" ","_") + " "; ecount++;
+			if(includeLinks=="false")
+			{
+				ep=ep+"-excludeLinks ";
+				ecount++;
+			}
+			// Indicate the icon mode
+			ep=ep+"-iconMode "; ecount++;
+			ep=ep+"drawing "; ecount++;
+			// Indicate the output format
+			ep=ep+"-outFormat "; ecount++;
+			ep=ep+"KML "; ecount++;
+			// Indicate the output file location
+			ep=ep+"-o "; ecount++;
+			ep=ep+File_Settings.outputPath + job.getKMLFileName().replaceAll(" ","_") + " "; ecount++;
+//				info(ep, out);
+//				info("Using file path: " + File_Settings.outputPath + fileName.replaceAll(" ","_") + ".kml ", out);
+			// Now tokenize eleph1nt parameters into a String array
+			String[] EParams=new String[ecount];
+			int EPPos=0;
+			StringTokenizer t= new StringTokenizer(ep," ");
+			while(t.hasMoreTokens())
+			{
+				EParams[EPPos]=t.nextToken();
+				EPPos++;
+			}
+			// Now run eleph1nt's main class with these parameters
+			eleph1nt.main(EParams);
+		}
+		catch (Exception e) 
+		{
+			//	 error("Exception while opening file '" + args[i] + "' for reading: ");
+			error(""+e);
+		}
+	} // end main
+
+	private static void deleteDir(File dir)
+	{
+		if (dir.isDirectory()) {
+			String[] _file = dir.list();
+			for (int i=0; i<_file.length; i++) {
+				deleteDir(new File(dir, _file[i]));
+			}
+		}
+		else
+		{
+			dir.delete();}
+	}
+	private static void printHelp() 
+	{
+		// Usage and info message.
+		System.out.print( 
+				endl
+				+ "This is controll3r, a tool to calculate network node position data" + endl
+				+	"for a directory of files using CCVisu, then combine position data with nodedata" + endl
+				+ "using eleph1nt." + endl
+		);
+	}
+
+	/*****************************************************************
+	 * Checks whether the command line argument at index i has a follower argument.
+	 * If there is no follower argument, it exits the program.
+	 * @param args String array containing the command line arguments.
+	 * @param i Index to check.
+	 *****************************************************************/
+	private static void chkAvail(String[] args, int i, PrintWriter out) {
+		if (i == args.length) {
+			System.out.println("Usage error: Option '" + args[i-1] + "' requires an argument (file).");
+			//System.exit(1);
+		}
+	}
+
+	/*public static void _P(String v) {
+		info(v, out);
+	}*/
+	
+	public void info(String msg)
+	{
+		System.out.println(msg);
+		logger.info(msg);
+		job.getStatus().println(msg);
+	}
+	
+	public void error(String msg)
+	{
+		System.err.println(msg);
+		logger.error(msg);
+		job.getStatus().println(msg);
+	}
+} // end class

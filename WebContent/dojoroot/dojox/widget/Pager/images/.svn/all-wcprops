@@ -1,0 +1,41 @@
+K 25
+svn:wc:ra_dav:version-url
+V 71
+/bagels/!svn/ver/40/trunk/WebContent/dojoroot/dojox/widget/Pager/images
+END
+pageInactive.png
+K 25
+svn:wc:ra_dav:version-url
+V 88
+/bagels/!svn/ver/40/trunk/WebContent/dojoroot/dojox/widget/Pager/images/pageInactive.png
+END
+vPrevious.png
+K 25
+svn:wc:ra_dav:version-url
+V 85
+/bagels/!svn/ver/40/trunk/WebContent/dojoroot/dojox/widget/Pager/images/vPrevious.png
+END
+hPrevious.png
+K 25
+svn:wc:ra_dav:version-url
+V 85
+/bagels/!svn/ver/40/trunk/WebContent/dojoroot/dojox/widget/Pager/images/hPrevious.png
+END
+vNext.png
+K 25
+svn:wc:ra_dav:version-url
+V 81
+/bagels/!svn/ver/40/trunk/WebContent/dojoroot/dojox/widget/Pager/images/vNext.png
+END
+hNext.png
+K 25
+svn:wc:ra_dav:version-url
+V 81
+/bagels/!svn/ver/40/trunk/WebContent/dojoroot/dojox/widget/Pager/images/hNext.png
+END
+pageActive.png
+K 25
+svn:wc:ra_dav:version-url
+V 86
+/bagels/!svn/ver/40/trunk/WebContent/dojoroot/dojox/widget/Pager/images/pageActive.png
+END

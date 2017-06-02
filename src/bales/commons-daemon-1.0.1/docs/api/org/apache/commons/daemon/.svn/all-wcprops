@@ -1,0 +1,53 @@
+K 25
+svn:wc:ra_dav:version-url
+V 91
+/bagels/!svn/ver/17/trunk/src/bales/commons-daemon-1.0.1/docs/api/org/apache/commons/daemon
+END
+DaemonPermission.html
+K 25
+svn:wc:ra_dav:version-url
+V 113
+/bagels/!svn/ver/17/trunk/src/bales/commons-daemon-1.0.1/docs/api/org/apache/commons/daemon/DaemonPermission.html
+END
+Daemon.html
+K 25
+svn:wc:ra_dav:version-url
+V 103
+/bagels/!svn/ver/17/trunk/src/bales/commons-daemon-1.0.1/docs/api/org/apache/commons/daemon/Daemon.html
+END
+package-frame.html
+K 25
+svn:wc:ra_dav:version-url
+V 110
+/bagels/!svn/ver/17/trunk/src/bales/commons-daemon-1.0.1/docs/api/org/apache/commons/daemon/package-frame.html
+END
+package-summary.html
+K 25
+svn:wc:ra_dav:version-url
+V 112
+/bagels/!svn/ver/17/trunk/src/bales/commons-daemon-1.0.1/docs/api/org/apache/commons/daemon/package-summary.html
+END
+DaemonController.html
+K 25
+svn:wc:ra_dav:version-url
+V 113
+/bagels/!svn/ver/17/trunk/src/bales/commons-daemon-1.0.1/docs/api/org/apache/commons/daemon/DaemonController.html
+END
+DaemonContext.html
+K 25
+svn:wc:ra_dav:version-url
+V 110
+/bagels/!svn/ver/17/trunk/src/bales/commons-daemon-1.0.1/docs/api/org/apache/commons/daemon/DaemonContext.html
+END
+package-tree.html
+K 25
+svn:wc:ra_dav:version-url
+V 109
+/bagels/!svn/ver/17/trunk/src/bales/commons-daemon-1.0.1/docs/api/org/apache/commons/daemon/package-tree.html
+END
+DaemonListener.html
+K 25
+svn:wc:ra_dav:version-url
+V 111
+/bagels/!svn/ver/17/trunk/src/bales/commons-daemon-1.0.1/docs/api/org/apache/commons/daemon/DaemonListener.html
+END

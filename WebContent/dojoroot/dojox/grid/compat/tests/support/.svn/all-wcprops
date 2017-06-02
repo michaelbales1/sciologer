@@ -1,0 +1,59 @@
+K 25
+svn:wc:ra_dav:version-url
+V 77
+/bagels/!svn/ver/40/trunk/WebContent/dojoroot/dojox/grid/compat/tests/support
+END
+data.php
+K 25
+svn:wc:ra_dav:version-url
+V 86
+/bagels/!svn/ver/40/trunk/WebContent/dojoroot/dojox/grid/compat/tests/support/data.php
+END
+json.php
+K 25
+svn:wc:ra_dav:version-url
+V 86
+/bagels/!svn/ver/40/trunk/WebContent/dojoroot/dojox/grid/compat/tests/support/json.php
+END
+testtbl.sql
+K 25
+svn:wc:ra_dav:version-url
+V 89
+/bagels/!svn/ver/40/trunk/WebContent/dojoroot/dojox/grid/compat/tests/support/testtbl.sql
+END
+yahoo_search.js
+K 25
+svn:wc:ra_dav:version-url
+V 93
+/bagels/!svn/ver/40/trunk/WebContent/dojoroot/dojox/grid/compat/tests/support/yahoo_search.js
+END
+test_data.js
+K 25
+svn:wc:ra_dav:version-url
+V 90
+/bagels/!svn/ver/40/trunk/WebContent/dojoroot/dojox/grid/compat/tests/support/test_data.js
+END
+geography.xml
+K 25
+svn:wc:ra_dav:version-url
+V 91
+/bagels/!svn/ver/40/trunk/WebContent/dojoroot/dojox/grid/compat/tests/support/geography.xml
+END
+books.xml
+K 25
+svn:wc:ra_dav:version-url
+V 87
+/bagels/!svn/ver/40/trunk/WebContent/dojoroot/dojox/grid/compat/tests/support/books.xml
+END
+movies.csv
+K 25
+svn:wc:ra_dav:version-url
+V 88
+/bagels/!svn/ver/40/trunk/WebContent/dojoroot/dojox/grid/compat/tests/support/movies.csv
+END
+test_data_objects.js
+K 25
+svn:wc:ra_dav:version-url
+V 98
+/bagels/!svn/ver/40/trunk/WebContent/dojoroot/dojox/grid/compat/tests/support/test_data_objects.js
+END

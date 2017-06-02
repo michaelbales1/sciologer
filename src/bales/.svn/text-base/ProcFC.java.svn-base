@@ -1,0 +1,725 @@
+package bales;
+//=======================================================================================
+//ProcFC.java processes a text file containing row-by-row data
+//In the following format:
+//Groups of entities
+//Each line has the entity and value
+//There is a blank line between records.
+//For example, PubMed citations in MEDLINE format.
+//The collection of citations is represented line by line, with multiple lines per citation (record)
+//There is a blank line between individual records
+//Each line starts with a 1 to 4 character field name
+//The data begins in column n
+//=======================================================================================
+import java.io.*;
+import bales.File_Settings;
+import java.util.StringTokenizer;
+public class ProcFC  {
+	public static void main(String args[]) {
+		//		System.out.println("Launching full citation processor...");
+		//		System.out.println(args.length);
+		if (args.length != 3) {
+			System.err.println("Usage: cmd infile utilfile outfile");
+			//System.exit(1);
+		}
+		// Types of nodes to include in the network
+		int includePapers=1;
+		int includeAuthors=1;
+		int includeJournals=1;
+		int includeInstitutions=0;
+		int includeGrants=1;
+		int includeMainheadings=0;
+		int includeSubstances=1;
+		int includeAbstracts=1;
+		int includeTags=0;
+		int parseInstitutions=0;
+		int lineCount=0; // to count lines in file
+		int auCountLeft=0; // to count authors in a single citation
+		int auCountRight=0; // to count authors in a single citation
+		String filename=args[1];
+		// RESET MAXIMUM AUTHORS HERE
+		//		int maxAuth=10; // maximum number of authors per citation for which to create links
+		int maxAuth=10; // maximum number of authors per citation for which to create links
+		// Create empty file with correct name in procfc_util
+		try {
+			File file=new File(File_Settings.procFC_utilPath+filename);
+			BufferedWriter makeBlankFile=new BufferedWriter(new FileWriter(file));
+			makeBlankFile.close();
+		} // end try
+		catch (IOException e) {
+			System.out.println(e);
+			e.printStackTrace();
+		} // end catch
+
+		boolean exclude=false; // initialize the exclude variable to exclude authors past the maxAuth threshold
+		try {
+			// Count number of lines in file
+			BufferedReader in = new BufferedReader(new FileReader(args[0]));
+			BufferedReader inp = new BufferedReader(new FileReader(args[0]));
+			BufferedReader inp2 = new BufferedReader(new FileReader(args[0]));
+			// System.out.println("____  _______");
+			// System.out.println(File_Settings.procFC_utilPath+"0.txt");
+			//			BufferedReader in2 = new BufferedReader(new FileReader(File_Settings.procFC_utilPath+"0.txt"));
+			BufferedReader in2 = new BufferedReader(new FileReader(File_Settings.procFC_utilPath+filename));
+			//			BufferedReader in3 = new BufferedReader(new FileReader(File_Settings.procFC_utilPath+"0.txt"));
+			BufferedReader in3 = new BufferedReader(new FileReader(File_Settings.procFC_utilPath+filename));
+			//			File file=new File(args[1]); // declaration of output filename
+			File file=new File(args[2]); // declaration of output filename
+			BufferedWriter output=new BufferedWriter(new FileWriter(file));
+			//			BufferedWriter output2=new BufferedWriter(new FileWriter(File_Settings.procFC_utilPath+"0.txt"));
+			BufferedWriter output2=new BufferedWriter(new FileWriter(File_Settings.procFC_utilPath+filename));
+			String str;
+			// First count the number of lines in the file
+			// System.out.println("2");
+			while ((str = in.readLine()) != null)
+			{
+				lineCount++;
+			}
+			in.close();
+			System.out.println("Assigning links between nodes (authors, journals, titles, and institutions) for a citation file with " + lineCount + " lines...");
+			// Now read in the file to populate the array for preprocessing (fixing line wrap problem)
+			String[][] allLines=new String[lineCount][2];
+			int curIndex=0;
+			String thisLinep;
+			while ((str = inp.readLine()) != null)
+			{
+				// System.out.println("3");
+				// System.out.println(str);
+				int lineLength=str.length();
+				if(str.equals("")) // If the line is blank, fill in the array with null values
+				{
+					allLines[curIndex][0]="";
+					allLines[curIndex][1]="";
+					curIndex++;
+				}
+				else
+					if(lineLength<6) // Non-blank lines with length less than six
+						// Non-blank lines with length less than six
+						// can occur if there is an error in PubMed data or if download was truncated; skip such lines
+					{
+						allLines[curIndex][0]="";
+						allLines[curIndex][1]="";
+						curIndex++;
+					}
+				// If the line is not blank, and contains at least six characters, fill in the array with the text on the line
+				// System.out.println("4");
+				if(lineLength>6) // Non-blank lines with length less than six
+					// can occur if there is an error in PubMed data or if download was truncated; skip such lines
+				{
+					//					thisLinep=str;
+					// Disallow rogue vertical bars, sometimes found in e-mail addresses
+					// They are used as a delimiter downstream
+					//					if(str.contains("|"))
+					//						System.out.println("Found vertical bar");
+					// The \\Q and \\E below are necessary because the vertical bar is a special character.
+					// The replaceAll command does not work without them.
+					thisLinep=str.replaceAll("\\Q|\\E","-verticalbar-");
+					//					System.out.println(str);
+					allLines[curIndex][0]=thisLinep.substring(0,4); // The first four characters
+					allLines[curIndex][1]=thisLinep.substring(6); // All the remaining characters starting with the 7th
+					curIndex++; // increment line counter
+				}
+			}
+			inp.close();
+
+			// Done populating the allLines array. Now fix the line wrap problem and write to output to the new array
+			String field; // the data type
+			String datum; // the data element
+			String repaired; // the repaired (concatenated) data element
+			String buildLinep;
+			int wrapCount=1;
+			// System.out.println("5");
+			for(int i=0; i<lineCount; i++)
+			{
+				field=(allLines[i][0]);
+				datum=(allLines[i][1]);
+				int index=i; // the current line which will remain constant while looking for additional lines to concatenate
+				if(i+1<lineCount) // only do this if not on the last line
+					while(allLines[index+wrapCount][0].equals("    "))
+					{
+						datum=datum+" "+allLines[index+wrapCount][1];
+						wrapCount++;
+						i++;
+					}
+				wrapCount=1; // reset wrapCount value
+
+				if(field.equals(""))
+					buildLinep=""; // regenerate the line
+				else
+					buildLinep=field+"- "+datum; // regenerate the line
+				// System.out.println(buildLinep);
+				output2.write(buildLinep);
+				output2.newLine();	
+			}
+			inp2.close();
+			output2.close();
+
+			// Now go line by line.
+			String thisLine;
+			int linesThisCitation=0;
+			// Now count how many lines there are in the next record
+			while ((str = in2.readLine()) != null)
+			{
+				if(str.equals(""))
+					// Reached a blank line. Now process what's in the array for this record.
+				{
+					auCountLeft=0; auCountRight=0; // Reset author counters
+					String[][] allLinesThisCitation=new String[linesThisCitation][2];
+					// Assemble mini-array allLinesThisCitation for all lines in the next abstract
+					// then populate it for this citation
+					for(int i=0; i<linesThisCitation; i++)
+					{
+						thisLine=in3.readLine();
+						// Remember a sample data line might look like this:
+						// AU  - Fazlioglu Y
+						// or
+						// TI  - A sensory integration therapy program on sensory problems for children with autism.
+						allLinesThisCitation[i][0]=thisLine.substring(0,4); // The first four characters
+						allLinesThisCitation[i][1]=thisLine.substring(6); // All the remaining characters starting with the 7th
+					}
+					// Done populating allLinesThisCitation array for this citation.
+					// Now run through allLinesThisCitation array and generate adjacencies to output file
+					// entityType will be populated only if it matches one of the desired types,
+					// e.g. author, journal, institutional affiliation
+					String nodeTypeLeft=""; // Empty string to hold type of node on left, to simplify expression
+					String nodeTypeRight=""; // Empty string to hold type of node on right, to simplify expression
+					String entityLeft=""; // Empty string to hold label/description of left entity, to simplify expression
+					String entityRight=""; // Empty string to hold label/description of right entity, to simplify expression
+					String yearPublished=""; // Empty string to hold year published
+					String buildLine=""; // Empty string to build RSF output line by line
+					for(int i=0; i<linesThisCitation; i++)
+					{
+						if(includeAuthors==1)
+						{
+							if (allLinesThisCitation[i][0].equalsIgnoreCase("AU  "))
+							{
+								auCountLeft++;
+								nodeTypeLeft="person"; // author
+							}
+						}
+						if (allLinesThisCitation[i][0].equalsIgnoreCase("DP  ")) // year published
+						{
+							yearPublished=allLinesThisCitation[i][1].substring(0,4); // Grab year published
+							// System.out.println(yearPublished);
+						}
+						if(includePapers==1)
+						{
+							if (allLinesThisCitation[i][0].equalsIgnoreCase("TI  ")) nodeTypeLeft="paper"; // title
+						}
+						if(includeJournals==1)
+						{
+							if (allLinesThisCitation[i][0].equalsIgnoreCase("TA  ")) nodeTypeLeft="journal";
+						}
+						if(includeGrants==1)
+						{
+							if (allLinesThisCitation[i][0].equalsIgnoreCase("GR  ")) nodeTypeLeft="grant";
+						}
+						if(includeInstitutions==1)
+						{
+							if (allLinesThisCitation[i][0].equalsIgnoreCase("AD  ")) nodeTypeLeft="institution";
+						}
+						if(includeAbstracts==1)
+						{
+							if (allLinesThisCitation[i][0].equalsIgnoreCase("AB  ")) nodeTypeLeft="abstract";
+						}
+
+						if(includeSubstances==1)
+						{
+							if (allLinesThisCitation[i][0].equalsIgnoreCase("RN  ")) nodeTypeLeft="substance";
+						}
+						if(includeMainheadings==1)
+						{
+							if (allLinesThisCitation[i][0].equalsIgnoreCase("MH  "))
+								// Only accept starred main headings (the ones the article is really
+								// considered to be "about" by the catalogers at NLM
+							{
+								if(allLinesThisCitation[i][1].contains("*"))
+								{
+									nodeTypeLeft="mainheading";
+								}
+								if(allLinesThisCitation[i][1].contains("/"))
+								{
+									nodeTypeLeft="mainheading";
+								}
+							}
+						}
+						entityLeft=allLinesThisCitation[i][1];
+						if(nodeTypeLeft.equals("paper")) // title
+						{	
+							entityLeft=entityLeft + " (" + yearPublished + ")"; // append year published to title
+							// System.out.println(entityLeft);
+						}
+
+						//						StringTokenizer tokenizer=new StringTokenizer(allLinesThisCitation[i][1]," ");
+						StringTokenizer tokenizer=new StringTokenizer(entityLeft," ");
+						// Count the tokens
+						int numTokens=tokenizer.countTokens();
+						// Instantiate an array to hold the tokens
+						String[] a = new String[numTokens];
+						String currentTag="";
+
+						if (nodeTypeLeft.length()>0) // In other words, if entityType is not null
+							// (i.e., if the current line matches one of the desired entity types)
+							// then create adjacencies
+						{
+							// Now determine node types for the right-hand nodes in the adjacency
+							for(int j=i+1; j<(linesThisCitation); j++)
+							{
+								if(includeAuthors==1)
+								{
+									if (allLinesThisCitation[j][0].equalsIgnoreCase("AU  "))
+									{
+										auCountRight++;
+										nodeTypeRight="person"; // author
+									}
+								}
+								if(includePapers==1)
+								{
+									if (allLinesThisCitation[j][0].equalsIgnoreCase("TI  ")) nodeTypeRight="paper";
+								}
+								if(includeJournals==1)
+								{
+									if (allLinesThisCitation[j][0].equalsIgnoreCase("TA  ")) nodeTypeRight="journal";
+								}
+								if(includeGrants==1)
+								{
+									if (allLinesThisCitation[j][0].equalsIgnoreCase("GR  ")) nodeTypeRight="grant";
+								}
+								if(includeInstitutions==1)
+								{
+									if (allLinesThisCitation[j][0].equalsIgnoreCase("AD  ")) nodeTypeRight="institution";
+								}
+								if(includeSubstances==1)
+								{
+									if (allLinesThisCitation[j][0].equalsIgnoreCase("RN  ")) nodeTypeRight="substance";
+								}
+								if(includeMainheadings==1)
+								{
+									if (allLinesThisCitation[j][0].equalsIgnoreCase("MH  "))
+										// Only accept starred main headings (the ones the article is really
+										// considered to be "about" by the catalogers at NLM
+									{
+										if(allLinesThisCitation[j][1].contains("*"))
+										{
+											nodeTypeRight="mainheading";
+										}
+										if(allLinesThisCitation[j][1].contains("/"))
+										{
+											nodeTypeRight="mainheading";
+										}
+									}
+								}
+								if (nodeTypeRight.length()>0) // In other words, if entityType is not null
+									// (i.e., if the current line matches one of the desired entity types)
+									// then run through the remainder of the citation to create adjacencies
+								{
+									entityLeft=allLinesThisCitation[i][1];
+									if(nodeTypeLeft.equals("paper")) // title
+									{	
+										entityLeft=entityLeft + " (" + yearPublished + ")"; // append year published to title
+										// System.out.println(entityLeft);
+									}
+									entityRight=allLinesThisCitation[j][1];
+
+									// Process MeSH headings to make terms with "/*" equivalent to terms with "/"
+									// by removing "*"
+									if(nodeTypeLeft.equals("mainheading"))
+									{
+										entityLeft=entityLeft.replaceAll("\\*", "");
+									}
+									if(nodeTypeRight.equals("mainheading"))
+									{
+										entityRight=entityRight.replaceAll("\\*", "");
+									}
+									// RUN PARSEINST
+									// to pull out institution from long institution name								
+									if(parseInstitutions==1)
+									{
+										if(nodeTypeLeft.equals("institution"))
+										{
+											entityLeft=parseInst(entityLeft);
+										}
+										if(nodeTypeRight.equals("institution"))
+										{
+											entityRight=parseInst(entityRight);
+										}
+									}
+									//									*/
+									// Now generate expression suitable for output format,
+									// in this case RSF format used in CCVisu
+									if(auCountRight>maxAuth)
+									{
+										if(nodeTypeRight.equalsIgnoreCase("person"))
+											exclude=true;
+									}
+									if(auCountLeft>maxAuth)
+									{
+										if(nodeTypeLeft.equalsIgnoreCase("person"))
+											exclude=true;
+									}
+									if(entityRight.equalsIgnoreCase("et al"))
+										exclude=true;
+									if(entityLeft.equalsIgnoreCase("et al"))
+										exclude=true;
+
+									// Only link the first author to the institution
+									if(nodeTypeLeft.equalsIgnoreCase("institution"))
+										if(nodeTypeRight.equalsIgnoreCase("person"))
+											if(auCountRight>1)
+												exclude=true;
+
+									// Remove unwanted links based on data schema
+									// Default link excludes for entity type person
+									if(nodeTypeLeft.equalsIgnoreCase("person"))
+									{
+										//										if(nodeTypeRight.equalsIgnoreCase("person"))
+										//											exclude=true;
+										if(nodeTypeRight.equalsIgnoreCase("journal"))
+											exclude=true;
+										if(nodeTypeRight.equalsIgnoreCase("grant"))
+											exclude=true;
+										if(nodeTypeRight.equalsIgnoreCase("substance"))
+											exclude=true;
+										if(nodeTypeRight.equalsIgnoreCase("mainheading"))
+											exclude=true;
+										if(nodeTypeLeft.equalsIgnoreCase("abstract"))
+											exclude=true;
+									}
+									if(nodeTypeRight.equalsIgnoreCase("person"))
+									{
+										//										if(nodeTypeLeft.equalsIgnoreCase("person"))
+										//											exclude=true;
+										if(nodeTypeLeft.equalsIgnoreCase("journal"))
+											exclude=true;
+										if(nodeTypeLeft.equalsIgnoreCase("grant"))
+											exclude=true;
+										if(nodeTypeLeft.equalsIgnoreCase("substance"))
+											exclude=true;
+										if(nodeTypeLeft.equalsIgnoreCase("mainheading"))
+											exclude=true;
+										if(nodeTypeLeft.equalsIgnoreCase("abstract"))
+											exclude=true;
+									}
+									// Default link excludes for paper							
+									if(nodeTypeLeft.equalsIgnoreCase("paper"))
+									{
+										if(nodeTypeRight.equalsIgnoreCase("institution"))
+											exclude=true;
+									}
+									if(nodeTypeRight.equalsIgnoreCase("paper"))
+									{
+										if(nodeTypeLeft.equalsIgnoreCase("institution"))
+											exclude=true;
+									}
+									// Default link excludes for journal	
+									if(nodeTypeLeft.equalsIgnoreCase("journal"))
+									{
+										if(nodeTypeRight.equalsIgnoreCase("person"))
+											exclude=true;
+										if(nodeTypeRight.equalsIgnoreCase("grant"))
+											exclude=true;
+										if(nodeTypeRight.equalsIgnoreCase("substance"))
+											exclude=true;
+										if(nodeTypeRight.equalsIgnoreCase("institution"))
+											exclude=true;
+										if(nodeTypeRight.equalsIgnoreCase("mainheading"))
+											exclude=true;
+										if(nodeTypeRight.equalsIgnoreCase("abstract"))
+											exclude=true;
+									}
+									if(nodeTypeRight.equalsIgnoreCase("journal"))
+									{
+										if(nodeTypeLeft.equalsIgnoreCase("person"))
+											exclude=true;
+										if(nodeTypeLeft.equalsIgnoreCase("grant"))
+											exclude=true;
+										if(nodeTypeLeft.equalsIgnoreCase("substance"))
+											exclude=true;
+										if(nodeTypeLeft.equalsIgnoreCase("institution"))
+											exclude=true;
+										if(nodeTypeLeft.equalsIgnoreCase("mainheading"))
+											exclude=true;
+										if(nodeTypeLeft.equalsIgnoreCase("abstract"))
+											exclude=true;
+									}
+									// Default link excludes for grant
+									if(nodeTypeLeft.equalsIgnoreCase("grant"))
+									{
+										if(nodeTypeRight.equalsIgnoreCase("person"))
+											exclude=true;
+										if(nodeTypeRight.equalsIgnoreCase("journal"))
+											exclude=true;
+										if(nodeTypeRight.equalsIgnoreCase("grant"))
+											exclude=true;
+										if(nodeTypeRight.equalsIgnoreCase("substance"))
+											exclude=true;
+										if(nodeTypeRight.equalsIgnoreCase("institution"))
+											exclude=true;
+										if(nodeTypeRight.equalsIgnoreCase("mainheading"))
+											exclude=true;
+										if(nodeTypeRight.equalsIgnoreCase("abstract"))
+											exclude=true;
+									}
+
+									if(nodeTypeRight.equalsIgnoreCase("grant"))
+									{
+										if(nodeTypeLeft.equalsIgnoreCase("person"))
+											exclude=true;
+										if(nodeTypeLeft.equalsIgnoreCase("journal"))
+											exclude=true;
+										if(nodeTypeLeft.equalsIgnoreCase("grant"))
+											exclude=true;
+										if(nodeTypeLeft.equalsIgnoreCase("substance"))
+											exclude=true;
+										if(nodeTypeLeft.equalsIgnoreCase("institution"))
+											exclude=true;
+										if(nodeTypeLeft.equalsIgnoreCase("mainheading"))
+											exclude=true;
+										if(nodeTypeLeft.equalsIgnoreCase("abstract"))
+											exclude=true;
+									}
+									// Default link excludes for substance
+									if(nodeTypeLeft.equalsIgnoreCase("substance"))
+									{
+										if(nodeTypeRight.equalsIgnoreCase("person"))
+											exclude=true;
+										if(nodeTypeRight.equalsIgnoreCase("journal"))
+											exclude=true;
+										if(nodeTypeRight.equalsIgnoreCase("grant"))
+											exclude=true;
+										if(nodeTypeRight.equalsIgnoreCase("substance"))
+											exclude=true;
+										if(nodeTypeRight.equalsIgnoreCase("institution"))
+											exclude=true;
+										if(nodeTypeRight.equalsIgnoreCase("mainheading"))
+											exclude=true;
+										if(nodeTypeRight.equalsIgnoreCase("abstract"))
+											exclude=true;
+									}
+
+									if(nodeTypeRight.equalsIgnoreCase("substance"))
+									{
+										if(nodeTypeLeft.equalsIgnoreCase("person"))
+											exclude=true;
+										if(nodeTypeLeft.equalsIgnoreCase("journal"))
+											exclude=true;
+										if(nodeTypeLeft.equalsIgnoreCase("grant"))
+											exclude=true;
+										if(nodeTypeLeft.equalsIgnoreCase("substance"))
+											exclude=true;
+										if(nodeTypeLeft.equalsIgnoreCase("institution"))
+											exclude=true;
+										if(nodeTypeLeft.equalsIgnoreCase("mainheading"))
+											exclude=true;
+										if(nodeTypeRight.equalsIgnoreCase("abstract"))
+											exclude=true;
+									}
+									// Default link excludes for institution
+									if(nodeTypeLeft.equalsIgnoreCase("institution"))
+									{
+										//										if(nodeTypeRight.equalsIgnoreCase("paper"))
+										//											exclude=true;
+										if(nodeTypeRight.equalsIgnoreCase("journal"))
+											exclude=true;
+										if(nodeTypeRight.equalsIgnoreCase("grant"))
+											exclude=true;
+										if(nodeTypeRight.equalsIgnoreCase("substance"))
+											exclude=true;
+										if(nodeTypeRight.equalsIgnoreCase("mainheading"))
+											exclude=true;
+										if(nodeTypeRight.equalsIgnoreCase("abstract"))
+											exclude=true;
+									}
+									if(nodeTypeRight.equalsIgnoreCase("institution"))
+									{
+										//										if(nodeTypeLeft.equalsIgnoreCase("paper"))
+										//											exclude=true;
+										if(nodeTypeLeft.equalsIgnoreCase("journal"))
+											exclude=true;
+										if(nodeTypeLeft.equalsIgnoreCase("grant"))
+											exclude=true;
+										if(nodeTypeLeft.equalsIgnoreCase("substance"))
+											exclude=true;
+										if(nodeTypeLeft.equalsIgnoreCase("mainheading"))
+											exclude=true;
+										if(nodeTypeLeft.equalsIgnoreCase("abstract"))
+											exclude=true;
+									}
+									// Default link excludes for mainheading
+									if(nodeTypeLeft.equalsIgnoreCase("mainheading"))
+									{
+										if(nodeTypeRight.equalsIgnoreCase("person"))
+											exclude=true;
+										if(nodeTypeRight.equalsIgnoreCase("journal"))
+											exclude=true;
+										if(nodeTypeRight.equalsIgnoreCase("grant"))
+											exclude=true;
+										if(nodeTypeRight.equalsIgnoreCase("substance"))
+											exclude=true;
+										if(nodeTypeRight.equalsIgnoreCase("institution"))
+											exclude=true;
+										if(nodeTypeRight.equalsIgnoreCase("abstract"))
+											exclude=true;
+										//										if(nodeTypeRight.equalsIgnoreCase("mainheading"))
+										//											exclude=true;
+									}
+									if(nodeTypeRight.equalsIgnoreCase("mainheading"))
+									{
+										if(nodeTypeLeft.equalsIgnoreCase("person"))
+											exclude=true;
+										if(nodeTypeLeft.equalsIgnoreCase("journal"))
+											exclude=true;
+										if(nodeTypeLeft.equalsIgnoreCase("grant"))
+											exclude=true;
+										if(nodeTypeLeft.equalsIgnoreCase("substance"))
+											exclude=true;
+										if(nodeTypeLeft.equalsIgnoreCase("institution"))
+											exclude=true;
+										if(nodeTypeLeft.equalsIgnoreCase("abstract"))
+											exclude=true;
+										//										if(nodeTypeLeft.equalsIgnoreCase("mainheading"))
+										//											exclude=true;
+									}
+									if(exclude==false) // Output this line only if the exclude flag hasn't been activated
+									{
+										buildLine=(nodeTypeLeft + "-" + nodeTypeRight + " \"" + nodeTypeLeft + "_" + entityLeft + "\" \"" + nodeTypeRight + "_"  + entityRight +"\" 1");
+										// System.out.println(buildLine);
+										output.write(buildLine);
+										output.newLine();
+									}
+									nodeTypeRight=""; // Reset nodeTypeRight to null string
+									exclude=false; // Reset exclude flag to false
+								} // end if for right side (if entitytype is not null; if right-hand matches desired entity type)
+							} // end for loop for right side
+
+							// Now assign links from elements to their tags
+							if(includeTags==1)
+							{
+								for(int tok=0; tok<numTokens;tok++)
+									a[tok]=(tokenizer.nextToken());
+
+								// Now output the tags with their parents
+								for(int gt=0; gt<numTokens; gt++)
+								{
+									//		System.out.println(a[gt]);
+									currentTag=a[gt];
+									nodeTypeRight="tag";
+									entityRight=currentTag;
+									double r=Math.random();
+									//								if(r>0.9) // Only pick one in ten words in abstracts
+
+									if(nodeTypeLeft.equals("abstract"))
+										if(r>0.99) // Only pick one in 100 words in abstracts
+										{
+											buildLine=(nodeTypeLeft + "-" + "tag" + " \"" + nodeTypeLeft + "_" + entityLeft + "\" \"" + nodeTypeRight + "_"  + entityRight +"\" 1");
+											System.out.println(buildLine);
+											output.write(buildLine);
+											output.newLine();
+										}
+
+									if(nodeTypeLeft.equals("paper") || nodeTypeLeft.equals("mainheading"))
+									{
+										buildLine=(nodeTypeLeft + "-" + "tag" + " \"" + nodeTypeLeft + "_" + entityLeft + "\" \"" + nodeTypeRight + "_"  + entityRight +"\" 1");
+										System.out.println(buildLine);
+										output.write(buildLine);
+										output.newLine();
+									}
+
+								}
+							} // end if for assigning links to tags
+						} // end if for left side
+						auCountRight=0; // Reset counter for author count in inner loop (remainder of lines for this citation)
+						nodeTypeLeft=""; // Reset nodeTypeLeft to null string
+						nodeTypeRight=""; // Reset nodeTypeLeft to null string
+						entityLeft="";
+						entityRight="";	
+						exclude=false;
+					} // end for loop to process the citation
+					auCountLeft=0; // Reset counter for number of authors in the citation
+				} // end if; now proceed on with iterator in2
+				if(str.equals("")==false) // as long as not currently on a blank line
+					linesThisCitation++;
+				else
+				{
+					linesThisCitation=0;
+					in3.readLine();
+				}
+			} // end while; iterator in2 has reached the end of the file
+			in.close();
+			output.close();
+			//			System.out.println("8");
+			System.out.println("Finished assigning links.");
+		} // end try
+		catch (IOException e) {
+			System.out.println(e);
+			e.printStackTrace();
+		} // end catch
+	} // end main
+	public static String parseInst(String inst) {
+		int tokenCount=0; // initialize token counter
+		int curIndex=0; // initialize current index in array of comma-delimited strings
+		String instShort=""; // initialize return variable, shortened institution name
+		String currentToken=""; // initialize value of current token in array
+		String[] institutions={
+				"Centers", // for CDC
+				"Clinique",
+				"College",
+				"University",
+				"Corporation",
+				"Council",
+				"Hopital",
+				"Hospital",
+				"Institut",
+				"Institute",
+				"Institutes", // for NIH
+				"Institutet",
+				"Laboratoire",
+				"Laboratory",
+				"Library",
+				"Ltd",
+				"Samusocial",
+				"Univ.",
+				"Universidad",
+				"Universidade",
+				"Universita",
+				"Universitas",
+				"Universitat",
+				"Universitatsklinikum",
+				"Universite",
+				"Universiteit",
+		};
+		StringTokenizer tokenizer = new StringTokenizer(inst, ","); // split input string on commas
+		String currentInstitution="";
+		// now count the number of tokens
+		while(tokenizer.hasMoreTokens())
+		{
+			tokenizer.nextToken();
+			tokenCount++;
+		}
+		String[] tokens=new String[tokenCount]; // initialize array to store tokens for further manipulation
+		StringTokenizer tokenizer2 = new StringTokenizer(inst, ","); // second tokenizer to read tokens into array
+		while(tokenizer2.hasMoreTokens())
+		{
+			tokens[curIndex]=tokenizer2.nextToken(); // read tokens into array
+			curIndex++;
+		}
+		for(int i=0; i<curIndex; i++)
+		{
+			currentToken=tokens[i];
+			for(int j=0; j<institutions.length; j++)
+				//		if(currentToken.contains("University")==true)
+			{
+				currentInstitution=institutions[j];
+				if(currentToken.contains(currentInstitution)==true)
+				{
+					//					System.out.println(currentToken);
+					instShort=currentToken.trim();
+				}
+			}
+		}
+		if(instShort=="") // If institution parser was not able to resolve a short institutional affiliation
+			return inst;
+		else
+			return instShort;
+	}
+} // end class

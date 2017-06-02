@@ -1,0 +1,67 @@
+package bales;
+
+public class Job
+{
+	private JobStatus status;
+	private String query;
+	private String seed;
+	private String fcFldr=File_Settings.fullCitationsPath; // Default location of full citations folder
+	private String adjFldr=File_Settings.adjacenciesPath; // Default location of adjacency lists folder
+	private String outFileName;
+	
+	public Job(String query)
+	{
+		this.query = query;
+		status = new JobStatus();
+		seed = Integer.toString((int)(1000+Math.random()*1000));
+
+		this.outFileName = query.replaceAll("\"","'").replaceAll(":","-").replaceAll("\\*","-WC-") + seed;
+	}
+
+	public String getKMLFileName()
+	{
+		return outFileName + ".kml";
+	}
+
+	public String getKMZFileName()
+	{
+		return outFileName + ".kmz";
+	}
+
+	
+	public JobStatus getStatus()
+	{
+		return status;
+	}
+	
+	public String getQuery()
+	{
+		return query;
+	}
+	
+	public String getSeed()
+	{
+		return seed;
+	}
+	
+	public void setfcFldr(String fcFldr)
+	{
+		this.fcFldr = fcFldr;
+	}
+
+	public void setadjFldr(String adjFldr)
+	{
+		this.adjFldr = adjFldr;
+	}
+
+	public String getfcFldr()
+	{
+		return fcFldr;
+	}
+
+	public String getadjFldr()
+	{
+		return adjFldr;
+	}
+
+}
