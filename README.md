@@ -7,4 +7,4 @@ Created by Michael Bales in 2009
 
 ## Requirements
 * Tomcat
-* Icons needed to be downloaded for the visualization
+* Icons needed for the visualization may be downloaded from the `drawing` folder
