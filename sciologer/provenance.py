@@ -40,6 +40,7 @@ class Manifest(BaseModel):
     fetched: int = 0
     parsed: int = 0
     from_cache: bool = False
+    retrieved_at: str | None = None  # when PubMed was queried (earlier than created_at if cached)
     pmids: list[str] = Field(default_factory=list)
     parameters: dict = Field(default_factory=dict)
     steps: list[Step] = Field(default_factory=list)

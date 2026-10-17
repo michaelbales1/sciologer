@@ -1,12 +1,14 @@
 """Build a weighted co-occurrence network from entities.
 
 Two entities are linked when they appear on the same paper. Edge weight is either the
-raw number of shared papers, or association strength (VOSviewer's default), which
-divides by the expected co-occurrence so frequent entities don't dominate.
+raw number of shared papers, or log(1 + association strength); association strength
+(VOSviewer's default normalization) divides by the expected co-occurrence so frequent
+entities don't dominate.
 """
 
 from __future__ import annotations
 
+import math
 from collections import Counter, defaultdict
 from itertools import combinations
 from typing import Literal
@@ -79,17 +81,32 @@ def build_graph(table: EntityTable, params: NetworkParams) -> tuple[nx.Graph, di
         if c < params.min_edge_weight:
             dropped_edges += 1
             continue
+        attrs: dict[str, float] = {"count": c}
         if params.weighting == "association":
             expected = occurrences[a] * occurrences[b] / (2 * total)
-            weight = c / expected if expected else 0.0
+            strength = c / expected if expected else 0.0
+            # Raw association strength is heavy-tailed: two rare entities that share one
+            # paper can score thousands of times the median and dominate clustering and
+            # layout. log(1 + strength) keeps the ordering but tames the tail; on test
+            # corpora it made clusters and layout agree (positive silhouette) where raw
+            # weights did not.
+            weight = math.log1p(strength)
+            attrs["association"] = round(strength, 4)
         else:
             weight = float(c)
-        g.add_edge(a, b, weight=weight, count=c)
+        g.add_edge(a, b, weight=weight, **attrs)
 
     summary["edges"] = {
         "pairs_found": len(pair_counts),
         "below_min_weight": dropped_edges,
         "shown": g.number_of_edges(),
     }
-    summary["isolated_nodes"] = sum(1 for n in g if g.degree(n) == 0)
+    # An entity with no links to anything else shown says nothing about relationships,
+    # and a force layout would fling it to the edge. Leave it off the map, but list it.
+    isolated = sorted((n for n in g if g.degree(n) == 0), key=lambda n: -g.nodes[n]["count"])
+    summary["unlinked"] = [
+        {"label": g.nodes[n]["label"], "type": g.nodes[n]["type"], "count": g.nodes[n]["count"]}
+        for n in isolated
+    ]
+    g.remove_nodes_from(isolated)
     return g, summary

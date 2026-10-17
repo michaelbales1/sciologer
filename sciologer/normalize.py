@@ -453,10 +453,33 @@ def add_mesh(
         )
 
 
-def add_substances(papers: Iterable[Paper], table: EntityTable) -> None:
+def add_substances(
+    papers: Iterable[Paper], table: EntityTable, skip_mesh_duplicates: bool = False
+) -> None:
+    """Substances from the chemical list.
+
+    Many chemicals are also indexed as MeSH headings with the same UI. When MeSH terms
+    are on the map too, those duplicates are skipped so one concept isn't drawn twice.
+    """
+    skipped: dict[str, int] = defaultdict(int)
     for paper in papers:
+        mesh_uis = {m.ui for m in paper.mesh} if skip_mesh_duplicates else set()
         for s in paper.substances:
+            if s.ui and s.ui in mesh_uis:
+                skipped[s.name] += 1
+                continue
             table.add(EntityType.SUBSTANCE, s.ui or fold(s.name), s.name, paper.pmid)
+    if skipped:
+        table.log.append(
+            LogEntry(
+                type=EntityType.SUBSTANCE,
+                action="excluded",
+                label="Substances also indexed as MeSH terms",
+                variants=[f"{k} ({v})" for k, v in sorted(skipped.items(), key=lambda kv: -kv[1])],
+                uncertain=False,
+                reason="Same MeSH UI on the same paper; shown once, as the MeSH term",
+            )
+        )
 
 
 def add_journals(papers: Iterable[Paper], table: EntityTable) -> None:
@@ -494,6 +517,7 @@ def build_entities(
     exclude_check_tags: bool = True,
 ) -> EntityTable:
     table = EntityTable()
+    types = list(types)
     for t in types:
         match t:
             case EntityType.AUTHOR:
@@ -512,7 +536,7 @@ def build_entities(
             case EntityType.GRANT:
                 add_grants(papers, table)
             case EntityType.SUBSTANCE:
-                add_substances(papers, table)
+                add_substances(papers, table, skip_mesh_duplicates=EntityType.MESH in types)
             case EntityType.KEYWORD:
                 add_keywords(papers, table)
     return table

@@ -156,7 +156,7 @@ def test_layout_and_clusters_are_deterministic():
 
     a, b = run(), run()
     assert a == b
-    assert all(-1 <= x <= 1 and -1 <= y <= 1 and 0 <= s <= 1 for x, y, _, s in a.values())
+    assert all(abs(x) <= 1.05 and abs(y) <= 1.05 and 0 <= s <= 1 for x, y, _, s in a.values())
 
 
 def test_pipeline_end_to_end_from_fixture():
@@ -236,3 +236,29 @@ def test_client_gives_up_with_clear_error():
     )
     with pytest.raises(RateLimitError, match="NCBI_API_KEY"):
         client.search("q")
+
+
+def test_substances_already_in_mesh_are_shown_once():
+    papers = load("neuroligins")
+    both = build_entities(papers, [EntityType.MESH, EntityType.SUBSTANCE])
+    mesh_uis = {e.attrs.get("ui") for e in both.entities.values() if e.type == EntityType.MESH}
+    sub_keys = {
+        e.key.split(":", 1)[1] for e in both.entities.values() if e.type == EntityType.SUBSTANCE
+    }
+    assert not (mesh_uis & sub_keys)
+    alone = build_entities(papers, [EntityType.SUBSTANCE])
+    assert len(alone.entities) > len(sub_keys)
+
+
+def test_cache_keeps_original_retrieval_time(tmp_path):
+    fixture = (FIXTURES / "f1275.xml").read_bytes()
+
+    def handler(request):
+        if request.url.path.endswith("esearch.fcgi"):
+            return httpx.Response(200, content=ESEARCH)
+        return httpx.Response(200, content=fixture)
+
+    client = PubMedClient(api_key="k", cache_dir=tmp_path, transport=httpx.MockTransport(handler))
+    first = client.search("q", max_records=10)
+    again = client.search("q", max_records=10)
+    assert first.retrieved_at and again.retrieved_at == first.retrieved_at

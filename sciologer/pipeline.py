@@ -16,7 +16,7 @@ from .provenance import Manifest, Step
 from .pubmed import PubMedClient, SearchResult
 from .records import EntityType, Paper
 
-DEFAULT_TYPES = [EntityType.AUTHOR, EntityType.MESH, EntityType.JOURNAL, EntityType.SUBSTANCE]
+DEFAULT_TYPES = [EntityType.MESH, EntityType.AUTHOR, EntityType.JOURNAL]
 
 Progress = Callable[[str, float], None]
 
@@ -58,7 +58,13 @@ def _graph_json(g: nx.Graph, clusters: list, run_id: str, query: str) -> dict:
     for key, d in g.nodes(data=True):
         nodes.append({"id": key, **d})
     edges = [
-        {"source": a, "target": b, "weight": round(d["weight"], 4), "count": d["count"]}
+        {
+            "source": a,
+            "target": b,
+            "weight": round(d["weight"], 4),
+            "count": d["count"],
+            **({"association": d["association"]} if "association" in d else {}),
+        }
         for a, b, d in g.edges(data=True)
     ]
     return {
@@ -105,6 +111,7 @@ def run_pipeline(
     manifest.pubmed_count = search_result.count
     manifest.fetched = len(search_result.pmids)
     manifest.from_cache = search_result.from_cache
+    manifest.retrieved_at = search_result.retrieved_at
     manifest.pmids = search_result.pmids
     manifest.steps.append(
         Step(
@@ -181,7 +188,8 @@ def run_pipeline(
                 f"Linked entities that share a paper; kept up to {params.network.max_per_type} "
                 f"per type seen on ≥{params.network.min_occurrences} papers; edge weight = "
                 + (
-                    "association strength (shared papers ÷ expected)"
+                    "log(1 + association strength), where association strength = "
+                    "shared papers ÷ expected shared papers"
                     if params.network.weighting == "association"
                     else "number of shared papers"
                 )
@@ -189,6 +197,12 @@ def run_pipeline(
             counts=net_summary,
         )
     )
+    if net_summary["unlinked"]:
+        n_unlinked = len(net_summary["unlinked"])
+        manifest.warnings.append(
+            f"{n_unlinked} entit{'y' if n_unlinked == 1 else 'ies'} had no links to anything "
+            f"else shown and {'is' if n_unlinked == 1 else 'are'} listed instead of drawn."
+        )
     if g.number_of_nodes() == 0:
         manifest.warnings.append(
             "No entity appears on enough papers to be shown. Lower the minimum "

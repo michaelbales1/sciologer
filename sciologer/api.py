@@ -92,8 +92,9 @@ def create_app(store: RunStore | None = None) -> FastAPI:
         if not (STATIC / "index.html").exists():
             return HTMLResponse(_NOT_BUILT)
         f = (STATIC / path).resolve()
-        if path and f.is_file() and f.is_relative_to(STATIC.resolve()):
-            return FileResponse(f)
-        return FileResponse(STATIC / "index.html")
+        if path and f.is_file() and f.is_relative_to(STATIC.resolve()) and f.name != "index.html":
+            # Built assets have content hashes in their names, so they can be cached.
+            return FileResponse(f, headers={"Cache-Control": "public, max-age=31536000, immutable"})
+        return FileResponse(STATIC / "index.html", headers={"Cache-Control": "no-cache"})
 
     return app

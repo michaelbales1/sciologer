@@ -85,8 +85,10 @@ def compute_layout(g: nx.Graph, p: LayoutParams) -> dict:
         corr = np.array([_rowwise_corr(ref_ranks, _distance_ranks(r)) for r in runs[1:]])
         stability = np.clip(np.median(corr, axis=0), 0, 1)
 
-    # Scale to [-1, 1] for display.
-    display = ref / (np.abs(ref).max() or 1.0)
+    # Scale to [-1, 1] for display. Use a high percentile rather than the maximum so a
+    # single far-flung node can't shrink everything else; it is clamped to the edge.
+    scale = float(np.percentile(np.abs(ref), 99)) or 1.0
+    display = np.clip(ref / scale, -1.05, 1.05)
     for i, node in enumerate(nodes):
         g.nodes[node].update(
             x=round(float(display[i, 0]), 5),

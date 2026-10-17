@@ -19,6 +19,7 @@ import threading
 import time
 from collections.abc import Callable
 from dataclasses import dataclass, field
+from datetime import UTC, datetime
 from pathlib import Path
 
 import httpx
@@ -79,6 +80,7 @@ class SearchResult:
     xml_batches: list[bytes] = field(default_factory=list)
     from_cache: bool = False
     retries: int = 0
+    retrieved_at: str | None = None
 
 
 class PubMedClient:
@@ -162,6 +164,7 @@ class PubMedClient:
             "count": result.count,
             "pmids": result.pmids,
             "query_translation": result.query_translation,
+            "retrieved_at": result.retrieved_at,
             "batches": len(result.xml_batches),
         }
         (path / "meta.json").write_text(json.dumps(meta))
@@ -189,6 +192,7 @@ class PubMedClient:
             raise ValueError(f"PubMed rejected the query: {error}")
         result = SearchResult(
             query=query,
+            retrieved_at=datetime.now(UTC).isoformat(),
             count=int(root.findtext("Count") or 0),
             pmids=[e.text for e in root.findall("IdList/Id") if e.text],
             query_translation=root.findtext("QueryTranslation"),
