@@ -393,10 +393,13 @@ export class NetworkMap {
       const style = TYPE_STYLES[v.node.type];
       const color = typeColor(v.node.type);
       const unstable = v.node.stability < this.lowStability;
-      const iconSize = v.r * ICON_SCALE;
+      // The paper icon is a simple page shape that reads at ~12px, so the text map
+      // switches to icons sooner (from ~2.25× zoom) than the entity map does.
+      const iconSize = this.graph.uniform_size ? v.r * 3.2 : v.r * ICON_SCALE;
+      const iconMin = this.graph.uniform_size ? 12 : MIN_ICON_PX;
       ctx.globalAlpha = dimmed(v) ? 0.18 : 1;
       let drewIcon = false;
-      if (iconSize >= MIN_ICON_PX) {
+      if (iconSize >= iconMin) {
         // A surface disc behind the pictogram hides links passing underneath.
         ctx.beginPath();
         ctx.arc(v.sx, v.sy, iconSize * 0.42, 0, Math.PI * 2);
