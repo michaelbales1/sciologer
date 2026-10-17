@@ -67,6 +67,7 @@ def create_app(store: RunStore | None = None) -> FastAPI:
                 "papers": store.load(run_id, "papers"),
                 "manifest": store.load(run_id, "manifest"),
                 "text": store.load_optional(run_id, "text"),
+                "citations": store.load_optional(run_id, "citations"),
             }
         except KeyError:
             raise missing(run_id) from None
@@ -81,6 +82,7 @@ def create_app(store: RunStore | None = None) -> FastAPI:
                 store.load(run_id, "manifest"),
                 fmt,
                 text=store.load_optional(run_id, "text"),
+                citations=store.load_optional(run_id, "citations"),
                 papers=store.load_optional(run_id, "papers"),
             )
         except KeyError:

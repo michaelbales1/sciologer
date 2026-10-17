@@ -8,6 +8,7 @@ from typing import Annotated
 
 import typer
 
+from .citations import ICiteClient
 from .pipeline import DEFAULT_TYPES, RunParams, run_pipeline
 from .pubmed import PubMedClient
 from .records import EntityType
@@ -36,15 +37,18 @@ def search(
         network={"min_occurrences": min_occurrences},
     )
     client = PubMedClient(cache_dir=None if no_cache else store.cache_dir)
+    icite = ICiteClient(cache_dir=None if no_cache else store.cache_dir)
     try:
         out = run_pipeline(
             params,
             new_run_id(query),
             client=client,
+            icite_client=icite,
             progress=lambda msg, frac: typer.echo(f"[{frac:4.0%}] {msg}", err=True),
         )
     finally:
         client.close()
+        icite.close()
     path = store.save(out)
     m = out.manifest
     typer.echo(

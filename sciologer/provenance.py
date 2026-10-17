@@ -44,7 +44,7 @@ class Manifest(BaseModel):
     software: dict[str, str] = Field(default_factory=software_versions)
     query: str
     query_translation: str | None = None
-    source: str = "PubMed via NCBI E-utilities (esearch + efetch, XML)"
+    source: str = "PubMed via NCBI E-utilities (esearch + efetch, XML); citations from NIH iCite"
     pubmed_count: int = 0
     fetched: int = 0
     parsed: int = 0
