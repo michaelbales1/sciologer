@@ -15,6 +15,11 @@ from .parse import parse_batches
 from .provenance import Manifest, Step
 from .pubmed import PubMedClient, SearchResult
 from .records import EntityType, Paper
+from .semantic import Embedder, SemanticParams, build_text_map
+
+# Text-map papers keeping fewer than this share of map neighbors across t-SNE starts
+# are drawn as unstable.
+TEXT_LOW_STABILITY = 0.3
 
 DEFAULT_TYPES = [EntityType.MESH, EntityType.AUTHOR, EntityType.JOURNAL]
 
@@ -30,12 +35,15 @@ class RunParams(BaseModel):
     network: NetworkParams = Field(default_factory=NetworkParams)
     cluster: ClusterParams = Field(default_factory=ClusterParams)
     layout: LayoutParams = Field(default_factory=LayoutParams)
+    text_map: bool = True
+    semantic: SemanticParams = Field(default_factory=SemanticParams)
 
 
 class RunOutput(BaseModel):
     manifest: Manifest
     graph: dict
     papers: dict[str, dict]
+    text: dict | None = None
 
 
 def _papers_json(papers: list[Paper]) -> dict[str, dict]:
@@ -82,6 +90,7 @@ def run_pipeline(
     client: PubMedClient | None = None,
     search_result: SearchResult | None = None,
     progress: Progress | None = None,
+    embed: Embedder | None = None,
 ) -> RunOutput:
     """Run every step. Pass `search_result` to skip the network fetch (tests, re-runs)."""
     report = progress or (lambda _msg, _frac: None)
@@ -238,9 +247,46 @@ def run_pipeline(
         )
     )
 
+    # 7. Text map (a separate view: papers placed by what their abstracts say)
+    text = None
+    if params.text_map:
+        sp = params.semantic
+        text, text_summary = build_text_map(
+            papers,
+            sp,
+            query=params.query,
+            embed=embed,
+            progress=lambda msg: report(msg, 0.85),
+        )
+        if "skipped" in text_summary:
+            manifest.warnings.append(f"Text map skipped: {text_summary['skipped'].lower()}.")
+            text = None
+        else:
+            text["low_stability"] = TEXT_LOW_STABILITY
+            manifest.steps.append(
+                Step(
+                    name="Text map",
+                    detail=(
+                        f"Embedded title + abstract with {sp.model}; clustered with Louvain "
+                        f"on a {sp.neighbors}-nearest-neighbor similarity graph in the full "
+                        f"embedding space (groups under {sp.min_cluster_size} papers left "
+                        "unclustered); labeled by class-based TF-IDF without the query's own "
+                        f"words; projected with t-SNE (perplexity {text_summary['perplexity']}). "
+                        "On the map, only local neighborhoods are meaningful."
+                    ),
+                    counts=text_summary,
+                )
+            )
+            if text_summary.get("silhouette", 1) < 0.1:
+                manifest.warnings.append(
+                    f"Text clusters overlap heavily (silhouette {text_summary['silhouette']}); "
+                    "read them as broad themes, not distinct groups."
+                )
+
     report("Done", 1.0)
     return RunOutput(
         manifest=manifest,
         graph=_graph_json(g, clusters, run_id, params.query),
         papers=_papers_json(papers),
+        text=text,
     )

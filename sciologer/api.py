@@ -66,6 +66,7 @@ def create_app(store: RunStore | None = None) -> FastAPI:
                 "graph": store.load(run_id, "graph"),
                 "papers": store.load(run_id, "papers"),
                 "manifest": store.load(run_id, "manifest"),
+                "text": store.load_optional(run_id, "text"),
             }
         except KeyError:
             raise missing(run_id) from None
@@ -75,7 +76,13 @@ def create_app(store: RunStore | None = None) -> FastAPI:
         if fmt not in FORMATS:
             raise HTTPException(404, f"Unknown format {fmt}; choose from {', '.join(FORMATS)}")
         try:
-            body = export(store.load(run_id, "graph"), store.load(run_id, "manifest"), fmt)
+            body = export(
+                store.load(run_id, "graph"),
+                store.load(run_id, "manifest"),
+                fmt,
+                text=store.load_optional(run_id, "text"),
+                papers=store.load_optional(run_id, "papers"),
+            )
         except KeyError:
             raise missing(run_id) from None
         media, ext = FORMATS[fmt]

@@ -15,6 +15,7 @@ FORMATS = {
     "nodes.csv": ("text/csv", "nodes.csv"),
     "edges.csv": ("text/csv", "edges.csv"),
     "json": ("application/json", "json"),
+    "text.csv": ("text/csv", "text-map.csv"),
 }
 
 _NODE_FIELDS = ["id", "label", "type", "count", "cluster", "x", "y", "stability"]
@@ -41,7 +42,13 @@ def _csv(rows: Iterator[list]) -> str:
     return buf.getvalue()
 
 
-def export(graph: dict, manifest: dict, fmt: str) -> str:
+def export(
+    graph: dict,
+    manifest: dict,
+    fmt: str,
+    text: dict | None = None,
+    papers: dict | None = None,
+) -> str:
     if fmt == "graphml":
         return "\n".join(nx.generate_graphml(to_networkx(graph)))
     if fmt == "gexf":
@@ -68,5 +75,45 @@ def export(graph: dict, manifest: dict, fmt: str) -> str:
             )
         )
     if fmt == "json":
-        return json.dumps({"manifest": manifest, "graph": graph}, indent=2)
+        return json.dumps({"manifest": manifest, "graph": graph, "text_map": text}, indent=2)
+    if fmt == "text.csv":
+        if not text:
+            raise KeyError(fmt)
+        labels = {c["id"]: c["label"] for c in text["clusters"]}
+        papers = papers or {}
+        return _csv(
+            iter(
+                [
+                    [
+                        "pmid",
+                        "title",
+                        "year",
+                        "journal",
+                        "cluster",
+                        "cluster_label",
+                        "x",
+                        "y",
+                        "stability",
+                        "text_neighbors_kept_on_map",
+                        "nearest_by_text",
+                    ]
+                ]
+                + [
+                    [
+                        p["pmid"],
+                        papers.get(p["pmid"], {}).get("title", ""),
+                        papers.get(p["pmid"], {}).get("year", ""),
+                        papers.get(p["pmid"], {}).get("journal", ""),
+                        p["cluster"],
+                        labels.get(p["cluster"], "unclustered"),
+                        p["x"],
+                        p["y"],
+                        p["stability"],
+                        p["neighbors_kept"],
+                        "; ".join(p["neighbors"]),
+                    ]
+                    for p in text["papers"]
+                ]
+            )
+        )
     raise KeyError(fmt)

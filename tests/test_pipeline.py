@@ -169,7 +169,11 @@ def test_pipeline_end_to_end_from_fixture():
         xml_batches=[xml],
     )
     out = run_pipeline(
-        RunParams(query="neuroligins", layout=LayoutParams(max_iter=60, stability_runs=2)),
+        RunParams(
+            query="neuroligins",
+            layout=LayoutParams(max_iter=60, stability_runs=2),
+            text_map=False,  # covered in test_semantic.py with an offline embedder
+        ),
         "test",
         search_result=sr,
     )

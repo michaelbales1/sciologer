@@ -25,6 +25,9 @@ def client(tmp_path, monkeypatch):
         )
 
     monkeypatch.setattr(PubMedClient, "search", fake_search)
+    from test_semantic import fake_embed
+
+    monkeypatch.setattr("sciologer.semantic.load_embedder", lambda model: fake_embed)
     return TestClient(create_app(RunStore(tmp_path)))
 
 
@@ -42,6 +45,7 @@ def test_run_lifecycle_and_exports(client):
     params = defaults["params"] | {"query": "neuroligins"}
     params["layout"]["stability_runs"] = 2
     params["layout"]["max_iter"] = 60
+    params["semantic"]["stability_runs"] = 2
     started = client.post("/api/runs", json=params)
     assert started.status_code == 202
     run_id = started.json()["run_id"]
@@ -54,7 +58,8 @@ def test_run_lifecycle_and_exports(client):
     assert run["graph"]["nodes"]
     assert [r["run_id"] for r in client.get("/api/runs").json()] == [run_id]
 
-    for fmt in ("graphml", "gexf", "nodes.csv", "edges.csv", "json"):
+    assert run["text"]["papers"]
+    for fmt in ("graphml", "gexf", "nodes.csv", "edges.csv", "json", "text.csv"):
         resp = client.get(f"/api/runs/{run_id}/export/{fmt}")
         assert resp.status_code == 200, fmt
         assert "attachment" in resp.headers["content-disposition"]
