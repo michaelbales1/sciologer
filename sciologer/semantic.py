@@ -6,7 +6,7 @@ link-based maps answer different questions (Xie & Waltman 2023).
 1. Embed title + abstract with a biomedical sentence-embedding model. The default is a
    Model2Vec distillation of PubMedBERT Embeddings: CPU only, ~31 MB, Apache-2.0.
 2. Cluster in the full embedding space, not the 2D picture, so clusters don't inherit
-   projection distortions: Louvain on a k-nearest-neighbor similarity graph. Groups
+   projection distortions: Leiden on a k-nearest-neighbor similarity graph. Groups
    smaller than a minimum size are left unclustered rather than shown as clusters.
 3. Name each cluster by its most distinctive terms (class-based TF-IDF), keeping the
    term weights and the most central papers as evidence.
@@ -29,6 +29,7 @@ from sklearn.feature_extraction.text import ENGLISH_STOP_WORDS, CountVectorizer
 from sklearn.manifold import TSNE
 from sklearn.metrics import silhouette_score
 
+from .cluster import leiden_communities
 from .layout import to_display
 from .records import Paper
 
@@ -155,7 +156,7 @@ def _local_stability(runs: list[np.ndarray], k: int) -> np.ndarray:
 
 
 def _clusters(idx: np.ndarray, sims: np.ndarray, p: SemanticParams) -> np.ndarray:
-    """Louvain on the kNN similarity graph; groups under min_cluster_size get -1."""
+    """Leiden on the kNN similarity graph; groups under min_cluster_size get -1."""
     g = nx.Graph()
     g.add_nodes_from(range(len(idx)))
     for i, (row, srow) in enumerate(zip(idx, sims, strict=True)):
@@ -165,12 +166,11 @@ def _clusters(idx: np.ndarray, sims: np.ndarray, p: SemanticParams) -> np.ndarra
                 g[i][int(j)]["weight"] = max(g[i][int(j)]["weight"], w)
             else:
                 g.add_edge(i, int(j), weight=w)
-    comms = nx.community.louvain_communities(
-        g, weight="weight", resolution=p.resolution, seed=p.seed
-    )
-    comms = sorted(
-        (c for c in comms if len(c) >= p.min_cluster_size), key=lambda c: (-len(c), min(c))
-    )
+    comms = [
+        c
+        for c in leiden_communities(g, "weight", p.resolution, p.seed)
+        if len(c) >= p.min_cluster_size
+    ]
     labels = np.full(len(idx), -1)
     for cid, members in enumerate(comms):
         labels[list(members)] = cid

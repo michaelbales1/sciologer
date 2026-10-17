@@ -47,11 +47,17 @@ export NCBI_EMAIL=you@example.org
 | Parse | XML → papers with authors, ORCIDs, affiliations, MeSH (major/minor), substances, grants, keywords | [`parse.py`](sciologer/parse.py) |
 | Normalize | Matches name variants and logs every merge. Uncertain merges are flagged (see below) | [`normalize.py`](sciologer/normalize.py) |
 | Network | Links entities that share papers, keeping the top entities per type. Authors are counted fractionally by default. Weight = log(1 + association strength) | [`network.py`](sciologer/network.py) |
-| Cluster | Louvain communities with a fixed seed. Each cluster is named by its most distinctive subject terms | [`cluster.py`](sciologer/cluster.py) |
+| Cluster | Leiden communities (modularity with a resolution setting), fixed seed. Each cluster is named by its most distinctive subject terms | [`cluster.py`](sciologer/cluster.py) |
 | Layout | ForceAtlas2 with LinLog attraction (the successor to CCVisu's LinLog), run with 5 seeds to score stability | [`layout.py`](sciologer/layout.py) |
 | Text map | Embeds each title + abstract, clusters papers in the full embedding space, names clusters by distinctive terms, projects with t-SNE (see below) | [`semantic.py`](sciologer/semantic.py) |
 
 Every run writes a **manifest** with the query, PubMed's interpretation of it, how many records matched and how many were fetched, all parameters, software versions, seeds and the full name-matching log. The app shows it under **How this map was made**. You can download it with the map as JSON, GEXF (for Gephi), GraphML (for Cytoscape) or CSV.
+
+### Clustering
+
+Both views use the Leiden algorithm (Traag, Waltman & van Eck 2019), the method behind VOSviewer and the CWTS publication-level classifications, rather than Louvain. Leiden guarantees that every cluster is internally connected (Louvain can return clusters that fall apart inside), and it keeps refining until no node can move to improve the result. It optimizes the same objective as before, modularity with a resolution parameter, so **Options → Cluster resolution** works as before: higher gives more, smaller clusters.
+
+On the three maps used during development (two topics and one researcher), Leiden and Louvain gave similar results: modularity within ±0.007, and no disconnected clusters with either. The switch is about guarantees, and about supporting nested, multilevel clusters next, rather than a visible change on typical maps.
 
 ### Counting authors
 
@@ -65,7 +71,7 @@ The **Entities** view links MeSH terms, authors, journals and so on when they sh
 
 How the text map is made:
 - **Embedding.** [NeuML/pubmedbert-base-embeddings-8M](https://huggingface.co/NeuML/pubmedbert-base-embeddings-8M), a Model2Vec distillation of PubMedBERT Embeddings. It runs on the CPU and is downloaded once (about 31 MB) to the Hugging Face cache. Papers without an abstract are placed by title and marked as such.
-- **Clusters** are found in the full embedding space, not on the 2D picture, using Louvain on a 10-nearest-neighbor similarity graph. Groups smaller than 5 papers are left unclustered rather than shown as clusters. The silhouette is reported, and a warning appears when clusters overlap heavily.
+- **Clusters** are found in the full embedding space, not on the 2D picture, using Leiden on a 10-nearest-neighbor similarity graph. Groups smaller than 5 papers are left unclustered rather than shown as clusters. The silhouette is reported, and a warning appears when clusters overlap heavily.
 - **Names** come from class-based TF-IDF. Terms must be shared by several papers, terms common to every cluster are penalized, and the query's own words are left out because every paper matches them. The weighted terms and the most central papers are shown as evidence.
 - **Projection.** t-SNE: one run starts from PCA and two from random positions. Only local neighborhoods are meaningful. Each paper gets a stability score (do its map neighbors stay the same?) and a count of how many of its 10 nearest papers by text are near it on the map. Selecting a paper lists its true nearest papers by text.
 - t-SNE can split a cluster into several islands. Each island gets its own region and label, so a split theme is visible rather than hidden.
@@ -135,4 +141,4 @@ legacy/      the original 2008 Java implementation, for reference
 
 - A citation view using NIH iCite or OpenAlex, including field-normalized impact (iCite's Relative Citation Ratio), which few mapping tools integrate
 - Cluster labels from a language model, grounded in the cluster's papers and checked against them
-- Multilevel clusters: zoom from broad areas into specialties
+- Multilevel clusters with Leiden: zoom from broad areas into specialties

@@ -300,3 +300,32 @@ def test_fractional_counting_ranks_and_links_authors():
     member = next(k for k in frac if k not in (lead_key, pal_key))
     assert frac[lead_key][member]["counted"] == pytest.approx(3 / 40)
     assert frac[lead_key][pal_key]["count"] == 2
+
+
+def test_leiden_clusters_are_connected_and_deterministic():
+    import networkx as nx
+
+    from sciologer.cluster import leiden_communities
+
+    papers = load("neuroligins")
+    table = build_entities(papers, [EntityType.MESH, EntityType.AUTHOR, EntityType.SUBSTANCE])
+    g, _ = build_graph(table, NetworkParams(), {p.pmid: len(p.authors) for p in papers})
+    comms = leiden_communities(g, "weight", 1.0, 42)
+    assert comms == leiden_communities(g, "weight", 1.0, 42)
+    assert set().union(*comms) == set(g.nodes)  # a partition: every node exactly once
+    assert sum(len(c) for c in comms) == g.number_of_nodes()
+    # Leiden's guarantee over Louvain: no community is internally disconnected.
+    assert all(nx.is_connected(g.subgraph(c)) for c in comms if len(c) > 1)
+    # Higher resolution gives at least as many clusters.
+    assert len(leiden_communities(g, "weight", 2.0, 42)) >= len(comms)
+
+
+def test_leiden_handles_edgeless_and_empty_graphs():
+    import networkx as nx
+
+    from sciologer.cluster import leiden_communities
+
+    assert leiden_communities(nx.Graph()) == []
+    g = nx.Graph()
+    g.add_nodes_from(["a", "b"])
+    assert sorted(map(sorted, leiden_communities(g))) == [["a"], ["b"]]

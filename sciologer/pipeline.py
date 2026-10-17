@@ -234,8 +234,9 @@ def run_pipeline(
     manifest.steps.append(
         Step(
             name="Cluster",
-            detail=f"Louvain communities (resolution {params.cluster.resolution}, "
-            f"seed {params.cluster.seed}); labels are the most frequent subject terms",
+            detail=f"Leiden communities (modularity, resolution {params.cluster.resolution}, "
+            f"seed {params.cluster.seed}); labels are the most distinctive subject terms "
+            "(frequent in the cluster, mostly linked within it)",
             counts={"clusters": len(clusters), "sizes": [c.size for c in clusters[:12]]},
         )
     )
@@ -277,7 +278,7 @@ def run_pipeline(
                 Step(
                     name="Text map",
                     detail=(
-                        f"Embedded title + abstract with {sp.model}; clustered with Louvain "
+                        f"Embedded title + abstract with {sp.model}; clustered with Leiden "
                         f"on a {sp.neighbors}-nearest-neighbor similarity graph in the full "
                         f"embedding space (groups under {sp.min_cluster_size} papers left "
                         "unclustered); labeled by class-based TF-IDF without the query's own "
