@@ -156,3 +156,4 @@ legacy/      the original 2008 Java implementation, for reference
 - Co-citation as an alternative citation link, for older literature
 - Cluster labels from a language model, grounded in the cluster's papers and checked against them
 - Multilevel clusters with Leiden: zoom from broad areas into specialties
+- A geographic view: institutions from author affiliations placed on a world map, sized by papers and linked by collaboration, with the same filters, details panel and provenance as the other views. It revives the 2008 Sciologer's Google Earth output in the browser. Geocoding would match institutions against a registry such as ROR, with uncertain matches flagged as name matches are today
