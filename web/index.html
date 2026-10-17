@@ -75,6 +75,7 @@
           <div id="mode" class="segmented" role="radiogroup" aria-label="View" hidden>
             <button type="button" role="radio" data-mode="entities" aria-checked="true" title="MeSH terms, authors, journals… linked when they share papers">Entities</button>
             <button type="button" role="radio" data-mode="text" aria-checked="false" title="Papers placed by what their titles and abstracts say">Papers by text</button>
+            <button type="button" role="radio" data-mode="citations" aria-checked="false" title="Papers linked by citations and shared references; size shows impact">Papers by citation</button>
           </div>
           <div id="legend" class="legend"></div>
           <label class="filter">Links
@@ -96,6 +97,7 @@
           <p id="map-note" class="map-note" hidden>
             <span id="map-note-entities">Nearby means often linked; distances are approximate.</span>
             <span id="map-note-text" hidden>Nearby means similar text. Only local neighborhoods are reliable; distances between clusters mean little.</span>
+            <span id="map-note-citations" hidden>Nearby means linked by citations or shared references; size shows the Relative Citation Ratio.</span>
             <span class="note-mark" aria-hidden="true"></span> Dashed outlines mark positions that shift between layout runs.
           </p>
         </div>
