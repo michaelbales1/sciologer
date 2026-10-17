@@ -14,7 +14,7 @@ import { polygonHull } from "d3-polygon";
 import { quadtree, type Quadtree } from "d3-quadtree";
 import { select } from "d3-selection";
 import { zoom, zoomIdentity, type ZoomBehavior, type ZoomTransform } from "d3-zoom";
-import { cssVar, TYPE_STYLES, tracePath, typeColor } from "./encoding";
+import { cssVar, drawIcon, ICON_SCALE, iconHtml, loadIcons, MIN_ICON_PX, mix, TYPE_STYLES, tracePath, typeColor } from "./encoding";
 import type { EntityType, Graph, GraphEdge, GraphNode, PaperInfo } from "./types";
 
 export const LOW_STABILITY = 0.5;
@@ -107,6 +107,7 @@ export class NetworkMap {
       if (e.key === "Escape") this.select(null);
     });
     new ResizeObserver(() => this.resize()).observe(container);
+    loadIcons(() => this.requestDraw());
     matchMedia("(prefers-color-scheme: dark)").addEventListener("change", () => this.requestDraw());
     this.resize();
   }
@@ -352,32 +353,53 @@ export class NetworkMap {
     }
     ctx.globalAlpha = 1;
 
-    // 3. Nodes, small on top of large so small ones stay reachable.
+    // 3. Nodes, small on top of large so small ones stay reachable. Marks big enough
+    //    for their pictogram to read get it; smaller ones get the matching shape.
     const order = [...visible].sort((a, b) => b.r - a.r);
     for (const v of order) {
       const style = TYPE_STYLES[v.node.type];
       const color = typeColor(v.node.type);
       const unstable = v.node.stability < LOW_STABILITY;
+      const iconSize = v.r * ICON_SCALE;
       ctx.globalAlpha = dimmed(v) ? 0.18 : 1;
-      tracePath(ctx, style.shape, v.sx, v.sy, v.r);
-      if (unstable) {
+      let drewIcon = false;
+      if (iconSize >= MIN_ICON_PX) {
+        // A surface disc behind the pictogram hides links passing underneath.
+        ctx.beginPath();
+        ctx.arc(v.sx, v.sy, iconSize * 0.42, 0, Math.PI * 2);
         ctx.fillStyle = surface;
         ctx.fill();
-        ctx.setLineDash([3, 2]);
-        ctx.lineWidth = 1.5;
-        ctx.strokeStyle = color;
-        ctx.stroke();
-        ctx.setLineDash([]);
-      } else {
-        ctx.fillStyle = color;
-        ctx.fill();
-        // 2px surface ring keeps overlapping marks separable.
-        ctx.lineWidth = 1.5;
-        ctx.strokeStyle = surface;
-        ctx.stroke();
+        drewIcon = drawIcon(ctx, v.node.type, v.sx, v.sy, iconSize, unstable ? surface : mix(color, surface, 0.22), color);
+        if (drewIcon && unstable) {
+          ctx.setLineDash([3, 2]);
+          ctx.lineWidth = 1.5;
+          ctx.strokeStyle = color;
+          ctx.stroke();
+          ctx.setLineDash([]);
+        }
+      }
+      if (!drewIcon) {
+        tracePath(ctx, style.shape, v.sx, v.sy, v.r);
+        if (unstable) {
+          ctx.fillStyle = surface;
+          ctx.fill();
+          ctx.setLineDash([3, 2]);
+          ctx.lineWidth = 1.5;
+          ctx.strokeStyle = color;
+          ctx.stroke();
+          ctx.setLineDash([]);
+        } else {
+          ctx.fillStyle = color;
+          ctx.fill();
+          // Surface ring keeps overlapping marks separable.
+          ctx.lineWidth = 1.5;
+          ctx.strokeStyle = surface;
+          ctx.stroke();
+        }
       }
       if (v === this.selected || v.match) {
-        tracePath(ctx, style.shape, v.sx, v.sy, v.r + 4);
+        ctx.beginPath();
+        ctx.arc(v.sx, v.sy, (drewIcon ? iconSize * 0.5 : v.r * 1.3) + 3, 0, Math.PI * 2);
         ctx.lineWidth = 2;
         ctx.strokeStyle = ink;
         ctx.stroke();
@@ -522,7 +544,7 @@ export class NetworkMap {
     const cluster = this.graph?.clusters[n.cluster];
     const links = this.neighbors(n.id).length;
     this.tooltip.innerHTML = `
-      <div class="tt-title">${esc(n.label)}</div>
+      <div class="tt-title">${iconHtml(n.type, 16)} ${esc(n.label)}</div>
       <div class="tt-row"><span>${style.label}</span><span>${v.count} paper${v.count === 1 ? "" : "s"} · ${links} link${links === 1 ? "" : "s"}</span></div>
       ${cluster ? `<div class="tt-muted">Cluster: ${esc(truncate(cluster.label, 60))}</div>` : ""}
       ${n.stability < LOW_STABILITY ? `<div class="tt-note">Position varies between layout runs (stability ${n.stability.toFixed(2)}). Read its links, not its location.</div>` : ""}`;

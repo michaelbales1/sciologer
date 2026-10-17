@@ -1,6 +1,6 @@
 import "./style.css";
 import { api } from "./api";
-import { shapeSvg, TYPE_ORDER, TYPE_STYLES } from "./encoding";
+import { iconHtml, TYPE_ORDER, TYPE_STYLES } from "./encoding";
 import { esc, LOW_STABILITY, NetworkMap, truncate } from "./map";
 import { Timeline } from "./timeline";
 import type { Defaults, EntityType, GraphNode, LogEntry, Run } from "./types";
@@ -93,7 +93,7 @@ function renderTypeOptions() {
   const chosen = new Set(defaults?.default_types ?? ["mesh", "author", "journal"]);
   $("type-options").innerHTML = TYPE_ORDER.map(
     (t) => `<label class="check"><input type="checkbox" name="type" value="${t}" ${chosen.has(t) ? "checked" : ""}/>
-      ${shapeSvg(t)} ${TYPE_STYLES[t].plural}</label>`,
+      ${iconHtml(t, 18)} ${TYPE_STYLES[t].plural}</label>`,
   ).join("");
 }
 
@@ -214,7 +214,7 @@ function renderLegend() {
     .map(
       (t) => `<button type="button" class="legend-item" aria-pressed="${shownTypes.has(t)}" data-type="${t}"
         title="Show or hide ${TYPE_STYLES[t].plural.toLowerCase()}">
-        ${shapeSvg(t)}<span>${TYPE_STYLES[t].plural}</span><span class="muted num">${counts.get(t)}</span></button>`,
+        ${iconHtml(t, 18)}<span>${TYPE_STYLES[t].plural}</span><span class="muted num">${counts.get(t)}</span></button>`,
     )
     .join("");
   $("legend").querySelectorAll<HTMLButtonElement>(".legend-item").forEach((b) =>
@@ -260,8 +260,8 @@ function paperItem(pmid: string): string {
   const p = run!.papers[pmid];
   if (!p) return "";
   const meta = [p.year, p.journal].filter(Boolean).join(" · ");
-  return `<li><a href="${esc(p.url)}" target="_blank" rel="noopener">${esc(p.title || `PMID ${pmid}`)}</a>
-    <div class="muted small">${esc(meta)}${p.authors.length ? ` — ${esc(p.authors.slice(0, 3).join(", "))}${p.authors.length > 3 ? " et al." : ""}` : ""}</div></li>`;
+  return `<li class="paper">${iconHtml("paper", 16)}<div><a href="${esc(p.url)}" target="_blank" rel="noopener">${esc(p.title || `PMID ${pmid}`)}</a>
+    <div class="muted small">${esc(meta)}${p.authors.length ? ` — ${esc(p.authors.slice(0, 3).join(", "))}${p.authors.length > 3 ? " et al." : ""}` : ""}</div></div></li>`;
 }
 
 function inYears(pmid: string) {
@@ -325,7 +325,7 @@ function unlinkedList(): string {
   if (!list.length) return "";
   return `<details class="small"><summary>${list.length} unlinked entit${list.length === 1 ? "y" : "ies"} not drawn</summary>
     <ul class="entity-list">${list
-      .map((u) => `<li class="row-button">${shapeSvg(u.type, 12)}<span class="grow">${esc(u.label)}</span><span class="muted num">${u.count}</span></li>`)
+      .map((u) => `<li class="row-button">${iconHtml(u.type, 16)}<span class="grow">${esc(u.label)}</span><span class="muted num">${u.count}</span></li>`)
       .join("")}</ul></details>`;
 }
 
@@ -352,7 +352,7 @@ function entityList(nodes: GraphNode[], extra?: (n: GraphNode) => string): strin
   return `<ul class="entity-list">${nodes
     .map(
       (n) => `<li><button type="button" class="row-button" data-node="${esc(n.id)}">
-        ${shapeSvg(n.type, 14, n.stability < LOW_STABILITY)}<span class="grow">${esc(n.label)}</span>
+        ${iconHtml(n.type, 18, n.stability < LOW_STABILITY)}<span class="grow">${esc(n.label)}</span>
         <span class="muted num">${extra ? extra(n) : map.visibleCount(n.id)}</span></button></li>`,
     )
     .join("")}</ul>`;
@@ -376,7 +376,7 @@ function renderNode(el: HTMLElement, n: GraphNode) {
   const ext = externalLink(n);
   el.innerHTML = `
     <button type="button" class="link back">← Overview</button>
-    <div class="node-head">${shapeSvg(n.type, 18)}<span class="muted">${style.label}</span></div>
+    <div class="node-head">${iconHtml(n.type, 28)}<span class="muted">${style.label}</span></div>
     <h2 class="panel-title">${esc(n.label)}</h2>
     ${ext ? `<p class="small"><a href="${esc(ext.url)}" target="_blank" rel="noopener">${esc(ext.text)}</a></p>` : ""}
     <dl class="stats">
@@ -444,7 +444,7 @@ function renderList() {
       <thead><tr>${head("type", "Type")}${head("label", "Name")}${head("count", "Papers", "num")}</tr></thead>
       <tbody>${rows
         .map(
-          (n) => `<tr><td>${shapeSvg(n.type, 12, n.stability < LOW_STABILITY)} <span class="sr-only">${TYPE_STYLES[n.type].label}</span></td>
+          (n) => `<tr><td>${iconHtml(n.type, 18, n.stability < LOW_STABILITY)} <span class="sr-only">${TYPE_STYLES[n.type].label}</span></td>
           <td><button type="button" class="link" data-node="${esc(n.id)}">${esc(n.label)}</button></td>
           <td class="num">${map.visibleCount(n.id)}</td></tr>`,
         )

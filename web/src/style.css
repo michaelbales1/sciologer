@@ -278,3 +278,23 @@ th[aria-sort="descending"] .th-button::after { content: " ↓"; }
   .runs-picker select { max-width: 52vw; }
   .filter input[type="search"] { width: 150px; }
 }
+
+/* Pictograms (2008 Sciologer drawings), tinted per type via masks. */
+.icon { position: relative; display: inline-block; flex: none; vertical-align: -3px; }
+.icon > span {
+  position: absolute; inset: 0;
+  -webkit-mask-size: contain; mask-size: contain;
+  -webkit-mask-repeat: no-repeat; mask-repeat: no-repeat;
+  -webkit-mask-position: center; mask-position: center;
+}
+.icon-fill { background: color-mix(in srgb, var(--c) 22%, var(--surface-1)); }
+.icon-line { background: var(--c); }
+.icon.hollow { outline: 1.5px dashed var(--c); outline-offset: 0; border-radius: 50%; }
+.icon.hollow .icon-fill { background: var(--surface-1); }
+.paper-list li.paper { display: flex; gap: 8px; align-items: flex-start; }
+.paper-list li.paper .icon { margin-top: 2px; }
+.tt-title .icon { vertical-align: -3px; }
+@media (forced-colors: active) {
+  .icon-line { background: CanvasText; }
+  .icon-fill { background: Canvas; }
+}
