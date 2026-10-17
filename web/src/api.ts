@@ -5,7 +5,12 @@ async function json<T>(resp: Response): Promise<T> {
     let detail = `${resp.status} ${resp.statusText}`;
     try {
       const body = await resp.json();
-      if (body?.detail) detail = typeof body.detail === "string" ? body.detail : JSON.stringify(body.detail);
+      if (typeof body?.detail === "string") detail = body.detail;
+      else if (Array.isArray(body?.detail))
+        // FastAPI validation errors: [{loc: ["body", "network", "max_per_type"], msg: "..."}]
+        detail = body.detail
+          .map((d: { loc?: unknown[]; msg?: string }) => `${(d.loc ?? []).slice(1).join(" › ")}: ${d.msg ?? ""}`)
+          .join("; ");
     } catch {
       /* not JSON */
     }

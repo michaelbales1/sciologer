@@ -65,6 +65,24 @@ def _rowwise_corr(a: np.ndarray, b: np.ndarray) -> np.ndarray:
     return np.divide((a * b).sum(axis=1), denom, out=np.ones(len(a)), where=denom > 0)
 
 
+def rank_stability(runs: list[np.ndarray]) -> np.ndarray:
+    """Per point, the median Spearman correlation between its distance ranks in the
+    first run and in each other run, clipped to [0, 1]. 1 = same relative position."""
+    n = len(runs[0])
+    if len(runs) < 2 or n < 3:
+        return np.ones(n)
+    ref_ranks = _distance_ranks(runs[0])
+    corr = np.array([_rowwise_corr(ref_ranks, _distance_ranks(r)) for r in runs[1:]])
+    return np.clip(np.median(corr, axis=0), 0, 1)
+
+
+def to_display(xy: np.ndarray) -> np.ndarray:
+    """Scale to [-1, 1] by the 99th percentile so one far-flung point can't shrink the
+    rest; outliers are clamped to the edge."""
+    scale = float(np.percentile(np.abs(xy), 99)) or 1.0
+    return np.clip(xy / scale, -1.05, 1.05)
+
+
 def compute_layout(g: nx.Graph, p: LayoutParams) -> dict:
     """Writes x, y and stability (0–1) onto each node. Returns a summary."""
     nodes = list(g.nodes)
@@ -79,16 +97,9 @@ def compute_layout(g: nx.Graph, p: LayoutParams) -> dict:
     runs = [_normalize(_run(g, p, s), nodes) for s in seeds]
     ref = runs[0]
 
-    stability = np.ones(n)
-    if len(runs) > 1 and n > 2:
-        ref_ranks = _distance_ranks(ref)
-        corr = np.array([_rowwise_corr(ref_ranks, _distance_ranks(r)) for r in runs[1:]])
-        stability = np.clip(np.median(corr, axis=0), 0, 1)
+    stability = rank_stability(runs)
 
-    # Scale to [-1, 1] for display. Use a high percentile rather than the maximum so a
-    # single far-flung node can't shrink everything else; it is clamped to the edge.
-    scale = float(np.percentile(np.abs(ref), 99)) or 1.0
-    display = np.clip(ref / scale, -1.05, 1.05)
+    display = to_display(ref)
     for i, node in enumerate(nodes):
         g.nodes[node].update(
             x=round(float(display[i, 0]), 5),

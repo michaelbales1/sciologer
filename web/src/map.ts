@@ -15,12 +15,12 @@ import { quadtree, type Quadtree } from "d3-quadtree";
 import { select } from "d3-selection";
 import { zoom, zoomIdentity, type ZoomBehavior, type ZoomTransform } from "d3-zoom";
 import { cssVar, drawIcon, ICON_SCALE, iconHtml, loadIcons, MIN_ICON_PX, mix, TYPE_STYLES, tracePath, typeColor } from "./encoding";
-import type { EntityType, Graph, GraphEdge, GraphNode, PaperInfo } from "./types";
+import type { Graph, GraphEdge, GraphNode, MarkType, PaperInfo } from "./types";
 
 export const LOW_STABILITY = 0.5;
 
 export interface MapFilter {
-  types: Set<EntityType>;
+  types: Set<MarkType>;
   years: [number, number] | null;
   linkShare: number; // 0..1: show this share of links, strongest first
   search: string;
@@ -74,6 +74,8 @@ export class NetworkMap {
   private filter: MapFilter = { types: new Set(), years: null, linkShare: 0.1, search: "" };
   private frame = 0;
   private clusterLabelBoxes: { id: number; x: number; y: number; w: number; h: number }[] = [];
+  /** Text map: each cluster split into spatially connected islands (graph coords). */
+  private islands: { cluster: number; members: NodeView[] }[] | null = null;
 
   constructor(private container: HTMLElement, private cb: MapCallbacks) {
     this.canvas = document.createElement("canvas");
@@ -133,6 +135,7 @@ export class NetworkMap {
         this.adjacency.set(end.node.id, list);
       }
     }
+    this.islands = graph.uniform_size ? findIslands(this.nodes) : null;
     this.selected = null;
     this.hovered = null;
     this.focusCluster = null;
@@ -157,7 +160,7 @@ export class NetworkMap {
     for (const v of this.nodes) {
       v.count = this.filter.years ? v.node.pmids.filter((p) => this.inYears(p)).length : v.node.count;
       v.visible = this.filter.types.has(v.node.type) && v.count > 0;
-      v.match = q.length > 0 && v.node.label.toLowerCase().includes(q);
+      v.match = q.length > 0 && (v.node.search ?? v.node.label.toLowerCase()).includes(q);
     }
     const candidates = this.edges.filter(
       (e) => e.a.visible && e.b.visible && (!this.filter.years || e.shared.some((p) => this.inYears(p))),
@@ -249,11 +252,19 @@ export class NetworkMap {
 
   private maxCount = 1;
 
+  /** Stability below which a mark is drawn as unstable. */
+  get lowStability(): number {
+    return this.graph?.low_stability ?? LOW_STABILITY;
+  }
+
   private radius(count: number): number {
     // Area proportional to papers (r ∝ sqrt(count)), relative to the largest node so the
     // biggest marks never swamp the map. Grows gently with zoom.
     const zoomGrow = Math.min(2, Math.sqrt(Math.max(1, this.transform.k)));
     const base = Math.min(this.width, this.height);
+    // Text map: small dots at the overview so cluster labels stay readable; they grow
+    // as you zoom in and become paper icons once there's room.
+    if (this.graph?.uniform_size) return Math.min(8, 2.5 * Math.sqrt(Math.max(1, this.transform.k)));
     const rMax = Math.max(10, Math.min(22, base / 40));
     return (2.5 + (rMax - 2.5) * Math.sqrt(count / this.maxCount)) * zoomGrow;
   }
@@ -300,33 +311,55 @@ export class NetworkMap {
       (hood !== null && !hood.has(v.node.id)) || (focusC !== null && v.node.cluster !== focusC);
 
     // 1. Cluster regions: a thick, round-joined hull stroke reads as a soft area.
+    //    Entity map: one region per cluster, around its core members (hubs and bridging
+    //    nodes sit far from the rest and would stretch a region across the map).
+    //    Text map: t-SNE can split a cluster into several islands, so each island gets
+    //    its own region, and each region is ringed with the surface color so that
+    //    neighboring regions stay distinct.
     const members = new Map<number, NodeView[]>();
     for (const v of visible) {
       const list = members.get(v.node.cluster) ?? [];
       list.push(v);
       members.set(v.node.cluster, list);
     }
+    const groups: { cluster: number; members: NodeView[] }[] = [];
+    if (this.islands) {
+      for (const isl of this.islands) {
+        const vis = isl.members.filter((v) => v.visible);
+        if (vis.length >= 3) groups.push({ cluster: isl.cluster, members: vis });
+      }
+    } else {
+      for (const [cid, list] of members) {
+        if (cid < 0 || list.length < 3) continue; // -1 = unclustered
+        const cx = list.reduce((s, v) => s + v.sx, 0) / list.length;
+        const cy = list.reduce((s, v) => s + v.sy, 0) / list.length;
+        const dist = list.map((v) => Math.hypot(v.sx - cx, v.sy - cy)).sort((a, b) => a - b);
+        const cut = dist[Math.floor((dist.length - 1) * 0.7)];
+        const core = list.filter((v) => Math.hypot(v.sx - cx, v.sy - cy) <= cut);
+        if (core.length >= 3) groups.push({ cluster: cid, members: core });
+      }
+    }
     ctx.lineJoin = "round";
     ctx.lineCap = "round";
-    const regionPad = 18 + 4 * Math.sqrt(t.k);
-    for (const [cid, list] of members) {
-      if (list.length < 3) continue;
-      // Wrap the cluster's core, not every member: hubs and bridging nodes sit far
-      // from the rest and would stretch each region across the whole map.
-      const cx = list.reduce((s, v) => s + v.sx, 0) / list.length;
-      const cy = list.reduce((s, v) => s + v.sy, 0) / list.length;
-      const dist = list.map((v) => Math.hypot(v.sx - cx, v.sy - cy)).sort((a, b) => a - b);
-      const cut = dist[Math.floor((dist.length - 1) * 0.7)];
-      const core = list.filter((v) => Math.hypot(v.sx - cx, v.sy - cy) <= cut);
-      if (core.length < 3) continue;
-      const pts = core.map((v) => [v.sx, v.sy] as [number, number]);
-      const hull = pts.length >= 3 ? polygonHull(pts) : pts;
-      if (!hull) continue;
-      ctx.beginPath();
-      hull.forEach(([x, y], i) => (i ? ctx.lineTo(x, y) : ctx.moveTo(x, y)));
-      ctx.closePath();
-      ctx.fillStyle = ctx.strokeStyle = focusC === cid ? regionFocus : regionFill;
-      ctx.globalAlpha = focusC !== null && focusC !== cid ? 0.4 : 1;
+    const regionPad = this.islands ? 8 + 3 * Math.sqrt(t.k) : 18 + 4 * Math.sqrt(t.k);
+    for (const grp of groups) {
+      const pts = grp.members.map((v) => [v.sx, v.sy] as [number, number]);
+      const hull = polygonHull(pts) ?? pts;
+      const trace = () => {
+        ctx.beginPath();
+        hull.forEach(([x, y], i) => (i ? ctx.lineTo(x, y) : ctx.moveTo(x, y)));
+        ctx.closePath();
+      };
+      ctx.globalAlpha = 1;
+      if (this.islands) {
+        trace();
+        ctx.strokeStyle = surface;
+        ctx.lineWidth = regionPad * 2 + 3;
+        ctx.stroke();
+      }
+      trace();
+      ctx.fillStyle = ctx.strokeStyle = focusC === grp.cluster ? regionFocus : regionFill;
+      ctx.globalAlpha = focusC !== null && focusC !== grp.cluster ? 0.4 : 1;
       ctx.lineWidth = regionPad * 2;
       ctx.stroke();
       ctx.fill();
@@ -359,11 +392,14 @@ export class NetworkMap {
     for (const v of order) {
       const style = TYPE_STYLES[v.node.type];
       const color = typeColor(v.node.type);
-      const unstable = v.node.stability < LOW_STABILITY;
-      const iconSize = v.r * ICON_SCALE;
+      const unstable = v.node.stability < this.lowStability;
+      // The paper icon is a simple page shape that reads at ~12px, so the text map
+      // switches to icons sooner (from ~2.25× zoom) than the entity map does.
+      const iconSize = this.graph.uniform_size ? v.r * 3.2 : v.r * ICON_SCALE;
+      const iconMin = this.graph.uniform_size ? 12 : MIN_ICON_PX;
       ctx.globalAlpha = dimmed(v) ? 0.18 : 1;
       let drewIcon = false;
-      if (iconSize >= MIN_ICON_PX) {
+      if (iconSize >= iconMin) {
         // A surface disc behind the pictogram hides links passing underneath.
         ctx.beginPath();
         ctx.arc(v.sx, v.sy, iconSize * 0.42, 0, Math.PI * 2);
@@ -379,20 +415,25 @@ export class NetworkMap {
         }
       }
       if (!drewIcon) {
+        // Text-map dots recede (a lighter tint) so labels read first; the selected or
+        // hovered paper's neighborhood returns to full strength.
+        const small = this.graph.uniform_size && v.r < 4;
+        const recede = this.graph.uniform_size && !(hood?.has(v.node.id) ?? false);
+        const dotColor = recede ? mix(color, surface, isDark(surface) ? 0.8 : 0.55) : color;
         tracePath(ctx, style.shape, v.sx, v.sy, v.r);
         if (unstable) {
           ctx.fillStyle = surface;
           ctx.fill();
-          ctx.setLineDash([3, 2]);
-          ctx.lineWidth = 1.5;
-          ctx.strokeStyle = color;
+          ctx.setLineDash(small ? [2, 1.5] : [3, 2]);
+          ctx.lineWidth = small ? 1 : 1.5;
+          ctx.strokeStyle = dotColor;
           ctx.stroke();
           ctx.setLineDash([]);
         } else {
-          ctx.fillStyle = color;
+          ctx.fillStyle = dotColor;
           ctx.fill();
           // Surface ring keeps overlapping marks separable.
-          ctx.lineWidth = 1.5;
+          ctx.lineWidth = small ? 1 : 1.5;
           ctx.strokeStyle = surface;
           ctx.stroke();
         }
@@ -420,17 +461,33 @@ export class NetworkMap {
     if (hood === null) {
       ctx.font = `600 13px ${font}`;
       ctx.textBaseline = "middle";
-      for (const cluster of this.graph.clusters) {
-        const list = members.get(cluster.id);
-        if (!list || list.length < 3) continue;
+      // Label each region: every cluster once on the entity map; every sizable island
+      // on the text map (largest first), so a split cluster is named in each place.
+      const labelGroups = [...groups]
+        .filter((g) => !this.islands || g.members.length >= 6)
+        .sort((a, b) => b.members.length - a.members.length);
+      for (const grp of labelGroups) {
+        const cluster = this.graph.clusters[grp.cluster];
+        if (!cluster) continue;
+        const list = grp.members;
         const cx = list.reduce((s, v) => s + v.sx, 0) / list.length;
+        const cy = list.reduce((s, v) => s + v.sy, 0) / list.length;
         const top = Math.min(...list.map((v) => v.sy - v.r));
-        const text = truncate(cluster.label, 46);
+        const text = truncate(cluster.label, this.islands ? 34 : 46);
         const w = ctx.measureText(text).width + 12;
-        const box = { x: cx - w / 2, y: top - regionPad - 4, w, h: 20 };
-        if (!fits(box)) {
-          box.y = list.reduce((s, v) => s + v.sy, 0) / list.length - 10;
-          if (!fits(box)) continue;
+        const box = this.islands
+          ? { x: cx - w / 2, y: cy - 10, w, h: 20 }
+          : { x: cx - w / 2, y: top - regionPad - 4, w, h: 20 };
+        // Text-map labels sit over their island's dots (with a halo), so they only
+        // need to avoid each other and the edges.
+        const ok = (b: typeof box) =>
+          this.islands
+            ? b.x >= 2 && b.y >= 2 && b.x + b.w <= this.width - 2 && b.y + b.h <= this.height - 2 &&
+              !this.clusterLabelBoxes.some((p) => b.x < p.x + p.w && b.x + b.w > p.x && b.y < p.y + p.h && b.y + b.h > p.y)
+            : fits(b);
+        if (!ok(box)) {
+          box.y = this.islands ? top - regionPad - 22 : cy - 10;
+          if (!ok(box)) continue;
         }
         placed.push(box);
         this.clusterLabelBoxes.push({ id: cluster.id, ...box });
@@ -442,7 +499,9 @@ export class NetworkMap {
 
     ctx.font = `12px ${font}`;
     ctx.textBaseline = "middle";
-    const budget = hood ? 40 : Math.round(12 + 18 * t.k);
+    // Fewer labels for the text map: titles are long and every paper weighs the same,
+    // so they appear as you zoom in (limiting load on first view).
+    const budget = hood ? 40 : this.graph.uniform_size ? (t.k < 1.8 ? 0 : Math.round(6 * t.k)) : Math.round(12 + 18 * t.k);
     const ranked = [...visible].sort((a, b) => {
       const pa = (a === this.selected ? 4 : 0) + (hood?.has(a.node.id) ? 2 : 0) + (a.match ? 3 : 0);
       const pb = (b === this.selected ? 4 : 0) + (hood?.has(b.node.id) ? 2 : 0) + (b.match ? 3 : 0);
@@ -541,13 +600,28 @@ export class NetworkMap {
   private showTooltip(v: NodeView, e: PointerEvent) {
     const n = v.node;
     const style = TYPE_STYLES[n.type];
-    const cluster = this.graph?.clusters[n.cluster];
+    const cluster = n.cluster >= 0 ? this.graph?.clusters[n.cluster] : undefined;
     const links = this.neighbors(n.id).length;
+    const unstable = n.stability < this.lowStability;
+    let row: string;
+    let note = "";
+    if (n.type === "paper") {
+      const p = this.papers[n.id];
+      row = `<span>${esc([p?.year, p?.journal].filter(Boolean).join(" · "))}</span>`;
+      if (n.neighbors_kept != null)
+        row += `<span>${n.neighbors_kept} of 10 nearest by text nearby</span>`;
+      if (unstable)
+        note = "Its map neighbors change between layout runs. Use its nearest papers by text, in the side panel, instead of its location.";
+    } else {
+      row = `<span>${style.label}</span><span>${v.count} paper${v.count === 1 ? "" : "s"} · ${links} link${links === 1 ? "" : "s"}</span>`;
+      if (unstable)
+        note = `Position varies between layout runs (stability ${n.stability.toFixed(2)}). Read its links, not its location.`;
+    }
     this.tooltip.innerHTML = `
-      <div class="tt-title">${iconHtml(n.type, 16)} ${esc(n.label)}</div>
-      <div class="tt-row"><span>${style.label}</span><span>${v.count} paper${v.count === 1 ? "" : "s"} · ${links} link${links === 1 ? "" : "s"}</span></div>
-      ${cluster ? `<div class="tt-muted">Cluster: ${esc(truncate(cluster.label, 60))}</div>` : ""}
-      ${n.stability < LOW_STABILITY ? `<div class="tt-note">Position varies between layout runs (stability ${n.stability.toFixed(2)}). Read its links, not its location.</div>` : ""}`;
+      <div class="tt-title">${iconHtml(n.type, 16)} ${esc(truncate(n.label, 120))}</div>
+      <div class="tt-row">${row}</div>
+      ${cluster ? `<div class="tt-muted">Cluster: ${esc(truncate(cluster.label, 60))}</div>` : n.type === "paper" ? `<div class="tt-muted">Not in a cluster</div>` : ""}
+      ${note ? `<div class="tt-note">${note}</div>` : ""}`;
     this.tooltip.hidden = false;
     const rect = this.container.getBoundingClientRect();
     const tw = this.tooltip.offsetWidth;
@@ -579,4 +653,49 @@ export function truncate(s: string, n: number): string {
 
 export function esc(s: string): string {
   return s.replace(/[&<>"']/g, (c) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" })[c]!);
+}
+
+/** Split each cluster into islands: members within a data-derived distance of each
+ *  other (single linkage), so a cluster that t-SNE broke apart gets one region per
+ *  piece instead of one region spanning the map. */
+function findIslands(nodes: NodeView[]): { cluster: number; members: NodeView[] }[] {
+  const n = nodes.length;
+  if (n < 3) return [];
+  const xs = nodes.map((v) => v.node.x);
+  const ys = nodes.map((v) => v.node.y);
+  // Threshold: a little over the typical distance to a point's 4th-nearest neighbor.
+  const kth: number[] = [];
+  for (let i = 0; i < n; i++) {
+    const d: number[] = [];
+    for (let j = 0; j < n; j++) if (i !== j) d.push(Math.hypot(xs[i] - xs[j], ys[i] - ys[j]));
+    d.sort((a, b) => a - b);
+    kth.push(d[Math.min(3, d.length - 1)]);
+  }
+  kth.sort((a, b) => a - b);
+  const tau = kth[Math.floor(n / 2)] * 1.8;
+  const parent = nodes.map((_, i) => i);
+  const find = (i: number): number => (parent[i] === i ? i : (parent[i] = find(parent[i])));
+  for (let i = 0; i < n; i++) {
+    if (nodes[i].node.cluster < 0) continue;
+    for (let j = i + 1; j < n; j++) {
+      if (nodes[j].node.cluster !== nodes[i].node.cluster) continue;
+      if (Math.hypot(xs[i] - xs[j], ys[i] - ys[j]) <= tau) parent[find(i)] = find(j);
+    }
+  }
+  const groups = new Map<number, NodeView[]>();
+  nodes.forEach((v, i) => {
+    if (v.node.cluster < 0) return;
+    const root = find(i);
+    const list = groups.get(root) ?? [];
+    list.push(v);
+    groups.set(root, list);
+  });
+  return [...groups.values()].map((members) => ({ cluster: members[0].node.cluster, members }));
+}
+
+/** True for a dark surface color (hex), so tints can recede by the right amount. */
+function isDark(hex: string): boolean {
+  const n = parseInt(hex.replace("#", "").padEnd(6, "0").slice(0, 6), 16);
+  const lum = 0.2126 * ((n >> 16) & 255) + 0.7152 * ((n >> 8) & 255) + 0.0722 * (n & 255);
+  return lum < 128;
 }

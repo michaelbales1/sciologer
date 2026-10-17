@@ -12,7 +12,16 @@ from pydantic import BaseModel, Field
 from . import __version__
 from .normalize import LogEntry
 
-_PACKAGES = ["networkx", "numpy", "lxml", "httpx", "pydantic", "fastapi"]
+_PACKAGES = [
+    "networkx",
+    "numpy",
+    "lxml",
+    "httpx",
+    "pydantic",
+    "fastapi",
+    "scikit-learn",
+    "model2vec",
+]
 
 
 def software_versions() -> dict[str, str]:

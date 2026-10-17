@@ -35,6 +35,22 @@ export class Timeline {
     this.render();
   }
 
+  /** Move the selected range by `delta` years, keeping its width, within the data. */
+  shift(delta: number) {
+    if (!this.range || !this.years.length) return;
+    const lo = this.years[0];
+    const hi = this.years[this.years.length - 1];
+    const width = this.range[1] - this.range[0];
+    const start = Math.max(lo, Math.min(hi - width, this.range[0] + delta));
+    this.range = [start, start + width];
+    this.render();
+    this.onRange(this.range);
+  }
+
+  get bounds(): [number, number] | null {
+    return this.years.length ? [this.years[0], this.years[this.years.length - 1]] : null;
+  }
+
   clear() {
     this.range = null;
     this.render();

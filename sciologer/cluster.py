@@ -1,15 +1,25 @@
-"""Community detection on the co-occurrence network."""
+"""Community detection, shared by the entity map and the text map.
+
+Leiden (Traag, Waltman & van Eck 2019) rather than Louvain: Louvain can return
+communities that are poorly connected or even disconnected inside, while Leiden
+guarantees every community is connected and keeps refining until no node can move
+to improve the partition. The objective is modularity with a resolution parameter
+(RBConfiguration), the same one Louvain optimized, so the resolution setting keeps
+its meaning: higher gives more, smaller clusters.
+"""
 
 from __future__ import annotations
 
+import igraph as ig
+import leidenalg
 import networkx as nx
-from pydantic import BaseModel
+from pydantic import BaseModel, Field
 
 from .records import EntityType
 
 
 class ClusterParams(BaseModel):
-    resolution: float = 1.0
+    resolution: float = Field(1.0, ge=0.2, le=3.0)
     seed: int = 42
 
 
@@ -25,18 +35,38 @@ class Cluster(BaseModel):
 _LABEL_TYPES = [EntityType.MESH, EntityType.KEYWORD, EntityType.SUBSTANCE]
 
 
+def leiden_communities(
+    g: nx.Graph, weight: str = "weight", resolution: float = 1.0, seed: int = 42
+) -> list[set]:
+    """Leiden communities of a networkx graph, largest first (ties by smallest node)."""
+    if g.number_of_nodes() == 0:
+        return []
+    nodes = list(g.nodes)
+    index = {n: i for i, n in enumerate(nodes)}
+    edges = [(index[a], index[b]) for a, b in g.edges()]
+    h = ig.Graph(n=len(nodes), edges=edges)
+    weights = [float(d.get(weight, 1.0)) for _, _, d in g.edges(data=True)]
+    partition = leidenalg.find_partition(
+        h,
+        leidenalg.RBConfigurationVertexPartition,
+        weights=weights if edges else None,
+        resolution_parameter=resolution,
+        n_iterations=-1,  # iterate until the partition stops improving
+        seed=seed,
+    )
+    communities = [{nodes[i] for i in members} for members in partition]
+    return sorted(communities, key=lambda c: (-len(c), min(map(str, c))))
+
+
 def detect_clusters(g: nx.Graph, params: ClusterParams) -> list[Cluster]:
-    """Louvain communities, largest first. Writes `cluster` onto each node.
+    """Leiden communities, largest first. Writes `cluster` onto each node.
 
     The label is the cluster's most distinctive subject terms (descriptive, not
     generated); the most frequent members are kept alongside as evidence.
     """
     if g.number_of_nodes() == 0:
         return []
-    communities = nx.community.louvain_communities(
-        g, weight="weight", resolution=params.resolution, seed=params.seed
-    )
-    communities = sorted(communities, key=lambda c: (-len(c), min(c)))
+    communities = leiden_communities(g, "weight", params.resolution, params.seed)
     clusters = []
     for cid, members in enumerate(communities):
         for n in members:

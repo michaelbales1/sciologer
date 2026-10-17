@@ -9,7 +9,7 @@
   <body>
     <header class="topbar">
       <div class="brand">Sciologer</div>
-      <form id="search" class="search" autocomplete="off">
+      <form id="search" class="search" autocomplete="off" novalidate>
         <label class="sr-only" for="query">PubMed query</label>
         <input id="query" name="query" type="search" placeholder="PubMed query, e.g. neuroligins" required />
         <details class="options">
@@ -19,9 +19,18 @@
               <legend>Include</legend>
               <div id="type-options" class="type-options"></div>
             </fieldset>
-            <label>Most records <input id="max-records" type="number" min="10" max="10000" step="10" value="500" /></label>
-            <label>Hide entities on fewer than <input id="min-occ" type="number" min="1" max="50" value="2" /> papers</label>
-            <label>Up to <input id="max-per-type" type="number" min="5" max="200" value="60" /> per type</label>
+            <div class="field">
+              <label>Most records <input id="max-records" type="number" min="10" max="10000" step="10" value="500" aria-describedby="max-records-hint" /></label>
+              <span class="hint" id="max-records-hint">10–10,000</span>
+            </div>
+            <div class="field">
+              <label>Hide entities on fewer than <input id="min-occ" type="number" min="1" max="50" value="2" aria-describedby="min-occ-hint" /> papers</label>
+              <span class="hint" id="min-occ-hint">1–50</span>
+            </div>
+            <div class="field">
+              <label>Up to <input id="max-per-type" type="number" min="5" max="200" value="60" aria-describedby="max-per-type-hint" /> per type</label>
+              <span class="hint" id="max-per-type-hint">5–200</span>
+            </div>
             <label class="check"><input id="mesh-major" type="checkbox" /> MeSH major topics only</label>
             <label class="check"><input id="check-tags" type="checkbox" checked /> Leave out MeSH check tags (Humans, Male…)</label>
             <label>Link weight
@@ -30,7 +39,19 @@
                 <option value="count">Shared papers</option>
               </select>
             </label>
-            <label>Cluster resolution <input id="resolution" type="number" min="0.2" max="3" step="0.1" value="1" /></label>
+            <div class="field">
+              <label>Count authors
+                <select id="author-counting" aria-describedby="author-counting-hint">
+                  <option value="fractional">Fractionally (recommended)</option>
+                  <option value="full">In full</option>
+                </select>
+              </label>
+              <span class="hint" id="author-counting-hint">Fractionally: on a paper with A authors, each author gets 1/A credit, so large consortium papers don't crowd out regular collaborators.</span>
+            </div>
+            <div class="field">
+              <label>Cluster resolution <input id="resolution" type="number" min="0.2" max="3" step="0.1" value="1" aria-describedby="resolution-hint" /></label>
+              <span class="hint" id="resolution-hint">0.2–3; higher gives more, smaller clusters</span>
+            </div>
           </div>
         </details>
         <button type="submit" class="primary">Map it</button>
@@ -51,6 +72,10 @@
     <main class="layout">
       <section class="map-area" aria-label="Map">
         <div class="filters" role="toolbar" aria-label="Map filters">
+          <div id="mode" class="segmented" role="radiogroup" aria-label="View" hidden>
+            <button type="button" role="radio" data-mode="entities" aria-checked="true" title="MeSH terms, authors, journals… linked when they share papers">Entities</button>
+            <button type="button" role="radio" data-mode="text" aria-checked="false" title="Papers placed by what their titles and abstracts say">Papers by text</button>
+          </div>
           <div id="legend" class="legend"></div>
           <label class="filter">Links
             <input id="link-share" type="range" min="0.02" max="1" step="0.02" value="0.1" aria-describedby="link-share-value" />
@@ -69,7 +94,8 @@
             <p class="muted">Try <button class="link" data-example="neuroligins">neuroligins</button> or <button class="link" data-example="CRISPR base editing">CRISPR base editing</button>.</p>
           </div>
           <p id="map-note" class="map-note" hidden>
-            Nearby means often linked; distances are approximate.
+            <span id="map-note-entities">Nearby means often linked; distances are approximate.</span>
+            <span id="map-note-text" hidden>Nearby means similar text. Only local neighborhoods are reliable; distances between clusters mean little.</span>
             <span class="note-mark" aria-hidden="true"></span> Dashed outlines mark positions that shift between layout runs.
           </p>
         </div>
@@ -77,6 +103,10 @@
           <div class="timeline-head">
             <span class="chart-title">Papers per year</span>
             <span class="muted" id="year-range">Drag across years to filter the map</span>
+            <span id="year-step" class="year-step" hidden>
+              <button id="year-prev" class="ghost small-btn" type="button" aria-label="Move the year range one year earlier">◀</button>
+              <button id="year-next" class="ghost small-btn" type="button" aria-label="Move the year range one year later">▶</button>
+            </span>
             <button id="clear-years" class="link" type="button" hidden>Clear</button>
           </div>
           <div id="timeline" class="timeline"></div>

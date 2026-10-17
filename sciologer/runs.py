@@ -60,7 +60,15 @@ class RunStore:
         (d / "manifest.json").write_text(out.manifest.model_dump_json(indent=2))
         (d / "graph.json").write_text(json.dumps(out.graph))
         (d / "papers.json").write_text(json.dumps(out.papers))
+        if out.text is not None:
+            (d / "text.json").write_text(json.dumps(out.text))
         return d
+
+    def load_optional(self, run_id: str, name: str) -> dict | None:
+        try:
+            return self.load(run_id, name)
+        except KeyError:
+            return None
 
     def load(self, run_id: str, name: str) -> dict:
         f = self.path(run_id) / f"{name}.json"

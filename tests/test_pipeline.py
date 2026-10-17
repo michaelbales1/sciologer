@@ -169,7 +169,11 @@ def test_pipeline_end_to_end_from_fixture():
         xml_batches=[xml],
     )
     out = run_pipeline(
-        RunParams(query="neuroligins", layout=LayoutParams(max_iter=60, stability_runs=2)),
+        RunParams(
+            query="neuroligins",
+            layout=LayoutParams(max_iter=60, stability_runs=2),
+            text_map=False,  # covered in test_semantic.py with an offline embedder
+        ),
         "test",
         search_result=sr,
     )
@@ -262,3 +266,66 @@ def test_cache_keeps_original_retrieval_time(tmp_path):
     first = client.search("q", max_records=10)
     again = client.search("q", max_records=10)
     assert first.retrieved_at and again.retrieved_at == first.retrieved_at
+
+
+def test_fractional_counting_ranks_and_links_authors():
+    from sciologer.network import author_credit
+
+    big = [Author(last_name=f"Member{i}", fore_name="A") for i in range(40)]
+    lead = Author(last_name="Lead", fore_name="Pat")
+    pal = Author(last_name="Pal", fore_name="Sam")
+    papers = [paper(f"c{i}", lead, *big) for i in range(3)]  # consortium papers
+    papers += [paper(f"s{i}", lead, pal) for i in range(2)]  # a regular collaborator
+    authors_per_paper = {p.pmid: len(p.authors) for p in papers}
+    table = build_entities(papers, [EntityType.AUTHOR])
+
+    credit = author_credit(table, authors_per_paper)
+    lead_key = next(k for k, e in table.entities.items() if e.label == "Pat Lead")
+    pal_key = next(k for k, e in table.entities.items() if e.label == "Sam Pal")
+    assert credit[lead_key] == pytest.approx(3 / 41 + 2 / 2)
+    assert credit[pal_key] == pytest.approx(1.0)
+
+    # With room for 5 authors, full counting fills the slots with consortium members
+    # (3 papers each beat Sam Pal's 2); fractional counting keeps the real collaborator.
+    full, _ = build_graph(
+        table, NetworkParams(max_per_type=5, author_counting="full"), authors_per_paper
+    )
+    frac, summary = build_graph(
+        table, NetworkParams(max_per_type=5, author_counting="fractional"), authors_per_paper
+    )
+    assert pal_key not in full and pal_key in frac
+    assert frac.nodes[pal_key]["credit"] == pytest.approx(1.0)
+    assert "fractional" in summary["author_counting"]["method"]
+    # Author–author links from a 41-author paper count 1/40 each.
+    member = next(k for k in frac if k not in (lead_key, pal_key))
+    assert frac[lead_key][member]["counted"] == pytest.approx(3 / 40)
+    assert frac[lead_key][pal_key]["count"] == 2
+
+
+def test_leiden_clusters_are_connected_and_deterministic():
+    import networkx as nx
+
+    from sciologer.cluster import leiden_communities
+
+    papers = load("neuroligins")
+    table = build_entities(papers, [EntityType.MESH, EntityType.AUTHOR, EntityType.SUBSTANCE])
+    g, _ = build_graph(table, NetworkParams(), {p.pmid: len(p.authors) for p in papers})
+    comms = leiden_communities(g, "weight", 1.0, 42)
+    assert comms == leiden_communities(g, "weight", 1.0, 42)
+    assert set().union(*comms) == set(g.nodes)  # a partition: every node exactly once
+    assert sum(len(c) for c in comms) == g.number_of_nodes()
+    # Leiden's guarantee over Louvain: no community is internally disconnected.
+    assert all(nx.is_connected(g.subgraph(c)) for c in comms if len(c) > 1)
+    # Higher resolution gives at least as many clusters.
+    assert len(leiden_communities(g, "weight", 2.0, 42)) >= len(comms)
+
+
+def test_leiden_handles_edgeless_and_empty_graphs():
+    import networkx as nx
+
+    from sciologer.cluster import leiden_communities
+
+    assert leiden_communities(nx.Graph()) == []
+    g = nx.Graph()
+    g.add_nodes_from(["a", "b"])
+    assert sorted(map(sorted, leiden_communities(g))) == [["a"], ["b"]]
