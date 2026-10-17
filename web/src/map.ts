@@ -262,7 +262,9 @@ export class NetworkMap {
     // biggest marks never swamp the map. Grows gently with zoom.
     const zoomGrow = Math.min(2, Math.sqrt(Math.max(1, this.transform.k)));
     const base = Math.min(this.width, this.height);
-    if (this.graph?.uniform_size) return 4 * zoomGrow;
+    // Text map: small dots at the overview so cluster labels stay readable; they grow
+    // as you zoom in and become paper icons once there's room.
+    if (this.graph?.uniform_size) return Math.min(8, 2.5 * Math.sqrt(Math.max(1, this.transform.k)));
     const rMax = Math.max(10, Math.min(22, base / 40));
     return (2.5 + (rMax - 2.5) * Math.sqrt(count / this.maxCount)) * zoomGrow;
   }
@@ -410,20 +412,25 @@ export class NetworkMap {
         }
       }
       if (!drewIcon) {
+        // Text-map dots recede (a lighter tint) so labels read first; the selected or
+        // hovered paper's neighborhood returns to full strength.
+        const small = this.graph.uniform_size && v.r < 4;
+        const recede = this.graph.uniform_size && !(hood?.has(v.node.id) ?? false);
+        const dotColor = recede ? mix(color, surface, isDark(surface) ? 0.8 : 0.55) : color;
         tracePath(ctx, style.shape, v.sx, v.sy, v.r);
         if (unstable) {
           ctx.fillStyle = surface;
           ctx.fill();
-          ctx.setLineDash([3, 2]);
-          ctx.lineWidth = 1.5;
-          ctx.strokeStyle = color;
+          ctx.setLineDash(small ? [2, 1.5] : [3, 2]);
+          ctx.lineWidth = small ? 1 : 1.5;
+          ctx.strokeStyle = dotColor;
           ctx.stroke();
           ctx.setLineDash([]);
         } else {
-          ctx.fillStyle = color;
+          ctx.fillStyle = dotColor;
           ctx.fill();
           // Surface ring keeps overlapping marks separable.
-          ctx.lineWidth = 1.5;
+          ctx.lineWidth = small ? 1 : 1.5;
           ctx.strokeStyle = surface;
           ctx.stroke();
         }
@@ -681,4 +688,11 @@ function findIslands(nodes: NodeView[]): { cluster: number; members: NodeView[] 
     groups.set(root, list);
   });
   return [...groups.values()].map((members) => ({ cluster: members[0].node.cluster, members }));
+}
+
+/** True for a dark surface color (hex), so tints can recede by the right amount. */
+function isDark(hex: string): boolean {
+  const n = parseInt(hex.replace("#", "").padEnd(6, "0").slice(0, 6), 16);
+  const lum = 0.2126 * ((n >> 16) & 255) + 0.7152 * ((n >> 8) & 255) + 0.0722 * (n & 255);
+  return lum < 128;
 }
