@@ -11,10 +11,10 @@
 // mark is too small for its pictogram to read, it is drawn as a simple shape that
 // echoes the pictogram's outline (person → circle, building → house, and so on).
 
-import type { EntityType } from "./types";
+import type { EntityType, MarkType } from "./types";
 
 export type Shape = "circle" | "square" | "triangle" | "diamond" | "house" | "cross" | "tag";
-export type Icon = EntityType | "paper";
+export type Icon = MarkType;
 
 export interface TypeStyle {
   label: string;
@@ -23,7 +23,7 @@ export interface TypeStyle {
   shape: Shape;
 }
 
-export const TYPE_STYLES: Record<EntityType, TypeStyle> = {
+export const TYPE_STYLES: Record<MarkType, TypeStyle> = {
   mesh: { label: "MeSH term", plural: "MeSH terms", slot: 1, shape: "triangle" },
   author: { label: "Author", plural: "Authors", slot: 2, shape: "circle" },
   journal: { label: "Journal", plural: "Journals", slot: 3, shape: "square" },
@@ -31,9 +31,11 @@ export const TYPE_STYLES: Record<EntityType, TypeStyle> = {
   institution: { label: "Institution", plural: "Institutions", slot: 5, shape: "house" },
   grant: { label: "Grant", plural: "Grants", slot: 6, shape: "cross" },
   keyword: { label: "Keyword", plural: "Keywords", slot: 7, shape: "tag" },
+  // The text map has one kind of mark, so it takes the first slot.
+  paper: { label: "Paper", plural: "Papers", slot: 1, shape: "circle" },
 };
 
-export const TYPE_ORDER = Object.keys(TYPE_STYLES) as EntityType[];
+export const TYPE_ORDER: EntityType[] = ["mesh", "author", "journal", "substance", "institution", "grant", "keyword"];
 
 /** Below this on-screen size (css px) a pictogram is drawn as its simple shape. */
 export const MIN_ICON_PX = 18;
@@ -76,7 +78,7 @@ export function cssVar(name: string): string {
   return getComputedStyle(document.documentElement).getPropertyValue(name).trim();
 }
 
-export function typeColor(type: EntityType): string {
+export function typeColor(type: MarkType): string {
   return cssVar(`--series-${TYPE_STYLES[type].slot}`);
 }
 
@@ -191,7 +193,7 @@ export function tracePath(ctx: CanvasRenderingContext2D, shape: Shape, x: number
 
 /** Inline pictogram for legends, lists and panels; colors follow the theme via CSS. */
 export function iconHtml(icon: Icon, size = 16, hollow = false): string {
-  const color = icon === "paper" ? "var(--text-secondary)" : `var(--series-${TYPE_STYLES[icon].slot})`;
+  const color = `var(--series-${TYPE_STYLES[icon].slot})`;
   const mask = (layer: "line" | "fill") => {
     const u = iconUrl(icon, layer);
     return `-webkit-mask-image:url('${u}');mask-image:url('${u}')`;

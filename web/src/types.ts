@@ -7,9 +7,12 @@ export type EntityType =
   | "grant"
   | "keyword";
 
+/** What a mark on the map stands for: an entity, or (in the text map) a paper. */
+export type MarkType = EntityType | "paper";
+
 export interface GraphNode {
   id: string;
-  type: EntityType;
+  type: MarkType;
   label: string;
   count: number;
   pmids: string[];
@@ -21,6 +24,10 @@ export interface GraphNode {
   orcid?: string;
   ui?: string;
   agency?: string;
+  /** Lowercased text that "Find on map" searches; defaults to the label. */
+  search?: string;
+  /** Text map only: how many of the paper's nearest papers by text are near it on the map. */
+  neighbors_kept?: number;
 }
 
 export interface GraphEdge {
@@ -34,7 +41,7 @@ export interface ClusterInfo {
   id: number;
   size: number;
   label: string;
-  top_members: { key: string; label: string; type: EntityType; count: number }[];
+  top_members: { key: string; label: string; type: MarkType; count: number }[];
 }
 
 export interface Graph {
@@ -43,6 +50,37 @@ export interface Graph {
   nodes: GraphNode[];
   edges: GraphEdge[];
   clusters: ClusterInfo[];
+  /** Marks with stability below this are drawn as unstable (default 0.5). */
+  low_stability?: number;
+  /** All marks the same size (text map: one paper each). */
+  uniform_size?: boolean;
+}
+
+export interface TextMapPaper {
+  pmid: string;
+  x: number;
+  y: number;
+  cluster: number; // -1 = unclustered
+  stability: number;
+  neighbors: string[];
+  similarity: number[];
+  neighbors_kept: number;
+  title_only: boolean;
+}
+
+export interface TextMapCluster {
+  id: number;
+  size: number;
+  label: string;
+  terms: [string, number][];
+  representative: string[];
+}
+
+export interface TextMap {
+  papers: TextMapPaper[];
+  clusters: TextMapCluster[];
+  edges: { source: string; target: string; similarity: number }[];
+  low_stability: number;
 }
 
 export interface PaperInfo {
@@ -86,6 +124,7 @@ export interface Run {
   graph: Graph;
   papers: Record<string, PaperInfo>;
   manifest: Manifest;
+  text: TextMap | null;
 }
 
 export interface RunSummary {

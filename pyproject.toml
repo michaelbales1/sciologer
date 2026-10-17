@@ -1,6 +1,6 @@
 [project]
 name = "sciologer"
-version = "0.2.0"
+version = "0.3.0"
 description = "Explore relationships among papers, authors, MeSH terms, journals, institutions, grants and substances in PubMed results"
 readme = "README.md"
 authors = [{ name = "Michael Bales" }]

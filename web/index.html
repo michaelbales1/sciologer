@@ -51,6 +51,10 @@
     <main class="layout">
       <section class="map-area" aria-label="Map">
         <div class="filters" role="toolbar" aria-label="Map filters">
+          <div id="mode" class="segmented" role="radiogroup" aria-label="View" hidden>
+            <button type="button" role="radio" data-mode="entities" aria-checked="true" title="MeSH terms, authors, journals… linked when they share papers">Entities</button>
+            <button type="button" role="radio" data-mode="text" aria-checked="false" title="Papers placed by what their titles and abstracts say">Papers by text</button>
+          </div>
           <div id="legend" class="legend"></div>
           <label class="filter">Links
             <input id="link-share" type="range" min="0.02" max="1" step="0.02" value="0.1" aria-describedby="link-share-value" />
@@ -69,7 +73,8 @@
             <p class="muted">Try <button class="link" data-example="neuroligins">neuroligins</button> or <button class="link" data-example="CRISPR base editing">CRISPR base editing</button>.</p>
           </div>
           <p id="map-note" class="map-note" hidden>
-            Nearby means often linked; distances are approximate.
+            <span id="map-note-entities">Nearby means often linked; distances are approximate.</span>
+            <span id="map-note-text" hidden>Nearby means similar text. Only local neighborhoods are reliable; distances between clusters mean little.</span>
             <span class="note-mark" aria-hidden="true"></span> Dashed outlines mark positions that shift between layout runs.
           </p>
         </div>
@@ -77,6 +82,10 @@
           <div class="timeline-head">
             <span class="chart-title">Papers per year</span>
             <span class="muted" id="year-range">Drag across years to filter the map</span>
+            <span id="year-step" class="year-step" hidden>
+              <button id="year-prev" class="ghost small-btn" type="button" aria-label="Move the year range one year earlier">◀</button>
+              <button id="year-next" class="ghost small-btn" type="button" aria-label="Move the year range one year later">▶</button>
+            </span>
             <button id="clear-years" class="link" type="button" hidden>Clear</button>
           </div>
           <div id="timeline" class="timeline"></div>

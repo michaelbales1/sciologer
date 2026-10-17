@@ -1,9 +1,10 @@
 import "./style.css";
 import { api } from "./api";
 import { iconHtml, TYPE_ORDER, TYPE_STYLES } from "./encoding";
-import { esc, LOW_STABILITY, NetworkMap, truncate } from "./map";
+import { esc, NetworkMap, truncate } from "./map";
 import { Timeline } from "./timeline";
-import type { Defaults, EntityType, GraphNode, LogEntry, Run } from "./types";
+import { buildTextGraph, paperDetailHtml, paperTableHtml, textClusterHtml, textOverviewHtml } from "./textview";
+import type { Defaults, EntityType, Graph, GraphNode, LogEntry, MarkType, Run } from "./types";
 
 const $ = <T extends HTMLElement = HTMLElement>(id: string) => document.getElementById(id) as T;
 const fmt = (n: number) => n.toLocaleString();
@@ -41,7 +42,13 @@ let defaults: Defaults | null = null;
 let run: Run | null = null;
 let selected: GraphNode | null = null;
 let focusCluster: number | null = null;
-const shownTypes = new Set<EntityType>(TYPE_ORDER);
+const shownTypes = new Set<MarkType>(TYPE_ORDER);
+type Mode = "entities" | "text";
+let mode: Mode = "entities";
+let textGraph: Graph | null = null;
+// Each view keeps its own link setting; the text map starts with links hidden.
+const linkShare: Record<Mode, number> = { entities: 0.1, text: 0 };
+let paperSort: "year" | "title" | "cluster" = "year";
 let years: [number, number] | null = null;
 let showAllPapers = false;
 let uncertainOnly = true;
@@ -70,10 +77,17 @@ const timeline = new Timeline($("timeline"), (r) => {
   map.setFilter({ years: r });
   $("year-range").textContent = r ? (r[0] === r[1] ? `${r[0]} only` : `${r[0]}–${r[1]}`) : "Drag across years to filter the map";
   $("clear-years").hidden = !r;
+  // Step buttons move the window through time, one year at a time.
+  $("year-step").hidden = !r;
+  const b = timeline.bounds;
+  ($("year-prev") as HTMLButtonElement).disabled = !r || !b || r[0] <= b[0];
+  ($("year-next") as HTMLButtonElement).disabled = !r || !b || r[1] >= b[1];
   renderDetails();
   renderList();
 });
 $("clear-years").addEventListener("click", () => timeline.clear());
+$("year-prev").addEventListener("click", () => timeline.shift(-1));
+$("year-next").addEventListener("click", () => timeline.shift(1));
 
 // --- tabs -----------------------------------------------------------------------
 
@@ -190,24 +204,65 @@ async function loadRun(id: string) {
   $("map-note").hidden = false;
   const present = new Set(run.graph.nodes.map((n) => n.type));
   for (const t of TYPE_ORDER) if (present.has(t)) shownTypes.add(t);
-  map.setData(run.graph, run.papers);
-  map.setFilter({ types: shownTypes, years: null });
+  textGraph = buildTextGraph(run);
   timeline.setPapers(run.papers);
+  setMode("entities");
   $("year-range").textContent = "Drag across years to filter the map";
   $("clear-years").hidden = true;
-  renderLegend();
-  renderDetails();
+  $("year-step").hidden = true;
   renderMethod();
-  renderList();
   history.replaceState(null, "", `#${id}`);
   await refreshRuns(id);
 }
+
+// --- views: entity map and text map ---------------------------------------------
+
+function setMode(next: Mode, selectId?: string) {
+  if (!run) return;
+  if (next === "text" && !textGraph) next = "entities";
+  mode = next;
+  selected = null;
+  focusCluster = null;
+  showAllPapers = false;
+  map.setData(next === "text" ? textGraph! : run.graph, run.papers);
+  map.setFilter({
+    types: next === "text" ? new Set<MarkType>(["paper"]) : new Set(shownTypes),
+    years,
+    linkShare: linkShare[next],
+    search: ($("find") as HTMLInputElement).value,
+  });
+  const slider = $("link-share") as HTMLInputElement;
+  slider.value = String(linkShare[next]);
+  updateLinkLabel();
+  $("mode").hidden = !textGraph;
+  $("mode").querySelectorAll<HTMLButtonElement>("button").forEach((b) =>
+    b.setAttribute("aria-checked", String(b.dataset.mode === next)),
+  );
+  $("map-note-entities").hidden = next !== "entities";
+  $("map-note-text").hidden = next !== "text";
+  ($("find") as HTMLInputElement).placeholder = next === "text" ? "Find title, author, journal  ( / )" : "Find on map  ( / )";
+  renderLegend();
+  renderList();
+  if (selectId) {
+    map.select(selectId);
+    map.zoomToNode(selectId);
+  } else renderDetails();
+}
+
+$("mode").querySelectorAll<HTMLButtonElement>("button").forEach((b) =>
+  b.addEventListener("click", () => setMode(b.dataset.mode as Mode)),
+);
 
 // --- legend (also the type filter) ----------------------------------------------
 
 function renderLegend() {
   if (!run) return;
-  const counts = new Map<EntityType, number>();
+  if (mode === "text") {
+    const n = run.text?.papers.length ?? 0;
+    $("legend").innerHTML = `<span class="legend-item static">${iconHtml("paper", 18)}<span>Papers</span><span class="muted num">${n}</span></span>`;
+    return;
+  }
+  const counts = new Map<MarkType, number>();
   for (const n of run.graph.nodes) counts.set(n.type, (counts.get(n.type) ?? 0) + 1);
   const types = TYPE_ORDER.filter((t) => counts.has(t));
   $("legend").innerHTML = types
@@ -229,17 +284,23 @@ function renderLegend() {
   );
 }
 
+function updateLinkLabel() {
+  const v = linkShare[mode];
+  $("link-share-value").textContent =
+    v >= 1 ? "all" : v <= 0 ? (mode === "text" ? "on selection" : "none") : `strongest ${Math.round(v * 100)}%`;
+}
 $("link-share").addEventListener("input", (e) => {
-  const v = Number((e.target as HTMLInputElement).value);
-  $("link-share-value").textContent = v >= 1 ? "all" : `strongest ${Math.round(v * 100)}%`;
-  map.setFilter({ linkShare: v });
+  linkShare[mode] = Number((e.target as HTMLInputElement).value);
+  updateLinkLabel();
+  map.setFilter({ linkShare: linkShare[mode] });
 });
 $("find").addEventListener("input", (e) => map.setFilter({ search: (e.target as HTMLInputElement).value }));
 $("find").addEventListener("keydown", (e) => {
   if (e.key !== "Enter" || !run) return;
   const q = (e.target as HTMLInputElement).value.trim().toLowerCase();
-  const hit = run.graph.nodes
-    .filter((n) => shownTypes.has(n.type) && n.label.toLowerCase().includes(q))
+  const nodes = mode === "text" ? textGraph!.nodes : run.graph.nodes.filter((n) => shownTypes.has(n.type));
+  const hit = nodes
+    .filter((n) => (n.search ?? n.label.toLowerCase()).includes(q))
     .sort((a, b) => b.count - a.count)[0];
   if (hit) {
     map.select(hit.id);
@@ -260,8 +321,37 @@ function paperItem(pmid: string): string {
   const p = run!.papers[pmid];
   if (!p) return "";
   const meta = [p.year, p.journal].filter(Boolean).join(" · ");
-  return `<li class="paper">${iconHtml("paper", 16)}<div><a href="${esc(p.url)}" target="_blank" rel="noopener">${esc(p.title || `PMID ${pmid}`)}</a>
-    <div class="muted small">${esc(meta)}${p.authors.length ? ` — ${esc(p.authors.slice(0, 3).join(", "))}${p.authors.length > 3 ? " et al." : ""}` : ""}</div></div></li>`;
+  const byline = p.authors.length ? ` — ${esc(p.authors.slice(0, 3).join(", "))}${p.authors.length > 3 ? " et al." : ""}` : "";
+  const onText = textGraph?.nodes.some((n) => n.id === pmid);
+  // In the text map a paper's title selects it; elsewhere it opens PubMed, with a
+  // link across to the text map.
+  const title = mode === "text" && onText
+    ? `<button type="button" class="link title-link" data-node="${esc(pmid)}">${esc(p.title || `PMID ${pmid}`)}</button>`
+    : `<a href="${esc(p.url)}" target="_blank" rel="noopener">${esc(p.title || `PMID ${pmid}`)}</a>`;
+  const extra = mode === "text"
+    ? ` · <a href="${esc(p.url)}" target="_blank" rel="noopener">PubMed</a>`
+    : onText ? ` · <button type="button" class="link" data-text-paper="${esc(pmid)}">on text map</button>` : "";
+  return `<li class="paper">${iconHtml("paper", 16)}<div>${title}
+    <div class="muted small">${esc(meta)}${byline}${extra}</div></div></li>`;
+}
+
+/** Links that cross between the two views, or into a text cluster. */
+function wireCrossLinks(el: HTMLElement) {
+  el.querySelectorAll<HTMLButtonElement>("[data-text-paper]").forEach((b) =>
+    b.addEventListener("click", () => setMode("text", b.dataset.textPaper)),
+  );
+  el.querySelectorAll<HTMLButtonElement>("[data-entity]").forEach((b) =>
+    b.addEventListener("click", () => setMode("entities", b.dataset.entity)),
+  );
+  el.querySelectorAll<HTMLButtonElement>("[data-goto-text-cluster]").forEach((b) =>
+    b.addEventListener("click", () => {
+      const id = Number(b.dataset.gotoTextCluster);
+      map.select(null);
+      focusCluster = id;
+      map.setFocusCluster(id);
+      renderDetails();
+    }),
+  );
 }
 
 function inYears(pmid: string) {
@@ -275,9 +365,34 @@ function renderDetails() {
     el.innerHTML = `<p class="muted">Run a search to see details here.</p>`;
     return;
   }
+  if (mode === "text") return renderText(el);
   if (selected) return renderNode(el, selected);
   if (focusCluster !== null) return renderCluster(el, focusCluster);
   renderOverview(el);
+}
+
+function renderText(el: HTMLElement) {
+  if (selected) {
+    el.innerHTML = paperDetailHtml(run!, selected.id, paperItem);
+    el.querySelector(".back")!.addEventListener("click", () => map.select(null));
+  } else if (focusCluster !== null && run!.text!.clusters[focusCluster]) {
+    el.innerHTML = textClusterHtml(run!, run!.text!.clusters[focusCluster], paperItem);
+    el.querySelector(".back")!.addEventListener("click", () => {
+      focusCluster = null;
+      map.setFocusCluster(null);
+      renderDetails();
+    });
+  } else {
+    el.innerHTML = textOverviewHtml(run!, years);
+    el.querySelectorAll<HTMLButtonElement>("[data-cluster]").forEach((b) =>
+      b.addEventListener("click", () => {
+        focusCluster = Number(b.dataset.cluster);
+        map.setFocusCluster(focusCluster);
+        renderDetails();
+      }),
+    );
+  }
+  wireEntityButtons(el);
 }
 
 function renderOverview(el: HTMLElement) {
@@ -352,7 +467,7 @@ function entityList(nodes: GraphNode[], extra?: (n: GraphNode) => string): strin
   return `<ul class="entity-list">${nodes
     .map(
       (n) => `<li><button type="button" class="row-button" data-node="${esc(n.id)}">
-        ${iconHtml(n.type, 18, n.stability < LOW_STABILITY)}<span class="grow">${esc(n.label)}</span>
+        ${iconHtml(n.type, 18, n.stability < map.lowStability)}<span class="grow">${esc(n.label)}</span>
         <span class="muted num">${extra ? extra(n) : map.visibleCount(n.id)}</span></button></li>`,
     )
     .join("")}</ul>`;
@@ -365,6 +480,7 @@ function wireEntityButtons(el: HTMLElement) {
       map.zoomToNode(b.dataset.node!);
     }),
   );
+  wireCrossLinks(el);
 }
 
 function renderNode(el: HTMLElement, n: GraphNode) {
@@ -384,7 +500,7 @@ function renderNode(el: HTMLElement, n: GraphNode) {
       <div><dt>Linked entities</dt><dd>${fmt(neighbors.length)}</dd></div>
       <div><dt>Layout stability</dt><dd>${n.stability.toFixed(2)}</dd></div>
     </dl>
-    ${n.stability < LOW_STABILITY ? `<div class="banner note">This node's position changed between layout runs. Its links are reliable; its exact location is not.</div>` : ""}
+    ${n.stability < map.lowStability ? `<div class="banner note">This node's position changed between layout runs. Its links are reliable; its exact location is not.</div>` : ""}
     ${cluster ? `<p class="small">Cluster: <button type="button" class="link" data-goto-cluster="${cluster.id}">${esc(cluster.label)}</button></p>` : ""}
     ${n.variants.length ? `<details class="small"><summary>Also written as (${n.variants.length})</summary><p>${n.variants.map(esc).join("; ")}</p></details>` : ""}
     <h3>Most linked</h3>
@@ -426,6 +542,32 @@ function renderList() {
     el.innerHTML = "";
     return;
   }
+  if (mode === "text" && run.text) {
+    const byId = new Map(run.text.papers.map((p) => [p.pmid, p]));
+    const rows = run.text.papers
+      .map((p) => p.pmid)
+      .filter((id) => map.visibleCount(id) > 0)
+      .sort((a, b) => {
+        const pa = run!.papers[a];
+        const pb = run!.papers[b];
+        if (paperSort === "title") return (pa?.title ?? "").localeCompare(pb?.title ?? "");
+        if (paperSort === "cluster") {
+          const ca = byId.get(a)!.cluster;
+          const cb = byId.get(b)!.cluster;
+          return (ca < 0 ? 1e9 : ca) - (cb < 0 ? 1e9 : cb) || (pb?.year ?? 0) - (pa?.year ?? 0);
+        }
+        return (pb?.year ?? 0) - (pa?.year ?? 0);
+      });
+    el.innerHTML = paperTableHtml(run, rows, paperSort);
+    el.querySelectorAll<HTMLButtonElement>("[data-paper-sort]").forEach((b) =>
+      b.addEventListener("click", () => {
+        paperSort = b.dataset.paperSort as typeof paperSort;
+        renderList();
+      }),
+    );
+    wireEntityButtons(el);
+    return;
+  }
   const rows = run.graph.nodes
     .filter((n) => shownTypes.has(n.type) && map.visibleCount(n.id) > 0)
     .sort((a, b) =>
@@ -444,7 +586,7 @@ function renderList() {
       <thead><tr>${head("type", "Type")}${head("label", "Name")}${head("count", "Papers", "num")}</tr></thead>
       <tbody>${rows
         .map(
-          (n) => `<tr><td>${iconHtml(n.type, 18, n.stability < LOW_STABILITY)} <span class="sr-only">${TYPE_STYLES[n.type].label}</span></td>
+          (n) => `<tr><td>${iconHtml(n.type, 18, n.stability < map.lowStability)} <span class="sr-only">${TYPE_STYLES[n.type].label}</span></td>
           <td><button type="button" class="link" data-node="${esc(n.id)}">${esc(n.label)}</button></td>
           <td class="num">${map.visibleCount(n.id)}</td></tr>`,
         )
@@ -527,6 +669,7 @@ function renderMethod() {
       <li><a href="${api.exportUrl(id, "gexf")}">GEXF</a> for Gephi, with positions</li>
       <li><a href="${api.exportUrl(id, "graphml")}">GraphML</a> for Cytoscape and others</li>
       <li><a href="${api.exportUrl(id, "nodes.csv")}">Entities (CSV)</a> · <a href="${api.exportUrl(id, "edges.csv")}">Links (CSV)</a></li>
+      ${run.text ? `<li><a href="${api.exportUrl(id, "text.csv")}">Text map (CSV)</a>: papers, clusters, positions, nearest by text</li>` : ""}
     </ul>`;
   el.querySelector("#uncertain-only")!.addEventListener("change", (e) => {
     uncertainOnly = (e.target as HTMLInputElement).checked;
