@@ -7,6 +7,7 @@ from collections.abc import Callable
 import networkx as nx
 from pydantic import BaseModel, Field
 
+from .citations import CitationParams, ICiteClient, build_citation_map
 from .cluster import ClusterParams, detect_clusters
 from .layout import LayoutParams, compute_layout
 from .network import NetworkParams, build_graph
@@ -37,6 +38,8 @@ class RunParams(BaseModel):
     layout: LayoutParams = Field(default_factory=LayoutParams)
     text_map: bool = True
     semantic: SemanticParams = Field(default_factory=SemanticParams)
+    citation_map: bool = True
+    citations: CitationParams = Field(default_factory=CitationParams)
 
 
 class RunOutput(BaseModel):
@@ -44,6 +47,7 @@ class RunOutput(BaseModel):
     graph: dict
     papers: dict[str, dict]
     text: dict | None = None
+    citations: dict | None = None
 
 
 def _papers_json(papers: list[Paper]) -> dict[str, dict]:
@@ -91,6 +95,8 @@ def run_pipeline(
     search_result: SearchResult | None = None,
     progress: Progress | None = None,
     embed: Embedder | None = None,
+    icite_client: ICiteClient | None = None,
+    icite_records: dict[str, dict] | None = None,
 ) -> RunOutput:
     """Run every step. Pass `search_result` to skip the network fetch (tests, re-runs)."""
     report = progress or (lambda _msg, _frac: None)
@@ -294,10 +300,61 @@ def run_pipeline(
                     "read them as broad themes, not distinct groups."
                 )
 
+    # 8. Citation map (papers linked by shared references and direct citations)
+    citations = None
+    if params.citation_map:
+        report("Fetching citation data from NIH iCite", 0.92)
+        icite_meta: dict = {}
+        if icite_records is None:
+            own_icite = icite_client is None
+            ic = icite_client or ICiteClient()
+            try:
+                icite_records = ic.fetch([x.pmid for x in papers])
+                icite_meta = {
+                    "from_cache": ic.from_cache,
+                    "retrieved_at": ic.retrieved_at,
+                    "retries_after_rate_limit": ic.retries,
+                }
+            except Exception as exc:  # noqa: BLE001 - the other views are still useful
+                manifest.warnings.append(
+                    f"Citation map skipped: couldn't get data from NIH iCite ({exc})."
+                )
+            finally:
+                if own_icite:
+                    ic.close()
+        if icite_records is not None:
+            report("Building citation map", 0.95)
+            citations, cit_summary = build_citation_map(
+                papers, icite_records, params.citations, query=params.query
+            )
+            if "skipped" in cit_summary:
+                manifest.warnings.append(f"Citation map skipped: {cit_summary['skipped'].lower()}.")
+                citations = None
+            else:
+                cp = params.citations
+                manifest.steps.append(
+                    Step(
+                        name="Citation map",
+                        detail=(
+                            "Citation data from NIH iCite (references, citing papers, Relative "
+                            "Citation Ratio). Papers in the set are linked if one cites the "
+                            "other (weight 1) and/or they share references (Salton's cosine), "
+                            f"keeping each paper's {cp.coupling_neighbors} strongest coupling "
+                            f"links. Clusters: Leiden (resolution {cp.resolution}); groups "
+                            f"under {cp.min_cluster_size} papers left unclustered. Layout: "
+                            + cit_summary["layout"]["detail"]
+                            + ", chosen over the alternative because its map agrees better "
+                            "with the clusters (see cluster_agreement)."
+                        ),
+                        counts={**icite_meta, **cit_summary},
+                    )
+                )
+
     report("Done", 1.0)
     return RunOutput(
         manifest=manifest,
         graph=_graph_json(g, clusters, run_id, params.query),
         papers=_papers_json(papers),
         text=text,
+        citations=citations,
     )

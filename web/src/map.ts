@@ -74,6 +74,8 @@ export class NetworkMap {
   private filter: MapFilter = { types: new Set(), years: null, linkShare: 0.1, search: "" };
   private frame = 0;
   private clusterLabelBoxes: { id: number; x: number; y: number; w: number; h: number }[] = [];
+  /** Every mark is a paper (text and citation maps). */
+  private paperMap = false;
   /** Text map: each cluster split into spatially connected islands (graph coords). */
   private islands: { cluster: number; members: NodeView[] }[] | null = null;
 
@@ -119,7 +121,7 @@ export class NetworkMap {
     this.papers = papers;
     this.nodes = graph.nodes.map((node) => ({ node, visible: true, count: node.count, sx: 0, sy: 0, r: 0, match: false }));
     this.byId = new Map(this.nodes.map((v) => [v.node.id, v]));
-    this.maxCount = Math.max(1, ...graph.nodes.map((n) => n.count));
+    this.maxCount = Math.max(1e-9, ...graph.nodes.map((n) => n.size ?? n.count));
     const sorted = [...graph.edges].sort((a, b) => b.weight - a.weight);
     this.edges = sorted.map((edge, rank) => {
       const a = this.byId.get(edge.source)!;
@@ -135,7 +137,8 @@ export class NetworkMap {
         this.adjacency.set(end.node.id, list);
       }
     }
-    this.islands = graph.uniform_size ? findIslands(this.nodes) : null;
+    this.islands = graph.regions === "islands" || graph.uniform_size ? findIslands(this.nodes) : null;
+    this.paperMap = graph.nodes.length > 0 && graph.nodes.every((n) => n.type === "paper");
     this.selected = null;
     this.hovered = null;
     this.focusCluster = null;
@@ -297,7 +300,9 @@ export class NetworkMap {
     for (const v of this.nodes) {
       const [wx, wy] = this.world(v.node);
       [v.sx, v.sy] = t.apply([wx, wy]);
-      v.r = this.radius(v.count);
+      // Size by the mark's own measure when it has one (citation map: RCR, which the
+      // year filter doesn't change); otherwise by papers within the year filter.
+      v.r = this.radius(v.node.size ?? v.count);
     }
     const visible = this.nodes.filter((v) => v.visible);
     this.tree = quadtree<NodeView>()
@@ -478,10 +483,11 @@ export class NetworkMap {
         const box = this.islands
           ? { x: cx - w / 2, y: cy - 10, w, h: 20 }
           : { x: cx - w / 2, y: top - regionPad - 4, w, h: 20 };
-        // Text-map labels sit over their island's dots (with a halo), so they only
+        // On paper maps, cluster labels sit over the dots (with a halo), so they only
         // need to avoid each other and the edges.
+        const overDots = this.islands || this.paperMap;
         const ok = (b: typeof box) =>
-          this.islands
+          overDots
             ? b.x >= 2 && b.y >= 2 && b.x + b.w <= this.width - 2 && b.y + b.h <= this.height - 2 &&
               !this.clusterLabelBoxes.some((p) => b.x < p.x + p.w && b.x + b.w > p.x && b.y < p.y + p.h && b.y + b.h > p.y)
             : fits(b);
@@ -501,7 +507,14 @@ export class NetworkMap {
     ctx.textBaseline = "middle";
     // Fewer labels for the text map: titles are long and every paper weighs the same,
     // so they appear as you zoom in (limiting load on first view).
-    const budget = hood ? 40 : this.graph.uniform_size ? (t.k < 1.8 ? 0 : Math.round(6 * t.k)) : Math.round(12 + 18 * t.k);
+    // Citation map: only the highest-impact papers' titles at first, more as you zoom.
+    const budget = hood
+      ? 40
+      : this.graph.uniform_size
+        ? t.k < 1.8 ? 0 : Math.round(6 * t.k)
+        : this.paperMap
+          ? Math.round(4 + 6 * t.k)
+          : Math.round(12 + 18 * t.k);
     const ranked = [...visible].sort((a, b) => {
       const pa = (a === this.selected ? 4 : 0) + (hood?.has(a.node.id) ? 2 : 0) + (a.match ? 3 : 0);
       const pb = (b === this.selected ? 4 : 0) + (hood?.has(b.node.id) ? 2 : 0) + (b.match ? 3 : 0);

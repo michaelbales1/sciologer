@@ -88,13 +88,19 @@ export function textOverviewHtml(run: Run, years: [number, number] | null): stri
     </ul>`;
 }
 
-export function textClusterHtml(run: Run, cl: TextMapCluster, paperItem: (pmid: string) => string): string {
+export function textClusterHtml(
+  run: Run,
+  cl: TextMapCluster,
+  paperItem: (pmid: string) => string,
+  members: string[] = run.text!.papers.filter((p) => p.cluster === cl.id).map((p) => p.pmid),
+  back = "← All text clusters",
+  centralNote = "the most central papers",
+): string {
   const max = Math.max(...cl.terms.map(([, w]) => w), 1e-9);
-  const members = run.text!.papers.filter((p) => p.cluster === cl.id).map((p) => p.pmid);
   return `
-    <button type="button" class="link back">← All text clusters</button>
+    <button type="button" class="link back">${back}</button>
     <h2 class="panel-title">${esc(cl.label)}</h2>
-    <p class="muted small">${cl.size} papers. The name is the top three terms below; check them against the most central papers.</p>
+    <p class="muted small">${cl.size} papers. The name is the top three terms below, from the papers' titles and abstracts; check them against ${centralNote}.</p>
     <h3>Distinctive terms</h3>
     <ul class="term-list small">${cl.terms
       .map(
@@ -142,23 +148,29 @@ export function paperDetailHtml(run: Run, pmid: string, paperItem: (pmid: string
       .join("")}</ul>` : ""}`;
 }
 
-export function paperTableHtml(run: Run, rows: string[], sort: "year" | "title" | "cluster"): string {
-  const text = run.text!;
+export function paperTableHtml(
+  run: Run,
+  rows: string[],
+  sort: "year" | "title" | "cluster" | "rcr",
+  data: { papers: { pmid: string; cluster: number; rcr?: number | null }[]; clusters: TextMapCluster[] } = run.text!,
+): string {
+  const text = data;
   const byId = new Map(text.papers.map((p) => [p.pmid, p]));
+  const showRcr = text.papers.some((p) => p.rcr !== undefined);
   const head = (key: typeof sort, label: string, cls = "") =>
-    `<th scope="col" class="${cls}" aria-sort="${sort === key ? (key === "year" ? "descending" : "ascending") : "none"}">
+    `<th scope="col" class="${cls}" aria-sort="${sort === key ? (key === "year" || key === "rcr" ? "descending" : "ascending") : "none"}">
       <button type="button" class="th-button" data-paper-sort="${key}">${label}</button></th>`;
   return `
     <p class="muted small">${fmt(rows.length)} papers. Select a row to find it on the map.</p>
     <table class="entity-table">
-      <thead><tr>${head("title", "Title")}${head("year", "Year", "num")}${head("cluster", "Cluster")}</tr></thead>
+      <thead><tr>${head("title", "Title")}${head("year", "Year", "num")}${showRcr ? head("rcr", "RCR", "num") : ""}${head("cluster", "Cluster")}</tr></thead>
       <tbody>${rows
         .map((pmid) => {
           const p = run.papers[pmid];
           const tp = byId.get(pmid)!;
           const cl = tp.cluster >= 0 ? text.clusters[tp.cluster].label : "–";
           return `<tr><td><button type="button" class="link" data-node="${esc(pmid)}">${esc(p?.title || pmid)}</button></td>
-            <td class="num">${p?.year ?? ""}</td><td class="small muted">${esc(cl)}</td></tr>`;
+            <td class="num">${p?.year ?? ""}</td>${showRcr ? `<td class="num">${tp.rcr == null ? "–" : tp.rcr.toFixed(2)}</td>` : ""}<td class="small muted">${esc(cl)}</td></tr>`;
         })
         .join("")}</tbody>
     </table>`;

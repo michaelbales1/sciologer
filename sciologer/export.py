@@ -16,6 +16,7 @@ FORMATS = {
     "edges.csv": ("text/csv", "edges.csv"),
     "json": ("application/json", "json"),
     "text.csv": ("text/csv", "text-map.csv"),
+    "citations.csv": ("text/csv", "citation-map.csv"),
 }
 
 _NODE_FIELDS = ["id", "label", "type", "count", "cluster", "x", "y", "stability"]
@@ -48,6 +49,7 @@ def export(
     fmt: str,
     text: dict | None = None,
     papers: dict | None = None,
+    citations: dict | None = None,
 ) -> str:
     if fmt == "graphml":
         return "\n".join(nx.generate_graphml(to_networkx(graph)))
@@ -75,7 +77,58 @@ def export(
             )
         )
     if fmt == "json":
-        return json.dumps({"manifest": manifest, "graph": graph, "text_map": text}, indent=2)
+        return json.dumps(
+            {"manifest": manifest, "graph": graph, "text_map": text, "citation_map": citations},
+            indent=2,
+        )
+    if fmt == "citations.csv":
+        if not citations:
+            raise KeyError(fmt)
+        labels = {c["id"]: c["label"] for c in citations["clusters"]}
+        papers = papers or {}
+        return _csv(
+            iter(
+                [
+                    [
+                        "pmid",
+                        "title",
+                        "year",
+                        "journal",
+                        "cluster",
+                        "cluster_label",
+                        "x",
+                        "y",
+                        "stability",
+                        "rcr",
+                        "rcr_provisional",
+                        "nih_percentile",
+                        "citation_count",
+                        "cites_in_set",
+                        "cited_by_in_set",
+                    ]
+                ]
+                + [
+                    [
+                        p["pmid"],
+                        papers.get(p["pmid"], {}).get("title", ""),
+                        papers.get(p["pmid"], {}).get("year", ""),
+                        papers.get(p["pmid"], {}).get("journal", ""),
+                        p["cluster"],
+                        labels.get(p["cluster"], "unclustered"),
+                        p["x"],
+                        p["y"],
+                        p["stability"],
+                        "" if p["rcr"] is None else p["rcr"],
+                        p["provisional"],
+                        "" if p["nih_percentile"] is None else p["nih_percentile"],
+                        p["citation_count"],
+                        "; ".join(p["cites"]),
+                        "; ".join(p["cited_by"]),
+                    ]
+                    for p in citations["papers"]
+                ]
+            )
+        )
     if fmt == "text.csv":
         if not text:
             raise KeyError(fmt)

@@ -28,6 +28,8 @@ export interface GraphNode {
   search?: string;
   /** Authors under fractional counting: sum of 1/(authors on the paper) over their papers. */
   credit?: number;
+  /** Mark size, when not the paper count (citation map: Relative Citation Ratio). */
+  size?: number;
   /** Text map only: how many of the paper's nearest papers by text are near it on the map. */
   neighbors_kept?: number;
 }
@@ -56,6 +58,34 @@ export interface Graph {
   low_stability?: number;
   /** All marks the same size (text map: one paper each). */
   uniform_size?: boolean;
+  /** "islands": one labeled region per spatially connected piece of a cluster (t-SNE
+   *  maps); default: one region per cluster around its core. */
+  regions?: "islands" | "clusters";
+}
+
+export interface CitationMapPaper {
+  pmid: string;
+  x: number;
+  y: number;
+  cluster: number;
+  stability: number;
+  rcr: number | null;
+  nih_percentile: number | null;
+  provisional: boolean;
+  citation_count: number;
+  is_research_article: boolean | null;
+  references_total: number;
+  cites: string[];
+  cited_by: string[];
+  coupled: { pmid: string; shared: number; cosine: number }[];
+}
+
+export interface CitationMap {
+  papers: CitationMapPaper[];
+  clusters: TextMapCluster[];
+  edges: { source: string; target: string; weight: number; shared: number; direct: boolean }[];
+  low_stability: number;
+  layout_method: "forceatlas2" | "spectral_tsne";
 }
 
 export interface TextMapPaper {
@@ -127,6 +157,7 @@ export interface Run {
   papers: Record<string, PaperInfo>;
   manifest: Manifest;
   text: TextMap | null;
+  citations: CitationMap | null;
 }
 
 export interface RunSummary {

@@ -173,6 +173,7 @@ def test_pipeline_end_to_end_from_fixture():
             query="neuroligins",
             layout=LayoutParams(max_iter=60, stability_runs=2),
             text_map=False,  # covered in test_semantic.py with an offline embedder
+            citation_map=False,  # covered in test_citations.py
         ),
         "test",
         search_result=sr,

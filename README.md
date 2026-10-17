@@ -50,6 +50,7 @@ export NCBI_EMAIL=you@example.org
 | Cluster | Leiden communities (modularity with a resolution setting), fixed seed. Each cluster is named by its most distinctive subject terms | [`cluster.py`](sciologer/cluster.py) |
 | Layout | ForceAtlas2 with LinLog attraction (the successor to CCVisu's LinLog), run with 5 seeds to score stability | [`layout.py`](sciologer/layout.py) |
 | Text map | Embeds each title + abstract, clusters papers in the full embedding space, names clusters by distinctive terms, projects with t-SNE (see below) | [`semantic.py`](sciologer/semantic.py) |
+| Citation map | Links papers by direct citation and shared references using NIH iCite, clusters them, sizes them by Relative Citation Ratio (see below) | [`citations.py`](sciologer/citations.py) |
 
 Every run writes a **manifest** with the query, PubMed's interpretation of it, how many records matched and how many were fetched, all parameters, software versions, seeds and the full name-matching log. The app shows it under **How this map was made**. You can download it with the map as JSON, GEXF (for Gephi), GraphML (for Cytoscape) or CSV.
 
@@ -65,9 +66,13 @@ By default, authors are counted **fractionally** (Perianes-Rodriguez, Waltman & 
 
 Without this, a few large consortium papers (80+ authors) can fill the author slots and bind their authors into one block that dominates the map. On a test map of one researcher's 92 papers, full counting gave 55 of the 60 author slots to consortium members. Fractional counting gave 24, and the researcher's regular collaborators moved to the top. Ranking matters as much as links: association strength largely cancels fractional links on their own. To count every author in full, use **Options → Count authors → In full**. The author's credit is shown in the details panel.
 
-### Two views: entities and papers by text
+### Three views
 
-The **Entities** view links MeSH terms, authors, journals and so on when they share papers. **Papers by text** places each paper by what its title and abstract say. They answer different questions, so they are separate views rather than one blended map: co-occurrence shows how indexed concepts and people connect, and text shows what the papers are about, including themes that cut across the indexing.
+- **Entities** links MeSH terms, authors, journals and so on when they share papers.
+- **Papers by text** places each paper by what its title and abstract say.
+- **Papers by citation** links papers that cite each other or share references.
+
+They answer different questions, so they are separate, linked views rather than one blended map. Co-occurrence shows how indexed concepts and people connect. Text shows what papers are about, including themes that cut across the indexing. Citations show intellectual communities: who builds on whom.
 
 How the text map is made:
 - **Embedding.** [NeuML/pubmedbert-base-embeddings-8M](https://huggingface.co/NeuML/pubmedbert-base-embeddings-8M), a Model2Vec distillation of PubMedBERT Embeddings. It runs on the CPU and is downloaded once (about 31 MB) to the Hugging Face cache. Papers without an abstract are placed by title and marked as such.
@@ -76,7 +81,15 @@ How the text map is made:
 - **Projection.** t-SNE: one run starts from PCA and two from random positions. Only local neighborhoods are meaningful. Each paper gets a stability score (do its map neighbors stay the same?) and a count of how many of its 10 nearest papers by text are near it on the map. Selecting a paper lists its true nearest papers by text.
 - t-SNE can split a cluster into several islands. Each island gets its own region and label, so a split theme is visible rather than hidden.
 
-The views link to each other: a paper on the text map lists its entities, and an entity's paper list links to each paper on the text map.
+How the citation map is made:
+- **Data** come from [NIH iCite](https://icite.od.nih.gov/): each paper's references, citing papers, citation count and **Relative Citation Ratio** (RCR). RCR is citations per year relative to papers in the same field and year; 1.0 is the median for NIH-funded papers. Requests go in batches of 200 PMIDs through a shared rate limiter, and responses are cached.
+- **Links:** two papers in the set are linked when one cites the other (weight 1) and/or they share references (bibliographic coupling, Salton's cosine). Coupling also connects recent papers that haven't been cited yet. In a focused topic nearly every pair shares some reference, so only each paper's 5 strongest coupling links are kept, plus every direct citation.
+- **Clusters:** Leiden, with groups under 3 papers left unclustered. Names come from distinctive terms in the papers' titles and abstracts.
+- **Layout:** two candidates are computed, ForceAtlas2 and a spectral embedding laid out with t-SNE, and the one that agrees better with the clusters is kept. Each won on one kind of network during development: ForceAtlas2 on a researcher's 82 linked papers (agreement 0.90 vs 0.40), t-SNE on 379 papers about one topic (0.70 vs 0.40). Both scores are recorded.
+- **Size** shows RCR. Papers without one (too recent, or not covered) are drawn smallest. Selecting a paper lists what it cites and what cites it within the set, and the papers it shares the most references with.
+- If iCite can't be reached, the other two views are still built and the run notes why the citation view is missing.
+
+The views link to each other: a paper lists its entities, and any paper list links to that paper's place on the text and citation maps.
 
 ### Name matching
 
@@ -106,6 +119,7 @@ The workflow follows the stages described in Bales, Wright, Oxley and Wheeler, *
 - labels from weighted terms
 - search within displayed articles by title, year, author or journal
 - a control that moves the map through time
+- impact measures integrated into the map (RCR), which the paper notes few tools do
 - information shown on demand to limit cognitive load
 
 The design also responds to the recommendations in *Bibliometric Visualization Update* (Undermind, October 2026):
@@ -115,7 +129,7 @@ The design also responds to the recommendations in *Bibliometric Visualization U
 | Keep analytical choices visible [Nowakowska 2025; Atzberger et al. 2024] | Run manifest; "How this map was made" panel; every parameter in the export |
 | Document normalization; inspect uncertain matches [Nowakowska 2025] | Name-matching log with flagged items |
 | Treat maps as navigation aids, not ground truth [González-Márquez et al. 2024] | Approximate-distance note, stability encoding, details come from the data rather than position |
-| Match the representation to the question [Xie & Waltman 2023] | Separate entity (co-occurrence) and text (embedding) views, linked but not blended. A citation view is planned |
+| Match the representation to the question [Xie & Waltman 2023] | Separate entity (co-occurrence), text (embedding) and citation views, linked but not blended |
 | Separate high-dimensional similarity from the 2D projection [González-Márquez et al. 2024] | Text clusters and "nearest by text" come from the embeddings; the map reports how many neighbors it keeps |
 | Ground labels in inspectable evidence [Murray et al. 2025] | Cluster names are built from member terms, and the members are listed beside them |
 
@@ -139,6 +153,6 @@ legacy/      the original 2008 Java implementation, for reference
 
 ## Roadmap
 
-- A citation view using NIH iCite or OpenAlex, including field-normalized impact (iCite's Relative Citation Ratio), which few mapping tools integrate
+- Co-citation as an alternative citation link, for older literature
 - Cluster labels from a language model, grounded in the cluster's papers and checked against them
 - Multilevel clusters with Leiden: zoom from broad areas into specialties

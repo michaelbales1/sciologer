@@ -201,7 +201,8 @@ def _ctfidf(
     vec = CountVectorizer(
         stop_words=sorted(set(STOP_WORDS) | set(exclude)),
         ngram_range=(1, 2),
-        token_pattern=r"(?u)\b[a-zA-Z][a-zA-Z0-9-]{2,}\b",
+        # Words of 3+ characters that may contain hyphens but don't end with one.
+        token_pattern=r"(?u)\b[a-zA-Z][a-zA-Z0-9-]*[a-zA-Z0-9]\b",
         lowercase=True,
     )
     x = vec.fit_transform(texts)  # papers × terms
