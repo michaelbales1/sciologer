@@ -9,7 +9,7 @@
   <body>
     <header class="topbar">
       <div class="brand">Sciologer</div>
-      <form id="search" class="search" autocomplete="off">
+      <form id="search" class="search" autocomplete="off" novalidate>
         <label class="sr-only" for="query">PubMed query</label>
         <input id="query" name="query" type="search" placeholder="PubMed query, e.g. neuroligins" required />
         <details class="options">
@@ -19,9 +19,18 @@
               <legend>Include</legend>
               <div id="type-options" class="type-options"></div>
             </fieldset>
-            <label>Most records <input id="max-records" type="number" min="10" max="10000" step="10" value="500" /></label>
-            <label>Hide entities on fewer than <input id="min-occ" type="number" min="1" max="50" value="2" /> papers</label>
-            <label>Up to <input id="max-per-type" type="number" min="5" max="200" value="60" /> per type</label>
+            <div class="field">
+              <label>Most records <input id="max-records" type="number" min="10" max="10000" step="10" value="500" aria-describedby="max-records-hint" /></label>
+              <span class="hint" id="max-records-hint">10–10,000</span>
+            </div>
+            <div class="field">
+              <label>Hide entities on fewer than <input id="min-occ" type="number" min="1" max="50" value="2" aria-describedby="min-occ-hint" /> papers</label>
+              <span class="hint" id="min-occ-hint">1–50</span>
+            </div>
+            <div class="field">
+              <label>Up to <input id="max-per-type" type="number" min="5" max="200" value="60" aria-describedby="max-per-type-hint" /> per type</label>
+              <span class="hint" id="max-per-type-hint">5–200</span>
+            </div>
             <label class="check"><input id="mesh-major" type="checkbox" /> MeSH major topics only</label>
             <label class="check"><input id="check-tags" type="checkbox" checked /> Leave out MeSH check tags (Humans, Male…)</label>
             <label>Link weight
@@ -30,7 +39,10 @@
                 <option value="count">Shared papers</option>
               </select>
             </label>
-            <label>Cluster resolution <input id="resolution" type="number" min="0.2" max="3" step="0.1" value="1" /></label>
+            <div class="field">
+              <label>Cluster resolution <input id="resolution" type="number" min="0.2" max="3" step="0.1" value="1" aria-describedby="resolution-hint" /></label>
+              <span class="hint" id="resolution-hint">0.2–3; higher gives more, smaller clusters</span>
+            </div>
           </div>
         </details>
         <button type="submit" class="primary">Map it</button>

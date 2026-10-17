@@ -69,6 +69,9 @@ def test_run_lifecycle_and_exports(client):
 def test_rejects_bad_input(client):
     assert client.post("/api/runs", json={"query": "  "}).status_code == 422
     assert client.post("/api/runs", json={"query": "x", "types": []}).status_code == 422
+    too_many = client.post("/api/runs", json={"query": "x", "network": {"max_per_type": 600}})
+    assert too_many.status_code == 422
+    assert "max_per_type" in str(too_many.json()["detail"])
     assert client.get("/api/runs/..%2F..%2Fetc/status").status_code == 404
     assert client.get("/api/nope").status_code == 404
     assert client.get("/api/runs/20260101-000000-nope").status_code == 404

@@ -149,11 +149,52 @@ async function startRun(query: string) {
   }
 }
 
+// Why each option has the limits it has, shown when a value is out of range.
+const OPTION_LIMITS: Record<string, string> = {
+  "max-records": "Choose 10 to 10,000 records. PubMed returns at most 10,000 records for one search.",
+  "min-occ": "Choose 1 to 50 papers.",
+  "max-per-type":
+    "Choose 5 to 200 per type. Larger maps take much longer to lay out (the work grows with the square of the number of entities) and get too crowded to read.",
+  resolution: "Choose a resolution from 0.2 to 3.",
+};
+
+/** The browser's own warning can't show inside the collapsed Options panel, so check
+ *  the options here: open the panel, mark the field and explain the limit. */
+function checkOptions(): boolean {
+  const panel = document.querySelector<HTMLDetailsElement>(".options")!;
+  panel.querySelectorAll(".field-error").forEach((el) => el.remove());
+  panel.querySelectorAll("[aria-invalid]").forEach((el) => el.removeAttribute("aria-invalid"));
+  const bad = [...panel.querySelectorAll<HTMLInputElement>("input")].find((i) => !i.checkValidity());
+  if (!bad) return true;
+  panel.open = true;
+  bad.setAttribute("aria-invalid", "true");
+  const msg = document.createElement("p");
+  msg.className = "field-error";
+  msg.id = `${bad.id}-error`;
+  msg.setAttribute("role", "alert");
+  msg.textContent = OPTION_LIMITS[bad.id] ?? bad.validationMessage;
+  bad.closest(".field")?.append(msg);
+  bad.setAttribute("aria-describedby", `${bad.id}-hint ${msg.id}`);
+  bad.focus();
+  bad.select();
+  return false;
+}
+
 $("search").addEventListener("submit", (e) => {
   e.preventDefault();
   const q = ($("query") as HTMLInputElement).value.trim();
-  if (q) startRun(q);
+  if (!q) {
+    ($("query") as HTMLInputElement).focus();
+    return;
+  }
+  if (!checkOptions()) return;
+  startRun(q);
 });
+document.querySelectorAll<HTMLInputElement>(".options input").forEach((i) =>
+  i.addEventListener("input", () => {
+    if (i.getAttribute("aria-invalid") && i.checkValidity()) checkOptions();
+  }),
+);
 document.querySelectorAll<HTMLButtonElement>("[data-example]").forEach((b) =>
   b.addEventListener("click", () => {
     ($("query") as HTMLInputElement).value = b.dataset.example!;

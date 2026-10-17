@@ -3,13 +3,13 @@
 from __future__ import annotations
 
 import networkx as nx
-from pydantic import BaseModel
+from pydantic import BaseModel, Field
 
 from .records import EntityType
 
 
 class ClusterParams(BaseModel):
-    resolution: float = 1.0
+    resolution: float = Field(1.0, ge=0.2, le=3.0)
     seed: int = 42
 
 

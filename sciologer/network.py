@@ -14,7 +14,7 @@ from itertools import combinations
 from typing import Literal
 
 import networkx as nx
-from pydantic import BaseModel
+from pydantic import BaseModel, Field
 
 from .normalize import EntityTable
 from .records import EntityType
@@ -23,9 +23,11 @@ Weighting = Literal["count", "association"]
 
 
 class NetworkParams(BaseModel):
-    min_occurrences: int = 2
-    max_per_type: int = 60
-    min_edge_weight: int = 1
+    min_occurrences: int = Field(2, ge=1, le=50)
+    # Layout cost grows with the square of the node count; past ~200 per type maps
+    # also get too crowded to read.
+    max_per_type: int = Field(60, ge=5, le=200)
+    min_edge_weight: int = Field(1, ge=1)
     weighting: Weighting = "association"
 
 
