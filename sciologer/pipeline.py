@@ -144,6 +144,11 @@ def run_pipeline(
             },
         )
     )
+    if len(papers) < manifest.fetched:
+        manifest.warnings.append(
+            f"{manifest.fetched - len(papers):,} fetched record(s) were not journal articles "
+            "(for example, book chapters) and were left out."
+        )
 
     # 3. Normalize
     report("Normalizing names", 0.6)

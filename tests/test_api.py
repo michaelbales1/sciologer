@@ -1,0 +1,69 @@
+import time
+from pathlib import Path
+
+import pytest
+from fastapi.testclient import TestClient
+
+from sciologer.api import create_app
+from sciologer.pubmed import PubMedClient, SearchResult
+from sciologer.runs import RunStore
+
+FIXTURES = Path(__file__).parent / "fixtures"
+
+
+@pytest.fixture
+def client(tmp_path, monkeypatch):
+    xml = (FIXTURES / "neuroligins.xml").read_bytes()
+
+    def fake_search(self, query, max_records=1000, progress=None, use_cache=True):
+        return SearchResult(
+            query=query,
+            count=1294,
+            pmids=[str(i) for i in range(80)],
+            query_translation=query,
+            xml_batches=[xml],
+        )
+
+    monkeypatch.setattr(PubMedClient, "search", fake_search)
+    return TestClient(create_app(RunStore(tmp_path)))
+
+
+def wait_done(client, run_id):
+    for _ in range(300):
+        status = client.get(f"/api/runs/{run_id}/status").json()
+        if status["state"] in ("done", "error"):
+            return status
+        time.sleep(0.05)
+    raise AssertionError("run did not finish")
+
+
+def test_run_lifecycle_and_exports(client):
+    defaults = client.get("/api/defaults").json()
+    params = defaults["params"] | {"query": "neuroligins"}
+    params["layout"]["stability_runs"] = 2
+    params["layout"]["max_iter"] = 60
+    started = client.post("/api/runs", json=params)
+    assert started.status_code == 202
+    run_id = started.json()["run_id"]
+
+    status = wait_done(client, run_id)
+    assert status["state"] == "done", status
+
+    run = client.get(f"/api/runs/{run_id}").json()
+    assert run["manifest"]["parsed"] == 80
+    assert run["graph"]["nodes"]
+    assert [r["run_id"] for r in client.get("/api/runs").json()] == [run_id]
+
+    for fmt in ("graphml", "gexf", "nodes.csv", "edges.csv", "json"):
+        resp = client.get(f"/api/runs/{run_id}/export/{fmt}")
+        assert resp.status_code == 200, fmt
+        assert "attachment" in resp.headers["content-disposition"]
+    assert "<gexf" in client.get(f"/api/runs/{run_id}/export/gexf").text
+
+
+def test_rejects_bad_input(client):
+    assert client.post("/api/runs", json={"query": "  "}).status_code == 422
+    assert client.post("/api/runs", json={"query": "x", "types": []}).status_code == 422
+    assert client.get("/api/runs/..%2F..%2Fetc/status").status_code == 404
+    assert client.get("/api/nope").status_code == 404
+    assert client.get("/api/runs/20260101-000000-nope").status_code == 404
