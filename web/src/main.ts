@@ -123,6 +123,7 @@ async function startRun(query: string) {
   params.network.min_occurrences = Number(($("min-occ") as HTMLInputElement).value) || 1;
   params.network.max_per_type = Number(($("max-per-type") as HTMLInputElement).value) || 60;
   params.network.weighting = ($("weighting") as HTMLSelectElement).value;
+  params.network.author_counting = ($("author-counting") as HTMLSelectElement).value;
   params.cluster.resolution = Number(($("resolution") as HTMLInputElement).value) || 1;
 
   hideError();
@@ -540,6 +541,7 @@ function renderNode(el: HTMLElement, n: GraphNode) {
       <div><dt>Papers${years ? " in range" : ""}</dt><dd>${fmt(pmids.length)}</dd></div>
       <div><dt>Linked entities</dt><dd>${fmt(neighbors.length)}</dd></div>
       <div><dt>Layout stability</dt><dd>${n.stability.toFixed(2)}</dd></div>
+      ${n.credit != null ? `<div><dt title="Sum of 1/(number of authors) over this author's papers">Fractional credit</dt><dd>${n.credit.toFixed(1)}</dd></div>` : ""}
     </dl>
     ${n.stability < map.lowStability ? `<div class="banner note">This node's position changed between layout runs. Its links are reliable; its exact location is not.</div>` : ""}
     ${cluster ? `<p class="small">Cluster: <button type="button" class="link" data-goto-cluster="${cluster.id}">${esc(cluster.label)}</button></p>` : ""}

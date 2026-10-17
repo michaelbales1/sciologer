@@ -26,6 +26,8 @@ export interface GraphNode {
   agency?: string;
   /** Lowercased text that "Find on map" searches; defaults to the label. */
   search?: string;
+  /** Authors under fractional counting: sum of 1/(authors on the paper) over their papers. */
+  credit?: number;
   /** Text map only: how many of the paper's nearest papers by text are near it on the map. */
   neighbors_kept?: number;
 }

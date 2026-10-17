@@ -40,6 +40,15 @@
               </select>
             </label>
             <div class="field">
+              <label>Count authors
+                <select id="author-counting" aria-describedby="author-counting-hint">
+                  <option value="fractional">Fractionally (recommended)</option>
+                  <option value="full">In full</option>
+                </select>
+              </label>
+              <span class="hint" id="author-counting-hint">Fractionally: on a paper with A authors, each author gets 1/A credit, so large consortium papers don't crowd out regular collaborators.</span>
+            </div>
+            <div class="field">
               <label>Cluster resolution <input id="resolution" type="number" min="0.2" max="3" step="0.1" value="1" aria-describedby="resolution-hint" /></label>
               <span class="hint" id="resolution-hint">0.2–3; higher gives more, smaller clusters</span>
             </div>

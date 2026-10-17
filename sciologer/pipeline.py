@@ -189,12 +189,22 @@ def run_pipeline(
 
     # 4. Network
     report("Building network", 0.65)
-    g, net_summary = build_graph(table, params.network)
+    g, net_summary = build_graph(
+        table, params.network, authors_per_paper={p.pmid: len(p.authors) for p in papers}
+    )
     manifest.steps.append(
         Step(
             name="Network",
             detail=(
-                f"Linked entities that share a paper; kept up to {params.network.max_per_type} "
+                "Linked entities that share a paper"
+                + (
+                    " (authors counted fractionally: on a paper with A authors, each earns "
+                    "1/A credit and each author–author link counts 1/(A − 1); authors shown "
+                    "are those with the most credit)"
+                    if params.network.author_counting == "fractional"
+                    else ""
+                )
+                + f"; kept up to {params.network.max_per_type} "
                 f"per type seen on ≥{params.network.min_occurrences} papers; edge weight = "
                 + (
                     "log(1 + association strength), where association strength = "

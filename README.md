@@ -46,12 +46,18 @@ export NCBI_EMAIL=you@example.org
 | Retrieve | E-utilities `esearch` with the history server, then `efetch` in batches of 200, as XML | [`pubmed.py`](sciologer/pubmed.py) |
 | Parse | XML → papers with authors, ORCIDs, affiliations, MeSH (major/minor), substances, grants, keywords | [`parse.py`](sciologer/parse.py) |
 | Normalize | Matches name variants and logs every merge. Uncertain merges are flagged (see below) | [`normalize.py`](sciologer/normalize.py) |
-| Network | Links entities that share papers, keeping the most frequent per type. Weight = log(1 + association strength) | [`network.py`](sciologer/network.py) |
+| Network | Links entities that share papers, keeping the top entities per type. Authors are counted fractionally by default. Weight = log(1 + association strength) | [`network.py`](sciologer/network.py) |
 | Cluster | Louvain communities with a fixed seed. Each cluster is named by its most distinctive subject terms | [`cluster.py`](sciologer/cluster.py) |
 | Layout | ForceAtlas2 with LinLog attraction (the successor to CCVisu's LinLog), run with 5 seeds to score stability | [`layout.py`](sciologer/layout.py) |
 | Text map | Embeds each title + abstract, clusters papers in the full embedding space, names clusters by distinctive terms, projects with t-SNE (see below) | [`semantic.py`](sciologer/semantic.py) |
 
 Every run writes a **manifest** with the query, PubMed's interpretation of it, how many records matched and how many were fetched, all parameters, software versions, seeds and the full name-matching log. The app shows it under **How this map was made**. You can download it with the map as JSON, GEXF (for Gephi), GraphML (for Cytoscape) or CSV.
+
+### Counting authors
+
+By default, authors are counted **fractionally** (Perianes-Rodriguez, Waltman & van Eck 2016). On a paper with A authors, each author earns 1/A credit for it, and each author–author link counts 1/(A − 1) instead of 1. The authors shown are those with the most credit, among those on at least the minimum number of papers.
+
+Without this, a few large consortium papers (80+ authors) can fill the author slots and bind their authors into one block that dominates the map. On a test map of one researcher's 92 papers, full counting gave 55 of the 60 author slots to consortium members. Fractional counting gave 24, and the researcher's regular collaborators moved to the top. Ranking matters as much as links: association strength largely cancels fractional links on their own. To count every author in full, use **Options → Count authors → In full**. The author's credit is shown in the details panel.
 
 ### Two views: entities and papers by text
 
