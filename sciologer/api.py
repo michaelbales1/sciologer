@@ -29,6 +29,7 @@ def create_app(store: RunStore | None = None) -> FastAPI:
     jobs = JobManager(store)
     studies = StudyStore(store)
     app = FastAPI(title="Sciologer", version=__version__)
+    app.state.store = store
 
     def missing(run_id: str) -> HTTPException:
         return HTTPException(404, f"No run named {run_id}")
@@ -58,6 +59,29 @@ def create_app(store: RunStore | None = None) -> FastAPI:
     def run_status(run_id: str) -> JobStatus:
         try:
             return jobs.status(run_id)
+        except KeyError:
+            raise missing(run_id) from None
+
+    @app.get("/api/runs/{run_id}/geo/estimate")
+    def geo_estimate(run_id: str) -> dict:
+        """How many ROR lookups adding the geographic view needs, and roughly how long."""
+        try:
+            return jobs.geo_estimate(run_id)
+        except KeyError:
+            raise missing(run_id) from None
+
+    @app.post("/api/runs/{run_id}/geo", status_code=202)
+    def add_geo(run_id: str) -> JobStatus:
+        """Add the geographic view to a saved map, in the background."""
+        try:
+            return jobs.submit_geo(run_id)
+        except KeyError:
+            raise missing(run_id) from None
+
+    @app.get("/api/runs/{run_id}/geo/status")
+    def geo_status(run_id: str) -> JobStatus:
+        try:
+            return jobs.geo_status(run_id)
         except KeyError:
             raise missing(run_id) from None
 

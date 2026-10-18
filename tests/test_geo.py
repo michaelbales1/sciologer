@@ -5,7 +5,15 @@ from pathlib import Path
 
 import httpx
 
-from sciologer.geo import GeoParams, RORClient, build_geo_map, clean_affiliation
+from sciologer.geo import (
+    GeoParams,
+    RORClient,
+    build_geo_map,
+    clean_affiliation,
+    estimate,
+    pack_affiliations,
+    unpack_affiliations,
+)
 from sciologer.parse import parse_batches
 from sciologer.records import Author, Paper
 
@@ -102,3 +110,24 @@ def test_no_affiliations_skips_the_view():
     papers = [Paper(pmid="1", authors=[Author(last_name="Lee", fore_name="Ann")])]
     data, summary = build_geo_map(papers, GeoParams(), RORClient())
     assert data is None and "skipped" in summary
+
+
+def test_affiliations_round_trip_and_estimate(tmp_path):
+    papers = parse_batches([(FIXTURES / "neuroligins.xml").read_bytes()])
+    packed = pack_affiliations(papers)
+    assert len(packed["strings"]) == len(
+        {a for p in papers for x in p.authors for a in x.affiliations}
+    )
+    again = unpack_affiliations(packed)
+    assert [[x.affiliations for x in p.authors] for p in again] == [
+        [x.affiliations for x in p.authors] for p in papers
+    ]
+    # The geographic view built from saved affiliations matches one built from the records.
+    a, _ = build_geo_map(papers, GeoParams(), RORClient())
+    b, _ = build_geo_map(again, GeoParams(), RORClient())
+    assert a == b
+
+    client = RORClient(cache_dir=tmp_path)
+    est = estimate(papers, GeoParams(max_lookups=50), client)
+    assert est["planned"] == 50 and est["to_lookup"] == 50 and est["cached"] == 0
+    assert est["seconds"] > 0

@@ -5,9 +5,9 @@ import { esc, NetworkMap, truncate } from "./map";
 import { StudiesPage } from "./studies";
 import { Timeline } from "./timeline";
 import { buildCitationGraph, citationOverviewHtml, citationPaperDetailHtml } from "./citeview";
-import { buildGeoGraph, geoOverviewHtml, loadBasemap } from "./geoview";
+import { buildGeoGraph, emptyGeoGraph, geoOverviewHtml, geoSetupHtml, loadBasemap } from "./geoview";
 import { buildTextGraph, paperDetailHtml, paperTableHtml, textClusterHtml, textOverviewHtml } from "./textview";
-import type { Defaults, EntityType, Graph, GraphNode, LogEntry, MarkType, Run } from "./types";
+import type { Defaults, EntityType, GeoEstimate, Graph, GraphNode, JobStatus, LogEntry, MarkType, Run } from "./types";
 
 const $ = <T extends HTMLElement = HTMLElement>(id: string) => document.getElementById(id) as T;
 const fmt = (n: number) => n.toLocaleString();
@@ -56,9 +56,15 @@ const linkShare: Record<Mode, number> = { entities: 0.1, text: 0, citations: 0, 
 let paperSort: "year" | "title" | "cluster" | "rcr" = "year";
 const paperMode = () => mode === "text" || mode === "citations";
 const graphFor = (m: Mode): Graph | null =>
-  m === "text" ? textGraph : m === "citations" ? citeGraph : m === "geo" ? geoGraph : run?.graph ?? null;
+  m === "text"
+    ? textGraph
+    : m === "citations"
+      ? citeGraph
+      : m === "geo"
+        ? geoGraph ?? (run ? emptyGeoGraph(run) : null)
+        : run?.graph ?? null;
 /** Entity marks the list and search work on: the entity map's shown types, or the institutions on the world map. */
-const entityNodes = (): GraphNode[] => (mode === "geo" ? geoGraph!.nodes : run!.graph.nodes.filter((n) => shownTypes.has(n.type)));
+const entityNodes = (): GraphNode[] => (mode === "geo" ? geoGraph?.nodes ?? [] : run!.graph.nodes.filter((n) => shownTypes.has(n.type)));
 let years: [number, number] | null = null;
 let showAllPapers = false;
 let uncertainOnly = true;
@@ -135,6 +141,7 @@ async function startRun(query: string) {
   params.network.weighting = ($("weighting") as HTMLSelectElement).value;
   params.network.author_counting = ($("author-counting") as HTMLSelectElement).value;
   params.cluster.resolution = Number(($("resolution") as HTMLInputElement).value) || 1;
+  params.geo_map = ($("geo-map") as HTMLInputElement).checked;
 
   hideError();
   setProgress("Starting…", 0);
@@ -288,7 +295,7 @@ function setMode(next: Mode, selectId?: string) {
   const slider = $("link-share") as HTMLInputElement;
   slider.value = String(linkShare[next]);
   updateLinkLabel();
-  $("mode").hidden = !textGraph && !citeGraph && !geoGraph;
+  $("mode").hidden = false; // Geography can always be added
   if (next === "geo") {
     // World outlines load on first use: coarse first, then the finer ones for zooming in.
     loadBasemap("110m").then((b) => map.setBasemap("coarse", b));
@@ -325,8 +332,8 @@ function renderLegend() {
   if (!run) return;
   if (mode === "geo") {
     $("legend").innerHTML =
-      `<span class="legend-item static">${iconHtml("institution", 18)}<span>Institutions</span><span class="muted num">${geoGraph!.nodes.length}</span></span>` +
-      `<span class="legend-note small muted">Size: papers · placed with ROR</span>`;
+      `<span class="legend-item static">${iconHtml("institution", 18)}<span>Institutions</span><span class="muted num">${geoGraph?.nodes.length ?? "–"}</span></span>` +
+      `<span class="legend-note small muted">${geoGraph ? "Size: papers · placed with ROR" : "Not placed yet"}</span>`;
     return;
   }
   if (paperMode()) {
@@ -448,9 +455,79 @@ function renderDetails() {
   if (mode === "text") return renderText(el);
   if (mode === "citations") return renderCitations(el);
   if (selected) return renderNode(el, selected);
-  if (mode === "geo") return renderGeoOverview(el);
+  if (mode === "geo") return geoGraph ? renderGeoOverview(el) : renderGeoSetup(el);
   if (focusCluster !== null) return renderCluster(el, focusCluster);
   renderOverview(el);
+}
+
+// Adding the geographic view to a saved map: estimate, then a background job.
+let geoEstimate: { runId: string; est: GeoEstimate | null; error: string | null } | null = null;
+let geoJob: { runId: string; status: JobStatus } | null = null;
+
+function renderGeoSetup(el: HTMLElement) {
+  const id = run!.manifest.run_id;
+  const est = geoEstimate?.runId === id ? geoEstimate : null;
+  const job = geoJob?.runId === id ? geoJob.status : null;
+  el.innerHTML = geoSetupHtml(run!, est?.est ?? null, job, est?.error ?? null);
+  el.querySelector("#add-geo")?.addEventListener("click", () => addGeography(id));
+  if (!est && !job) {
+    geoEstimate = { runId: id, est: null, error: null };
+    loadGeoEstimate(id);
+  }
+}
+
+async function loadGeoEstimate(id: string): Promise<void> {
+  try {
+    // A job may already be running for this map (started before a reload).
+    const s = await api.geoStatus(id);
+    if (s && (s.state === "queued" || s.state === "running")) {
+      pollGeography(id, s);
+      return;
+    }
+    geoEstimate = { runId: id, est: await api.geoEstimate(id), error: null };
+  } catch (err) {
+    geoEstimate = { runId: id, est: null, error: err instanceof Error ? err.message : String(err) };
+  }
+  if (mode === "geo" && run?.manifest.run_id === id && !geoGraph) renderDetails();
+}
+
+async function addGeography(id: string) {
+  try {
+    pollGeography(id, await api.addGeo(id));
+  } catch (err) {
+    geoEstimate = { runId: id, est: geoEstimate?.est ?? null, error: String(err instanceof Error ? err.message : err) };
+    renderDetails();
+  }
+}
+
+async function pollGeography(id: string, status: JobStatus) {
+  geoJob = { runId: id, status };
+  const here = () => run?.manifest.run_id === id;
+  const show = () => {
+    if (here() && mode === "geo" && !geoGraph) renderDetails();
+  };
+  show();
+  while (geoJob.status.state === "queued" || geoJob.status.state === "running") {
+    await new Promise((r) => setTimeout(r, 800));
+    const s = await api.geoStatus(id).catch(() => null);
+    if (s) geoJob = { runId: id, status: s };
+    show();
+  }
+  const final = geoJob.status;
+  geoJob = null;
+  if (final.state === "error") {
+    geoEstimate = { runId: id, est: geoEstimate?.est ?? null, error: `Couldn't add the geographic view: ${final.error ?? "unknown error"}` };
+    show();
+    return;
+  }
+  if (!here()) return;
+  const fresh = await api.run(id);
+  if (!here()) return;
+  run!.geo = fresh.geo;
+  run!.manifest = fresh.manifest;
+  geoGraph = buildGeoGraph(run!);
+  renderMethod();
+  if (mode === "geo") setMode("geo");
 }
 
 function renderGeoOverview(el: HTMLElement) {
