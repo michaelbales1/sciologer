@@ -12,6 +12,7 @@ from .export import FORMATS, export
 from .pipeline import DEFAULT_TYPES, RunParams
 from .records import EntityType
 from .runs import JobManager, JobStatus, RunStore, RunSummary
+from .study import StudyStore
 
 STATIC = Path(__file__).parent / "static"
 
@@ -26,6 +27,7 @@ _NOT_BUILT = """<!doctype html><meta charset="utf-8"><title>Sciologer</title>
 def create_app(store: RunStore | None = None) -> FastAPI:
     store = store or RunStore()
     jobs = JobManager(store)
+    studies = StudyStore(store)
     app = FastAPI(title="Sciologer", version=__version__)
 
     def missing(run_id: str) -> HTTPException:
@@ -92,6 +94,31 @@ def create_app(store: RunStore | None = None) -> FastAPI:
             body,
             media_type=media,
             headers={"Content-Disposition": f'attachment; filename="sciologer-{run_id}.{ext}"'},
+        )
+
+    @app.get("/api/studies")
+    def list_studies() -> list[dict]:
+        return studies.list()
+
+    @app.get("/api/studies/{study_id}")
+    def get_study(study_id: str) -> dict:
+        try:
+            return studies.status(study_id)
+        except KeyError:
+            raise HTTPException(404, f"No study named {study_id}") from None
+
+    @app.get("/api/studies/{study_id}/metrics.csv")
+    def study_csv(study_id: str) -> Response:
+        try:
+            f = studies.path(study_id) / "metrics.csv"
+        except KeyError:
+            f = None
+        if f is None or not f.exists():
+            raise HTTPException(404, f"No study named {study_id}")
+        return Response(
+            f.read_text(),
+            media_type="text/csv",
+            headers={"Content-Disposition": f'attachment; filename="{study_id}-metrics.csv"'},
         )
 
     @app.get("/{path:path}", include_in_schema=False)

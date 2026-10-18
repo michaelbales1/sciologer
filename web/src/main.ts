@@ -2,6 +2,7 @@ import "./style.css";
 import { api } from "./api";
 import { iconHtml, TYPE_ORDER, TYPE_STYLES } from "./encoding";
 import { esc, NetworkMap, truncate } from "./map";
+import { StudiesPage } from "./studies";
 import { Timeline } from "./timeline";
 import { buildCitationGraph, citationOverviewHtml, citationPaperDetailHtml } from "./citeview";
 import { buildTextGraph, paperDetailHtml, paperTableHtml, textClusterHtml, textOverviewHtml } from "./textview";
@@ -775,6 +776,27 @@ window.addEventListener("hashchange", () => {
     loadRun(id).catch((err) => showError(String(err)));
   }
 });
+
+// --- studies page ---------------------------------------------------------------
+
+const studiesPage = new StudiesPage((runId) => {
+  showStudies(false);
+  loadRun(runId).catch((err) => showError(String(err)));
+});
+
+function showStudies(on: boolean) {
+  $("studies-page").hidden = !on;
+  document.querySelector<HTMLElement>(".layout")!.hidden = on;
+  $("studies-toggle").setAttribute("aria-pressed", String(on));
+  if (on) studiesPage.show().catch((err) => showError(String(err)));
+  else {
+    studiesPage.hide();
+    map.requestDraw();
+  }
+}
+$("studies-toggle").addEventListener("click", () =>
+  showStudies($("studies-toggle").getAttribute("aria-pressed") !== "true"),
+);
 
 (async () => {
   renderDetails();

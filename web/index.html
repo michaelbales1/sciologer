@@ -60,6 +60,7 @@
         <span class="sr-only">Saved maps</span>
         <select id="runs"><option value="">Saved maps</option></select>
       </label>
+      <button id="studies-toggle" class="ghost" type="button" aria-pressed="false" title="Compare the queries of a batch study">Studies</button>
       <button id="theme" class="ghost" type="button" aria-label="Switch theme" title="Switch theme">◐</button>
     </header>
 
@@ -126,6 +127,19 @@
         <div id="panel-method" role="tabpanel" aria-labelledby="tab-method" class="panel" hidden></div>
       </aside>
     </main>
+
+    <section id="studies-page" class="studies-page" aria-label="Studies" hidden>
+      <div class="studies-inner">
+        <div class="studies-head">
+          <label class="studies-picker">
+            <span class="sr-only">Study</span>
+            <select id="study-select"></select>
+          </label>
+          <a id="study-csv" class="ghost-link small" href="#" download>Download comparison (CSV)</a>
+        </div>
+        <div id="study-body"></div>
+      </div>
+    </section>
     <script type="module" src="/src/main.ts"></script>
   </body>
 </html>

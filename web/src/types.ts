@@ -183,3 +183,37 @@ export interface Defaults {
   default_types: EntityType[];
   version: string;
 }
+
+export interface StudySummary {
+  id: string;
+  name: string;
+  queries: number;
+  done: number;
+  failed: number;
+  updated_at: string | null;
+}
+
+export interface StudyQueryStatus {
+  label: string;
+  query: string;
+  state: "pending" | "running" | "done" | "error";
+  run_id?: string;
+  error?: string | null;
+  pubmed_count?: number;
+  retrieved?: number;
+  sampled_from?: number;
+  retrieved_at?: string;
+  finished_at?: string;
+  metrics?: Record<string, number | null>;
+  warnings?: string[];
+}
+
+export interface StudyStatus {
+  id: string;
+  name: string;
+  description: string | null;
+  settings: Record<string, any>;
+  metric_info: Record<string, { label: string; description: string }>;
+  queries: StudyQueryStatus[];
+  updated_at?: string;
+}
