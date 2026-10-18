@@ -14,6 +14,7 @@ dependencies = [
     "model2vec>=0.10.0",
     "networkx>=3.4",
     "numpy>=2.0",
+    "pycountry>=26.2.16",
     "pydantic>=2.9",
     "pyyaml>=6.0.3",
     "scikit-learn>=1.9.1",

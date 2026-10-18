@@ -17,6 +17,7 @@ FORMATS = {
     "json": ("application/json", "json"),
     "text.csv": ("text/csv", "text-map.csv"),
     "citations.csv": ("text/csv", "citation-map.csv"),
+    "geo.csv": ("text/csv", "institutions.csv"),
 }
 
 _NODE_FIELDS = ["id", "label", "type", "count", "cluster", "x", "y", "stability"]
@@ -50,6 +51,7 @@ def export(
     text: dict | None = None,
     papers: dict | None = None,
     citations: dict | None = None,
+    geo: dict | None = None,
 ) -> str:
     if fmt == "graphml":
         return "\n".join(nx.generate_graphml(to_networkx(graph)))
@@ -80,6 +82,31 @@ def export(
         return json.dumps(
             {"manifest": manifest, "graph": graph, "text_map": text, "citation_map": citations},
             indent=2,
+        )
+    if fmt == "geo.csv":
+        if not geo:
+            raise KeyError(fmt)
+        header = ["ror_id", "name", "city", "region", "country", "lat", "lng", "papers", "pmids"]
+        header.append("affiliations_matched")
+        return _csv(
+            iter(
+                [header]
+                + [
+                    [
+                        n["id"],
+                        n["label"],
+                        n["city"] or "",
+                        n["region"] or "",
+                        n["country"] or "",
+                        n["lat"],
+                        n["lng"],
+                        n["count"],
+                        "; ".join(n["pmids"]),
+                        " | ".join(n["variants"]),
+                    ]
+                    for n in geo["institutions"]
+                ]
+            )
         )
     if fmt == "citations.csv":
         if not citations:

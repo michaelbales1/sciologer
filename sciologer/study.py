@@ -5,7 +5,7 @@ A study is a YAML file:
     name: Editorial policy and collaboration, 2021-2026
     settings:
       types: [author, institution]
-      views: [entities, text, citations]
+      views: [entities, text, citations]   # add geography for the world map
       max_records: all          # or a number; "all" splits >10,000 by date
       sample: 2000              # optional: random sample when a set is larger
     queries:
@@ -38,6 +38,7 @@ import yaml
 from pydantic import BaseModel, Field, field_validator, model_validator
 
 from .citations import ICiteClient
+from .geo import RORClient
 from .metrics import METRIC_INFO, MetricParams, collaboration_metrics
 from .parse import parse_batches
 from .pipeline import DEFAULT_TYPES, RunParams, run_pipeline
@@ -45,7 +46,7 @@ from .pubmed import PubMedClient, SearchResult
 from .records import EntityType
 from .runs import RunStore, new_run_id
 
-View = Literal["entities", "text", "citations"]
+View = Literal["entities", "text", "citations", "geography"]
 # Sets bigger than this need an explicit sample size or allow_large: true.
 LARGE_SET = 20_000
 
@@ -213,6 +214,7 @@ def run_study(
     own_pubmed, own_icite = pubmed is None, icite is None
     pubmed = pubmed or PubMedClient(cache_dir=store.runs.cache_dir)
     icite = icite or ICiteClient(cache_dir=store.runs.cache_dir)
+    ror = RORClient(cache_dir=store.runs.cache_dir)
     s = study.settings
     try:
         for i, entry in enumerate(status["queries"], 1):
@@ -234,11 +236,14 @@ def run_study(
                         "types": [t.value for t in s.types],
                         "text_map": "text" in s.views,
                         "citation_map": "citations" in s.views,
+                        "geo_map": "geography" in s.views,
                         "retrieve_all": s.max_records == "all",
                     }
                 )
                 run_id = new_run_id(f"{study.id}-{label}")
-                out = run_pipeline(params, run_id, search_result=sr, icite_client=icite)
+                out = run_pipeline(
+                    params, run_id, search_result=sr, icite_client=icite, ror_client=ror
+                )
                 out.manifest.study = {"id": study.id, "name": study.name, "label": label}
                 store.runs.save(out)
                 papers = parse_batches(sr.xml_batches)
@@ -260,6 +265,7 @@ def run_study(
             pubmed.close()
         if own_icite:
             icite.close()
+        ror.close()
     save()
     return status
 

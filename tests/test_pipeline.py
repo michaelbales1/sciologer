@@ -186,7 +186,9 @@ def test_pipeline_end_to_end_from_fixture():
         "Network",
         "Cluster",
         "Layout",
+        "Geography",
     ]
+    assert out.geo and out.geo["institutions"]
     assert m.pubmed_count == 1294 and m.fetched == 80 and m.parsed == 80
     assert any("first 80" in w for w in m.warnings)
     node_ids = {n["id"] for n in out.graph["nodes"]}

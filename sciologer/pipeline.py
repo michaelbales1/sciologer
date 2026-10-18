@@ -9,6 +9,7 @@ from pydantic import BaseModel, Field
 
 from .citations import CitationParams, ICiteClient, build_citation_map
 from .cluster import ClusterParams, detect_clusters
+from .geo import GeoParams, RORClient, build_geo_map
 from .layout import LayoutParams, compute_layout
 from .network import NetworkParams, build_graph
 from .normalize import build_entities
@@ -43,6 +44,8 @@ class RunParams(BaseModel):
     semantic: SemanticParams = Field(default_factory=SemanticParams)
     citation_map: bool = True
     citations: CitationParams = Field(default_factory=CitationParams)
+    geo_map: bool = True
+    geo: GeoParams = Field(default_factory=GeoParams)
 
 
 class RunOutput(BaseModel):
@@ -51,6 +54,7 @@ class RunOutput(BaseModel):
     papers: dict[str, dict]
     text: dict | None = None
     citations: dict | None = None
+    geo: dict | None = None
 
 
 def _papers_json(papers: list[Paper]) -> dict[str, dict]:
@@ -100,6 +104,7 @@ def run_pipeline(
     embed: Embedder | None = None,
     icite_client: ICiteClient | None = None,
     icite_records: dict[str, dict] | None = None,
+    ror_client: RORClient | None = None,
 ) -> RunOutput:
     """Run every step. Pass `search_result` to skip the network fetch (tests, re-runs)."""
     report = progress or (lambda _msg, _frac: None)
@@ -383,6 +388,47 @@ def run_pipeline(
                     )
                 )
 
+    # 9. Geography (institutions from affiliations, placed with the ROR registry)
+    geo = None
+    if params.geo_map:
+        report("Locating institutions with ROR", 0.96)
+        own_ror = ror_client is None
+        rc = ror_client or RORClient()
+        try:
+            geo, geo_summary = build_geo_map(
+                papers, params.geo, rc, progress=lambda msg: report(msg, 0.97)
+            )
+        except Exception as exc:  # noqa: BLE001 - the other views are still useful
+            manifest.warnings.append(f"Geographic view skipped: couldn't reach ROR ({exc}).")
+            geo_summary = None
+        finally:
+            if own_ror:
+                rc.close()
+        if geo_summary and "skipped" in geo_summary:
+            manifest.warnings.append(f"Geographic view skipped: {geo_summary['skipped'].lower()}.")
+            geo = None
+        elif geo_summary:
+            gp = params.geo
+            manifest.steps.append(
+                Step(
+                    name="Geography",
+                    detail=(
+                        "Each distinct affiliation (without emails or URLs) was matched with "
+                        "the Research Organization Registry's affiliation service (ROR, "
+                        "ror.org); only matches ROR marks as chosen (confident) are placed, "
+                        f"at the city ROR records. Most frequent affiliations first, up to "
+                        f"{gp.max_lookups:,}. Institutions are linked when they share a paper; "
+                        f"the {gp.max_institutions} with the most papers are drawn."
+                    ),
+                    counts=geo_summary,
+                )
+            )
+            if geo_summary["not_looked_up"]:
+                manifest.warnings.append(
+                    f"Geographic view: {geo_summary['not_looked_up']:,} rarer affiliations "
+                    f"weren't looked up (limit {gp.max_lookups:,} per map)."
+                )
+
     report("Done", 1.0)
     return RunOutput(
         manifest=manifest,
@@ -390,4 +436,5 @@ def run_pipeline(
         papers=_papers_json(papers),
         text=text,
         citations=citations,
+        geo=geo,
     )

@@ -19,6 +19,7 @@ from pathlib import Path
 from pydantic import BaseModel
 
 from .citations import ICiteClient
+from .geo import RORClient
 from .pipeline import RunOutput, RunParams, run_pipeline
 from .pubmed import PubMedClient
 
@@ -65,6 +66,8 @@ class RunStore:
             (d / "text.json").write_text(json.dumps(out.text))
         if out.citations is not None:
             (d / "citations.json").write_text(json.dumps(out.citations))
+        if out.geo is not None:
+            (d / "geo.json").write_text(json.dumps(out.geo))
         return d
 
     def load_optional(self, run_id: str, name: str) -> dict | None:
@@ -142,10 +145,16 @@ class JobManager:
 
         client = PubMedClient(cache_dir=self.store.cache_dir)
         icite = ICiteClient(cache_dir=self.store.cache_dir)
+        ror = RORClient(cache_dir=self.store.cache_dir)
         try:
             report("Starting", 0.0)
             out = run_pipeline(
-                params, status.run_id, client=client, progress=report, icite_client=icite
+                params,
+                status.run_id,
+                client=client,
+                progress=report,
+                icite_client=icite,
+                ror_client=ror,
             )
             self.store.save(out)
             with self._lock:
@@ -158,3 +167,4 @@ class JobManager:
         finally:
             client.close()
             icite.close()
+            ror.close()
