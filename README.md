@@ -98,6 +98,41 @@ The views link to each other: a paper lists its entities, and any paper list lin
 - **Grants** are keyed by NIH project number. `R01 MH067947`, `5R01MH067947-02` and `R01-MH067947` count as one grant. An F32 and a K01 with the same serial number stay separate, since they're different awards.
 - **MeSH check tags** (Humans, Male, Mice…) are left out by default because they link nearly every paper. **Substances** that are also indexed as MeSH terms are shown once.
 
+## Batch studies
+
+A **study** runs a list of PubMed queries with identical settings, such as journals over the same years, departments, universities or authors in a field, and compares their collaboration networks. Start one from Terminal and come back later:
+
+```bash
+caffeinate -i uv run sciologer batch examples/informatics-journals-2021-2026.yaml
+```
+
+`caffeinate -i` keeps a Mac awake while it runs. Then open the app and choose **Studies**, or open `~/.sciologer/studies/<study>/metrics.csv` in a spreadsheet or R.
+
+A study file lists shared settings and the queries. See [`examples/informatics-journals-2021-2026.yaml`](examples/informatics-journals-2021-2026.yaml):
+
+```yaml
+name: Informatics journals 2021-2026
+settings:
+  types: [author, institution, mesh]
+  views: [entities, text, citations]
+  max_records: all            # every matching paper
+  # sample: 2000              # or a seeded random sample for very large sets
+queries:
+  - {label: JBI,   query: '"J Biomed Inform"[TA] AND 2021:2026[DP]'}
+  - {label: JAMIA, query: '"J Am Med Inform Assoc"[TA] AND 2021:2026[DP]'}
+```
+
+What a batch does, for each query:
+- **Retrieves the complete set**, not PubMed's first N. Sets over 10,000 papers (PubMed's limit per search) are split by publication date and recombined. Sets over 20,000 need either `sample:`, a reproducible random sample, or `allow_large: true`.
+- **Freezes the PMIDs** in `pmids/<label>.txt`, so rerunning the study later reproduces the same sets even as PubMed grows. Use `--refresh` to search again.
+- **Builds the maps**, saved as ordinary runs that you can open from the Studies page.
+- **Computes collaboration measures** on the complete co-authorship network: every author after name matching, not just those drawn on the map. The measures are team size, single-author and 10+ author shares, multi-institution share, density, components and the largest component's share, clustering, transitivity, Leiden modularity, mean path length, degree assortativity and repeat collaboration. Each is defined on the Studies page. Papers with more than 100 authors are left out of the network measures (and counted), as is common in co-authorship studies.
+- **Saves progress after every query.** Rerunning the same command resumes; a failed query is recorded, and the rest continue.
+
+When comparing sets, keep in mind that density falls as networks grow, and that path length is measured within each set's largest connected group. The Studies page notes these caveats beside the measures.
+
+Commands: `sciologer batch FILE [--refresh] [--only LABEL]` and `sciologer studies`.
+
 ## Visual design
 
 The map follows principles from the information-visualization literature and from the [2026 *Bibliometric Visualization Update*](#background) that motivated this rewrite.

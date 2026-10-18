@@ -1,4 +1,4 @@
-import type { Defaults, JobStatus, Run, RunSummary } from "./types";
+import type { Defaults, JobStatus, Run, RunSummary, StudyStatus, StudySummary } from "./types";
 
 async function json<T>(resp: Response): Promise<T> {
   if (!resp.ok) {
@@ -22,6 +22,9 @@ async function json<T>(resp: Response): Promise<T> {
 export const api = {
   defaults: () => fetch("/api/defaults").then((r) => json<Defaults>(r)),
   runs: () => fetch("/api/runs").then((r) => json<RunSummary[]>(r)),
+  studies: () => fetch("/api/studies").then((r) => json<StudySummary[]>(r)),
+  study: (id: string) => fetch(`/api/studies/${encodeURIComponent(id)}`).then((r) => json<StudyStatus>(r)),
+  studyCsvUrl: (id: string) => `/api/studies/${encodeURIComponent(id)}/metrics.csv`,
   run: (id: string) => fetch(`/api/runs/${encodeURIComponent(id)}`).then((r) => json<Run>(r)),
   status: (id: string) =>
     fetch(`/api/runs/${encodeURIComponent(id)}/status`).then((r) => json<JobStatus>(r)),
