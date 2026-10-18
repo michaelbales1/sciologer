@@ -15,6 +15,7 @@ import hashlib
 import json
 import os
 import random
+import re
 import threading
 import time
 from collections.abc import Callable
@@ -29,6 +30,8 @@ EUTILS = "https://eutils.ncbi.nlm.nih.gov/entrez/eutils"
 TOOL = "sciologer"
 BATCH_SIZE = 200
 MAX_ATTEMPTS = 6
+# PubMed's esearch returns at most 10,000 PMIDs per query; bigger sets are split by date.
+SEARCH_LIMIT = 9_999
 
 
 class RateLimitError(RuntimeError):
@@ -81,6 +84,10 @@ class SearchResult:
     from_cache: bool = False
     retries: int = 0
     retrieved_at: str | None = None
+    # Date ranges a large query was split into: [{"range": "2021/01:2021/12", "count": n}]
+    parts: list[dict] = field(default_factory=list)
+    # Set when pmids are a random sample of a larger set of this many matches.
+    sampled_from: int | None = None
 
 
 class PubMedClient:
@@ -213,6 +220,134 @@ class PubMedClient:
             )
             if progress:
                 progress(min(start + BATCH_SIZE, total), total)
+        result.retries = self.retries - start_retries
+        self._save_cache(cache_path, result)
+        return result
+
+    def count(self, query: str) -> tuple[int, str | None]:
+        """Number of PubMed matches for a query (one request, no records)."""
+        root = etree.fromstring(self._post("esearch.fcgi", term=query, retmax=0))
+        error = root.findtext("ERROR")
+        if error:
+            raise ValueError(f"PubMed rejected the query: {error}")
+        return int(root.findtext("Count") or 0), root.findtext("QueryTranslation")
+
+    def search_all(
+        self,
+        query: str,
+        progress: Callable[[int, int], None] | None = None,
+        use_cache: bool = True,
+    ) -> SearchResult:
+        """Fetch every record a query matches.
+
+        PubMed returns at most 10,000 records per search, so larger sets are split into
+        publication-date ranges (by year, then by month) that each fit, fetched
+        separately and combined without duplicates. If a single month still has more
+        than 10,000 records, that month is truncated and recorded in `parts`.
+        """
+        total, translation = self.count(query)
+        ranges = self._ranges(query)
+        if len(ranges) <= 1:
+            result = self.search(
+                query, max_records=max(total, 1), progress=progress, use_cache=use_cache
+            )
+            result.parts = [{"range": "all", "count": total}]
+            return result
+
+        combined = SearchResult(
+            query=query,
+            count=total,
+            pmids=[],
+            query_translation=translation,
+            retrieved_at=datetime.now(UTC).isoformat(),
+            from_cache=True,
+        )
+        seen: set[str] = set()
+        done = 0
+        for q, n in ranges:
+            part = self.search(
+                q,
+                max_records=min(n, SEARCH_LIMIT),
+                progress=(lambda d, _t, base=done: progress(min(base + d, total), total))
+                if progress
+                else None,
+                use_cache=use_cache,
+            )
+            done += len(part.pmids)
+            combined.xml_batches.extend(part.xml_batches)
+            combined.pmids.extend(p for p in part.pmids if p not in seen)
+            seen.update(part.pmids)
+            combined.from_cache = combined.from_cache and part.from_cache
+            combined.retries += part.retries
+            m = re.search(r"\(([\d/]+:[\d/]+)\[dp\]\)$", q)
+            combined.parts.append(
+                {"range": m.group(1) if m else q, "count": n, "truncated": n > SEARCH_LIMIT}
+            )
+        return combined
+
+    def _ranges(self, query: str, first_year: int = 1800) -> list[tuple[str, int]]:
+        """Split a query into publication-date ranges of at most SEARCH_LIMIT matches.
+        Returns [(range_query, count)]; a lone month over the limit is kept as is."""
+        total, _ = self.count(query)
+        if total <= SEARCH_LIMIT:
+            return [(query, total)] if total else []
+
+        def fmt(m: int) -> str:
+            return f"{m // 12}/{m % 12 + 1:02d}"
+
+        out: list[tuple[str, int]] = []
+
+        def split(lo: int, hi: int) -> None:
+            q = f"({query}) AND ({fmt(lo)}:{fmt(hi)}[dp])"
+            n, _ = self.count(q)
+            if n == 0:
+                return
+            if n <= SEARCH_LIMIT or lo == hi:
+                out.append((q, n))
+                return
+            mid = ((lo // 12 + hi // 12) // 2) * 12 + 11 if hi - lo >= 12 else (lo + hi) // 2
+            mid = min(max(mid, lo), hi - 1)
+            split(lo, mid)
+            split(mid + 1, hi)
+
+        split(first_year * 12, (datetime.now(UTC).year + 1) * 12 + 11)
+        return out
+
+    def ids_all(self, query: str) -> tuple[list[str], int, str | None]:
+        """Every PMID a query matches (IDs only, no records): (pmids, count, translation)."""
+        total, translation = self.count(query)
+        seen: dict[str, None] = {}
+        for q, n in self._ranges(query):
+            root = etree.fromstring(self._post("esearch.fcgi", term=q, retmax=min(n, SEARCH_LIMIT)))
+            for e in root.findall("IdList/Id"):
+                if e.text:
+                    seen[e.text] = None
+        return list(seen), total, translation
+
+    def fetch_ids(
+        self,
+        pmids: list[str],
+        progress: Callable[[int, int], None] | None = None,
+        use_cache: bool = True,
+    ) -> SearchResult:
+        """Fetch full records for a fixed list of PMIDs (frozen sets, random samples)."""
+        key = "ids:" + hashlib.sha256(",".join(pmids).encode()).hexdigest()
+        cache_path = self._cache_path(key, len(pmids))
+        if use_cache and (cached := self._load_cache(cache_path)):
+            return cached
+        start_retries = self.retries
+        result = SearchResult(
+            query=f"{len(pmids)} PMIDs",
+            count=len(pmids),
+            pmids=list(pmids),
+            query_translation=None,
+            retrieved_at=datetime.now(UTC).isoformat(),
+        )
+        for start in range(0, len(pmids), BATCH_SIZE):
+            chunk = pmids[start : start + BATCH_SIZE]
+            result.xml_batches.append(self._post("efetch.fcgi", id=",".join(chunk), retmode="xml"))
+            if progress:
+                progress(min(start + BATCH_SIZE, len(pmids)), len(pmids))
         result.retries = self.retries - start_retries
         self._save_cache(cache_path, result)
         return result

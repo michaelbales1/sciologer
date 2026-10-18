@@ -364,9 +364,15 @@ def _best_layout(g: nx.Graph, label_of: dict[str, int], p: CitationParams) -> di
     w = np.zeros((len(nodes), len(nodes)))
     for a, b, e in g.edges(data=True):
         w[index[a], index[b]] = w[index[b], index[a]] = e["weight"]
-    emb = SpectralEmbedding(
-        n_components=min(30, len(nodes) - 2), affinity="precomputed", random_state=p.seed
-    ).fit_transform(w)
+    # Disconnected pieces are fine here (each lands in its own region); silence
+    # scikit-learn's warning about them.
+    import warnings
+
+    with warnings.catch_warnings():
+        warnings.filterwarnings("ignore", message="Graph is not fully connected")
+        emb = SpectralEmbedding(
+            n_components=min(30, len(nodes) - 2), affinity="precomputed", random_state=p.seed
+        ).fit_transform(w)
     perplexity = float(min(30.0, (len(nodes) - 1) / 3))
     runs = []
     for i in range(3):

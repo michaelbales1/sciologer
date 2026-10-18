@@ -30,6 +30,9 @@ Progress = Callable[[str, float], None]
 class RunParams(BaseModel):
     query: str
     max_records: int = Field(500, ge=1, le=10_000)
+    # Fetch every matching record instead of the first max_records (used by batch
+    # studies, where comparisons need complete sets, not PubMed's first N).
+    retrieve_all: bool = False
     types: list[EntityType] = Field(default_factory=lambda: list(DEFAULT_TYPES))
     mesh_major_only: bool = False
     exclude_check_tags: bool = True
@@ -111,14 +114,17 @@ def run_pipeline(
         own_client = client is None
         client = client or PubMedClient()
         report("Searching PubMed", 0.02)
+
+        def fetched(done: int, total: int) -> None:
+            report(f"Fetching records {done:,} of {total:,}", 0.05 + 0.45 * done / max(total, 1))
+
         try:
-            search_result = client.search(
-                params.query,
-                max_records=params.max_records,
-                progress=lambda done, total: report(
-                    f"Fetching records {done:,} of {total:,}", 0.05 + 0.45 * done / total
-                ),
-            )
+            if params.retrieve_all:
+                search_result = client.search_all(params.query, progress=fetched)
+            else:
+                search_result = client.search(
+                    params.query, max_records=params.max_records, progress=fetched
+                )
         finally:
             if own_client:
                 client.close()
@@ -135,20 +141,47 @@ def run_pipeline(
                 "Loaded from local cache of an earlier identical query"
                 if search_result.from_cache
                 else "Queried PubMed and fetched full records"
+            )
+            + (
+                f"; all matching records, split into {len(search_result.parts)} publication-"
+                "date ranges because PubMed returns at most 10,000 per search"
+                if len(search_result.parts) > 1
+                else "; all matching records"
+                if params.retrieve_all
+                else ""
             ),
             counts={
                 "pubmed_matches": search_result.count,
                 "fetched": manifest.fetched,
                 "retries_after_rate_limit": search_result.retries,
+                **({"date_ranges": search_result.parts} if len(search_result.parts) > 1 else {}),
             },
         )
     )
-    if search_result.count > manifest.fetched:
+    if search_result.sampled_from:
         manifest.warnings.append(
-            f"PubMed found {search_result.count:,} records; this map uses the first "
-            f"{manifest.fetched:,} in PubMed's default order. Narrow the query or raise "
-            "the record limit to cover more."
+            f"This map uses a random sample of {manifest.fetched:,} of the "
+            f"{search_result.sampled_from:,} papers PubMed found."
         )
+    elif search_result.count > manifest.fetched:
+        if params.retrieve_all:
+            truncated = [p["range"] for p in search_result.parts if p.get("truncated")]
+            manifest.warnings.append(
+                f"PubMed reported {search_result.count:,} matches but {manifest.fetched:,} "
+                "were retrieved"
+                + (
+                    f"; these months had more than 10,000 records and were cut off: "
+                    f"{', '.join(truncated)}."
+                    if truncated
+                    else " (PubMed's count and its date ranges can differ slightly)."
+                )
+            )
+        else:
+            manifest.warnings.append(
+                f"PubMed found {search_result.count:,} records; this map uses the first "
+                f"{manifest.fetched:,} in PubMed's default order. Narrow the query or raise "
+                "the record limit to cover more."
+            )
 
     # 2. Parse
     report("Parsing records", 0.55)

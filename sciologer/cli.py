@@ -4,6 +4,7 @@ from __future__ import annotations
 
 import threading
 import webbrowser
+from pathlib import Path
 from typing import Annotated
 
 import typer
@@ -85,3 +86,56 @@ def list_runs() -> None:
     """List saved runs."""
     for r in RunStore().list():
         typer.echo(f"{r.run_id}  {r.papers:>5} papers  {r.nodes:>4} nodes  {r.query}")
+
+
+@app.command()
+def batch(
+    study_file: Annotated[Path, typer.Argument(help="Study file (YAML) listing the queries")],
+    refresh: Annotated[
+        bool, typer.Option(help="Search PubMed again instead of reusing frozen PMID lists")
+    ] = False,
+    only: Annotated[
+        list[str] | None, typer.Option("--only", help="Run just this query label (repeatable)")
+    ] = None,
+) -> None:
+    """Run every query in a study file, then write a comparison table.
+
+    Progress is saved after each query: run the same command again to resume.
+    On a Mac, prefix it with `caffeinate -i` to keep the computer awake.
+    """
+    from .study import StudyStore, load_study, run_study
+
+    try:
+        study = load_study(study_file)
+    except Exception as exc:  # noqa: BLE001 - show the file problem plainly
+        typer.secho(f"Can't read {study_file}: {exc}", fg="red", err=True)
+        raise typer.Exit(1) from None
+    store = StudyStore(RunStore())
+    status = run_study(
+        study,
+        store,
+        source_text=study_file.read_text(),
+        refresh=refresh,
+        only=only,
+        log=lambda msg: typer.echo(msg, err=True),
+    )
+    qs = status["queries"]
+    done = sum(1 for q in qs if q["state"] == "done")
+    failed = [q["label"] for q in qs if q["state"] == "error"]
+    folder = store.path(study.id)
+    typer.echo(f"\n{done} of {len(qs)} queries done. Comparison table: {folder / 'metrics.csv'}")
+    if failed:
+        typer.secho(
+            f"Failed: {', '.join(failed)}. Run the command again to retry them.", fg="yellow"
+        )
+    typer.echo("Open the app (sciologer serve) and choose Studies to compare them.")
+
+
+@app.command()
+def studies() -> None:
+    """List batch studies."""
+    from .study import StudyStore
+
+    for st in StudyStore(RunStore()).list():
+        failed = f", {st['failed']} failed" if st["failed"] else ""
+        typer.echo(f"{st['id']}  {st['done']}/{st['queries']} done{failed}  {st['name']}")

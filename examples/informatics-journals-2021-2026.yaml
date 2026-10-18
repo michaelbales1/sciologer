@@ -1,0 +1,33 @@
+# Example batch study: collaboration in informatics journals, 2021–2026.
+# Run with:  uv run sciologer batch examples/informatics-journals-2021-2026.yaml
+# Results: ~/.sciologer/studies/<study id>/metrics.csv, and Studies in the app.
+
+name: Informatics journals 2021-2026
+description: >
+  Compare co-authorship structure across biomedical informatics journals
+  over the same publication window.
+
+settings:
+  # Entity types for each query's entity map. Collaboration measures always use
+  # every author and institution, regardless of this list.
+  types: [author, institution, mesh]
+  # Which maps to build per query: entities, text, citations.
+  views: [entities, text, citations]
+  # "all" fetches every matching paper (larger than 10,000 is split by date).
+  max_records: all
+  # For very large sets, uncomment to use a reproducible random sample instead:
+  # sample: 2000
+  # sample_seed: 42
+  # Settings passed to every map (same names as the app's Options):
+  params:
+    network: {author_counting: fractional, min_occurrences: 2, max_per_type: 60}
+  # Collaboration measures leave out papers with more authors than this.
+  metrics: {max_authors_per_paper: 100}
+
+queries:
+  - label: JBI
+    query: '"J Biomed Inform"[TA] AND 2021:2026[DP]'
+  - label: JAMIA
+    query: '"J Am Med Inform Assoc"[TA] AND 2021:2026[DP]'
+  - label: Scientometrics
+    query: '"Scientometrics"[TA] AND 2021:2026[DP]'

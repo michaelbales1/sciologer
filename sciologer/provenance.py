@@ -43,6 +43,8 @@ class Manifest(BaseModel):
     created_at: str = Field(default_factory=lambda: datetime.now(UTC).isoformat())
     software: dict[str, str] = Field(default_factory=software_versions)
     query: str
+    # Set when the run is one query of a batch study: {"id": ..., "name": ..., "label": ...}
+    study: dict | None = None
     query_translation: str | None = None
     source: str = "PubMed via NCBI E-utilities (esearch + efetch, XML); citations from NIH iCite"
     pubmed_count: int = 0
