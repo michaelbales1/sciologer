@@ -377,3 +377,6 @@ th[aria-sort="descending"] .th-button::after { content: " ↓"; }
 .country-bar span { display: block; height: 100%; background: var(--baseline); }
 .unplaced { padding-left: 18px; max-height: 240px; overflow: auto; }
 .unplaced li { margin: 2px 0; }
+.geo-progress { margin: 12px 0; }
+.geo-progress .progress-track { margin: 6px 0; }
+#add-geo { margin: 8px 0 4px; }

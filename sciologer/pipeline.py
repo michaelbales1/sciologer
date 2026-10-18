@@ -9,7 +9,7 @@ from pydantic import BaseModel, Field
 
 from .citations import CitationParams, ICiteClient, build_citation_map
 from .cluster import ClusterParams, detect_clusters
-from .geo import GeoParams, RORClient, build_geo_map
+from .geo import GeoParams, RORClient, build_geo_map, geo_step, pack_affiliations
 from .layout import LayoutParams, compute_layout
 from .network import NetworkParams, build_graph
 from .normalize import build_entities
@@ -44,7 +44,9 @@ class RunParams(BaseModel):
     semantic: SemanticParams = Field(default_factory=SemanticParams)
     citation_map: bool = True
     citations: CitationParams = Field(default_factory=CitationParams)
-    geo_map: bool = True
+    # Off by default: the first ROR lookups for a map take minutes. The view can be added
+    # to a saved map later (POST /api/runs/{id}/geo).
+    geo_map: bool = False
     geo: GeoParams = Field(default_factory=GeoParams)
 
 
@@ -55,6 +57,8 @@ class RunOutput(BaseModel):
     text: dict | None = None
     citations: dict | None = None
     geo: dict | None = None
+    # Each paper's author affiliations, so the geographic view can be added later.
+    affiliations: dict | None = None
 
 
 def _papers_json(papers: list[Paper]) -> dict[str, dict]:
@@ -396,7 +400,7 @@ def run_pipeline(
         rc = ror_client or RORClient()
         try:
             geo, geo_summary = build_geo_map(
-                papers, params.geo, rc, progress=lambda msg: report(msg, 0.97)
+                papers, params.geo, rc, progress=lambda msg, f: report(msg, 0.96 + 0.03 * f)
             )
         except Exception as exc:  # noqa: BLE001 - the other views are still useful
             manifest.warnings.append(f"Geographic view skipped: couldn't reach ROR ({exc}).")
@@ -408,26 +412,9 @@ def run_pipeline(
             manifest.warnings.append(f"Geographic view skipped: {geo_summary['skipped'].lower()}.")
             geo = None
         elif geo_summary:
-            gp = params.geo
-            manifest.steps.append(
-                Step(
-                    name="Geography",
-                    detail=(
-                        "Each distinct affiliation (without emails or URLs) was matched with "
-                        "the Research Organization Registry's affiliation service (ROR, "
-                        "ror.org); only matches ROR marks as chosen (confident) are placed, "
-                        f"at the city ROR records. Most frequent affiliations first, up to "
-                        f"{gp.max_lookups:,}. Institutions are linked when they share a paper; "
-                        f"the {gp.max_institutions} with the most papers are drawn."
-                    ),
-                    counts=geo_summary,
-                )
-            )
-            if geo_summary["not_looked_up"]:
-                manifest.warnings.append(
-                    f"Geographic view: {geo_summary['not_looked_up']:,} rarer affiliations "
-                    f"weren't looked up (limit {gp.max_lookups:,} per map)."
-                )
+            step, warnings = geo_step(geo_summary, params.geo)
+            manifest.steps.append(step)
+            manifest.warnings.extend(warnings)
 
     report("Done", 1.0)
     return RunOutput(
@@ -437,4 +424,5 @@ def run_pipeline(
         text=text,
         citations=citations,
         geo=geo,
+        affiliations=pack_affiliations(papers),
     )

@@ -82,6 +82,14 @@ export interface GeoInstitution {
   variants: string[];
 }
 
+export interface GeoEstimate {
+  distinct_affiliations: number;
+  planned: number;
+  cached: number;
+  to_lookup: number;
+  seconds: number;
+}
+
 export interface GeoMap {
   institutions: GeoInstitution[];
   edges: { source: string; target: string; count: number; weight: number }[];

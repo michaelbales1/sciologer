@@ -5,10 +5,15 @@
 
 import { feature, mesh } from "topojson-client";
 import type { GeometryObject, Topology } from "topojson-specification";
-import type { Graph, GraphNode, Run } from "./types";
+import type { GeoEstimate, Graph, GraphNode, JobStatus, Run } from "./types";
 import { esc } from "./map";
 
 const fmt = (n: number) => n.toLocaleString();
+
+/** A world map with no institutions yet: the backdrop while the view is being added. */
+export function emptyGeoGraph(run: Run): Graph {
+  return { run_id: run.graph.run_id, query: run.graph.query, nodes: [], edges: [], clusters: [], geo: true };
+}
 
 export function buildGeoGraph(run: Run): Graph | null {
   const geo = run.geo;
@@ -67,6 +72,40 @@ export function loadBasemap(detail: "110m" | "50m"): Promise<Basemap> {
 }
 
 // --- side panel -----------------------------------------------------------------
+
+function duration(seconds: number): string {
+  if (seconds < 60) return "under a minute";
+  const min = Math.round(seconds / 60);
+  return min < 60 ? `about ${min} minute${min === 1 ? "" : "s"}` : `about ${(seconds / 3600).toFixed(1)} hours`;
+}
+
+/** The Geography tab before the view exists: what adding it costs, and a button. */
+export function geoSetupHtml(run: Run, est: GeoEstimate | null, job: JobStatus | null, error: string | null): string {
+  const intro = `
+    <h2 class="panel-title">${esc(run.manifest.query)}</h2>
+    <p class="small muted">Geography places the institutions in authors' affiliations on a world map, linked when they share papers. Each affiliation is matched with the Research Organization Registry (ROR), so this view is made only when you ask for it.</p>`;
+  if (job && (job.state === "queued" || job.state === "running")) {
+    return `${intro}
+      <div class="geo-progress" role="status">
+        <p class="small">${esc(job.message)}</p>
+        <div class="progress-track"><div class="progress-bar" style="width:${Math.round(job.progress * 100)}%"></div></div>
+        <p class="small muted">You can keep using the other views; the map appears here when it's ready.</p>
+      </div>`;
+  }
+  if (!est) return `${intro}${error ? `<div class="banner error small">${esc(error)}</div>` : `<p class="small muted">Checking how many affiliations need looking up…</p>`}`;
+  const extra = est.distinct_affiliations - est.planned;
+  return `${intro}
+    ${error ? `<div class="banner error small">${esc(error)}</div>` : ""}
+    <dl class="stats">
+      <div><dt>Distinct affiliations</dt><dd>${fmt(est.distinct_affiliations)}</dd></div>
+      <div><dt>Already looked up</dt><dd>${fmt(est.cached)}</dd></div>
+      <div><dt>To look up</dt><dd>${fmt(est.to_lookup)}</dd></div>
+      <div><dt>Estimated time</dt><dd class="small">${est.to_lookup ? duration(est.seconds) : "a few seconds"}</dd></div>
+    </dl>
+    ${extra > 0 ? `<p class="small muted">The ${fmt(est.planned)} most frequent are looked up; ${fmt(extra)} rarer ones are skipped and counted.</p>` : ""}
+    <button type="button" class="primary" id="add-geo">Place institutions on the map</button>
+    <p class="small muted">Lookups are cached, so maps that share affiliations get faster. ROR allows 2,000 lookups per 5 minutes; Sciologer stays under that.</p>`;
+}
 
 function step(run: Run): Record<string, any> {
   return run.manifest.steps.find((s) => s.name === "Geography")?.counts ?? {};

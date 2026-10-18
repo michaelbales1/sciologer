@@ -25,6 +25,11 @@ def client(tmp_path, monkeypatch):
         )
 
     monkeypatch.setattr(PubMedClient, "search", fake_search)
+    monkeypatch.setattr(
+        PubMedClient,
+        "fetch_ids",
+        lambda self, pmids, progress=None, use_cache=True: fake_search(self, "ids"),
+    )
     from test_semantic import fake_embed
 
     monkeypatch.setattr("sciologer.semantic.load_embedder", lambda model: fake_embed)
@@ -64,6 +69,33 @@ def test_run_lifecycle_and_exports(client):
         assert resp.status_code == 200, fmt
         assert "attachment" in resp.headers["content-disposition"]
     assert "<gexf" in client.get(f"/api/runs/{run_id}/export/gexf").text
+
+    # Geography is off by default and can be added to the saved map later.
+    assert run["geo"] is None
+    assert client.get(f"/api/runs/{run_id}/geo/status").status_code == 404
+    est = client.get(f"/api/runs/{run_id}/geo/estimate").json()
+    assert est["distinct_affiliations"] > 0 and est["planned"] == est["distinct_affiliations"]
+    assert est["seconds"] >= 0
+    assert client.post(f"/api/runs/{run_id}/geo").status_code == 202
+    for _ in range(300):
+        status = client.get(f"/api/runs/{run_id}/geo/status").json()
+        if status["state"] in ("done", "error"):
+            break
+        time.sleep(0.05)
+    assert status["state"] == "done", status
+    run = client.get(f"/api/runs/{run_id}").json()
+    assert run["geo"]["institutions"]
+    assert [s["name"] for s in run["manifest"]["steps"]].count("Geography") == 1
+    csv = client.get(f"/api/runs/{run_id}/export/geo.csv").text
+    assert csv.startswith("ror_id,name,city")
+    assert client.post("/api/runs/20260101-000000-nope/geo").status_code == 404
+
+    # Maps saved before affiliations were kept: records are fetched again by PMID.
+    folder = client.app.state.store.path(run_id)
+    (folder / "affiliations.json").unlink()
+    again = client.get(f"/api/runs/{run_id}/geo/estimate").json()
+    assert again["distinct_affiliations"] == est["distinct_affiliations"]
+    assert (folder / "affiliations.json").exists()
 
 
 def test_rejects_bad_input(client):

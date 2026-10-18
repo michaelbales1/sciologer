@@ -42,9 +42,12 @@ from pydantic import BaseModel, Field
 
 from .citations import _Limiter
 from .countries import country_of
-from .records import Paper
+from .provenance import Step
+from .records import Author, Paper
 
 ROR = "https://api.ror.org/v2/organizations"
+# Measured: about 5.5 lookups per second with 4 threads under the shared limiter.
+LOOKUPS_PER_SECOND = 5.5
 # 2,000 per 5 minutes is 6.7 per second; stay a little under it.
 _LIMITER = _Limiter(0.17)
 _CONTACT = re.compile(r"electronic address:?.*$|\S+@\S+|https?://\S+", re.I)
@@ -138,6 +141,10 @@ class RORClient:
             "score": chosen.get("score"),
         }
 
+    def is_cached(self, affiliation: str) -> bool:
+        with self._lock:
+            return affiliation in self._cache
+
     def match(self, affiliation: str) -> dict | None:
         """The confident ROR match for one cleaned affiliation, or None."""
         with self._lock:
@@ -182,15 +189,31 @@ class RORClient:
         self._http.close()
 
 
-def build_geo_map(
-    papers: list[Paper],
-    params: GeoParams,
-    client: RORClient,
-    progress: Callable[[str], None] | None = None,
-) -> tuple[dict | None, dict]:
-    """The geographic view's data and a summary for the provenance record."""
-    report = progress or (lambda _m: None)
-    # Distinct affiliations by how many authorships list them (most frequent first).
+def pack_affiliations(papers: list[Paper]) -> dict:
+    """Each paper's author affiliations, with repeated strings stored once.
+
+    Saved with every map so the geographic view can be added later without going back
+    to PubMed.
+    """
+    index: dict[str, int] = {}
+    out: dict[str, list[list[int]]] = {}
+    for p in papers:
+        out[p.pmid] = [
+            [index.setdefault(aff, len(index)) for aff in a.affiliations] for a in p.authors
+        ]
+    return {"strings": list(index), "papers": out}
+
+
+def unpack_affiliations(data: dict) -> list[Paper]:
+    """Papers carrying only their authors' affiliations (enough for the geographic view)."""
+    strings = data["strings"]
+    return [
+        Paper(pmid=pmid, authors=[Author(affiliations=[strings[i] for i in a]) for a in authors])
+        for pmid, authors in data["papers"].items()
+    ]
+
+
+def _distinct_affiliations(papers: list[Paper]) -> tuple[Counter[str], int]:
     freq: Counter[str] = Counter()
     authorships = 0
     for p in papers:
@@ -200,6 +223,58 @@ def build_geo_map(
                 if aff:
                     freq[aff] += 1
                     authorships += 1
+    return freq, authorships
+
+
+def estimate(papers: list[Paper], params: GeoParams, client: RORClient) -> dict:
+    """How much ROR work the geographic view needs: lookups not yet cached, and time."""
+    freq, _ = _distinct_affiliations(papers)
+    planned = [a for a, _ in freq.most_common(params.max_lookups)]
+    to_lookup = sum(1 for a in planned if not client.is_cached(a))
+    return {
+        "distinct_affiliations": len(freq),
+        "planned": len(planned),
+        "cached": len(planned) - to_lookup,
+        "to_lookup": to_lookup,
+        "seconds": round(to_lookup / LOOKUPS_PER_SECOND),
+    }
+
+
+def geo_step(summary: dict, params: GeoParams) -> tuple[Step, list[str]]:
+    """The provenance step for the geographic view, and any warnings."""
+    step = Step(
+        name="Geography",
+        detail=(
+            "Each distinct affiliation (without emails or URLs) was matched with the Research "
+            "Organization Registry's affiliation service (ROR, ror.org); only matches ROR "
+            "marks as chosen (confident) are placed, at the city ROR records. Most frequent "
+            f"affiliations first, up to {params.max_lookups:,}. Institutions are linked when "
+            f"they share a paper; the {params.max_institutions} with the most papers are drawn."
+        ),
+        counts=summary,
+    )
+    warnings = []
+    if summary["not_looked_up"]:
+        warnings.append(
+            f"Geographic view: {summary['not_looked_up']:,} rarer affiliations weren't looked "
+            f"up (limit {params.max_lookups:,} per map)."
+        )
+    return step, warnings
+
+
+def build_geo_map(
+    papers: list[Paper],
+    params: GeoParams,
+    client: RORClient,
+    progress: Callable[[str, float], None] | None = None,
+) -> tuple[dict | None, dict]:
+    """The geographic view's data and a summary for the provenance record.
+
+    `progress` gets a message and the share of lookups done (0–1).
+    """
+    report = progress or (lambda _m, _f: None)
+    # Distinct affiliations by how many authorships list them (most frequent first).
+    freq, authorships = _distinct_affiliations(papers)
     if not freq:
         return None, {"skipped": "No author affiliations in these records"}
     ranked = [a for a, _ in freq.most_common()]
@@ -208,7 +283,7 @@ def build_geo_map(
     matches = client.match_all(
         to_match,
         threads=params.threads,
-        progress=lambda d, n: report(f"Locating institutions with ROR: {d:,} of {n:,}"),
+        progress=lambda d, n: report(f"Locating institutions with ROR: {d:,} of {n:,}", d / n),
     )
 
     # Institutions (by ROR ID) with their papers and the strings that matched them.

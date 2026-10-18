@@ -174,11 +174,13 @@ def test_pipeline_end_to_end_from_fixture():
             layout=LayoutParams(max_iter=60, stability_runs=2),
             text_map=False,  # covered in test_semantic.py with an offline embedder
             citation_map=False,  # covered in test_citations.py
+            geo_map=True,  # off by default; served offline from recorded ROR matches
         ),
         "test",
         search_result=sr,
     )
     m = out.manifest
+    assert len(out.affiliations["papers"]) == 80 and out.affiliations["strings"]
     assert [s.name for s in m.steps] == [
         "Retrieve",
         "Parse",

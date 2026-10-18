@@ -72,7 +72,7 @@ Without this, a few large consortium papers (80+ authors) can fill the author sl
 - **Entities** links MeSH terms, authors, journals and so on when they share papers.
 - **Papers by text** places each paper by what its title and abstract say.
 - **Papers by citation** links papers that cite each other or share references.
-- **Geography** places institutions from author affiliations on a world map, linked when they share papers.
+- **Geography** places institutions from author affiliations on a world map, linked when they share papers. It is made on request (see below), because its lookups take minutes.
 
 They answer different questions, so they are separate, linked views rather than one blended map. Co-occurrence shows how indexed concepts and people connect. Text shows what papers are about, including themes that cut across the indexing. Citations show intellectual communities: who builds on whom.
 
@@ -92,12 +92,13 @@ How the citation map is made:
 - If iCite can't be reached, the other views are still built and the run notes why the citation view is missing.
 
 How the geographic view is made:
+- **On request.** Matching affiliations takes a few minutes for a new map, so the view is off by default. Open the **Geography** tab on any map: it shows how many affiliations need looking up, how many are already cached and roughly how long the rest will take, with a button to start. Only this step runs, in the background, while the other views stay usable. To make it with the map instead, tick **Options → Include the geographic view**. Each map saves its authors' affiliations, so the view can be added later without going back to PubMed. Maps made before that are fetched again by PMID.
 - **Matching.** Each distinct affiliation string (without emails and URLs) is sent to the [ROR](https://ror.org) affiliation-matching service. Only results ROR marks as *chosen*, meaning confident, are placed. Everything else is counted and listed under "not placed" rather than guessed. On test data, 84% of distinct affiliations got a confident match. Full strings match better than shortened ones (35 vs 31 of 40 in a sample), so they are sent whole.
 - **Institutions** are identified by their ROR ID, so different spellings of one institution become one mark. The details panel lists the affiliation strings that matched it and links to its ROR record.
 - **Location** is the city ROR records for the institution, so institutions in the same city share a point. The map spreads them around it, largest in the middle. The projection is Equal Earth, which keeps areas true, and the outlines are Natural Earth's (public domain).
 - **Size** is the number of papers with an author at the institution. **Links** join institutions that appear on the same paper; their weight is the number of shared papers. The 300 institutions with the most papers are drawn, and the side panel lists papers by country.
 - **Rate limits.** ROR allows 2,000 requests per 5 minutes without registration and has announced a lower limit (50 per 5 minutes) for unregistered clients later. Requests go through a shared rate limiter that honors Retry-After, the most frequent affiliations are looked up first (up to 2,500 per map), and every answer is cached, so overlapping queries reuse earlier lookups. A first map of 400 papers needs a few hundred to about 1,500 lookups, roughly 1–5 minutes. To use a registered ROR client ID, set `ROR_CLIENT_ID`.
-- In batch studies the view is off unless `geography` is listed under `views`.
+- In batch studies the view is made only when `geography` is listed under `views`.
 
 The views link to each other: a paper lists its entities, and any paper list links to that paper's place on the text and citation maps.
 

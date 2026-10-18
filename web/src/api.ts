@@ -1,4 +1,4 @@
-import type { Defaults, JobStatus, Run, RunSummary, StudyStatus, StudySummary } from "./types";
+import type { Defaults, GeoEstimate, JobStatus, Run, RunSummary, StudyStatus, StudySummary } from "./types";
 
 async function json<T>(resp: Response): Promise<T> {
   if (!resp.ok) {
@@ -34,5 +34,11 @@ export const api = {
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify(params),
     }).then((r) => json<JobStatus>(r)),
+  geoEstimate: (id: string) =>
+    fetch(`/api/runs/${encodeURIComponent(id)}/geo/estimate`).then((r) => json<GeoEstimate>(r)),
+  addGeo: (id: string) =>
+    fetch(`/api/runs/${encodeURIComponent(id)}/geo`, { method: "POST" }).then((r) => json<JobStatus>(r)),
+  geoStatus: (id: string) =>
+    fetch(`/api/runs/${encodeURIComponent(id)}/geo/status`).then((r) => (r.status === 404 ? null : json<JobStatus>(r))),
   exportUrl: (id: string, fmt: string) => `/api/runs/${encodeURIComponent(id)}/export/${fmt}`,
 };

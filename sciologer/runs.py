@@ -19,9 +19,20 @@ from pathlib import Path
 from pydantic import BaseModel
 
 from .citations import ICiteClient
-from .geo import RORClient
+from .geo import (
+    GeoParams,
+    RORClient,
+    build_geo_map,
+    estimate,
+    geo_step,
+    pack_affiliations,
+    unpack_affiliations,
+)
+from .parse import parse_batches
 from .pipeline import RunOutput, RunParams, run_pipeline
+from .provenance import Manifest
 from .pubmed import PubMedClient
+from .records import Paper
 
 _RUN_ID = re.compile(r"^[0-9]{8}-[0-9]{6}-[a-z0-9-]{1,48}$")
 
@@ -68,7 +79,36 @@ class RunStore:
             (d / "citations.json").write_text(json.dumps(out.citations))
         if out.geo is not None:
             (d / "geo.json").write_text(json.dumps(out.geo))
+        if out.affiliations is not None:
+            (d / "affiliations.json").write_text(json.dumps(out.affiliations))
         return d
+
+    def affiliations(self, run_id: str, pubmed: PubMedClient | None = None) -> list[Paper]:
+        """The map's papers with their authors' affiliations (for the geographic view).
+
+        Saved with each map; for maps made before that, the records are fetched again by
+        PMID (usually from the cache) and the affiliations saved for next time.
+        """
+        saved = self.load_optional(run_id, "affiliations")
+        if saved is not None:
+            return unpack_affiliations(saved)
+        manifest = self.load(run_id, "manifest")
+        on_map = set(self.load(run_id, "papers"))
+        own = pubmed is None
+        pubmed = pubmed or PubMedClient(cache_dir=self.cache_dir)
+        try:
+            result = pubmed.fetch_ids(manifest["pmids"])
+        finally:
+            if own:
+                pubmed.close()
+        papers = [p for p in parse_batches(result.xml_batches) if p.pmid in on_map]
+        (self.path(run_id) / "affiliations.json").write_text(json.dumps(pack_affiliations(papers)))
+        return papers
+
+    def geo_params(self, run_id: str) -> GeoParams:
+        return GeoParams.model_validate(
+            self.load(run_id, "manifest").get("parameters", {}).get("geo", {})
+        )
 
     def load_optional(self, run_id: str, name: str) -> dict | None:
         try:
@@ -117,6 +157,8 @@ class JobManager:
         self.store = store
         self._pool = ThreadPoolExecutor(max_workers=workers, thread_name_prefix="run")
         self._jobs: dict[str, JobStatus] = {}
+        # Geographic views being added to saved maps, by run id.
+        self._geo_jobs: dict[str, JobStatus] = {}
         self._lock = threading.Lock()
 
     def submit(self, params: RunParams) -> JobStatus:
@@ -167,4 +209,68 @@ class JobManager:
         finally:
             client.close()
             icite.close()
+            ror.close()
+
+    # --- adding the geographic view to a saved map --------------------------------
+
+    def geo_estimate(self, run_id: str) -> dict:
+        ror = RORClient(cache_dir=self.store.cache_dir)
+        try:
+            return estimate(self.store.affiliations(run_id), self.store.geo_params(run_id), ror)
+        finally:
+            ror.close()
+
+    def submit_geo(self, run_id: str) -> JobStatus:
+        self.store.load(run_id, "manifest")  # KeyError if there's no such map
+        with self._lock:
+            current = self._geo_jobs.get(run_id)
+            if current and current.state in ("queued", "running"):
+                return current.model_copy()
+            status = self._geo_jobs[run_id] = JobStatus(run_id=run_id)
+        self._pool.submit(self._add_geo, run_id, status)
+        return status
+
+    def geo_status(self, run_id: str) -> JobStatus:
+        with self._lock:
+            if run_id in self._geo_jobs:
+                return self._geo_jobs[run_id].model_copy()
+        if (self.store.path(run_id) / "geo.json").exists():
+            return JobStatus(run_id=run_id, state="done", message="Done", progress=1.0)
+        raise KeyError(run_id)
+
+    def _add_geo(self, run_id: str, status: JobStatus) -> None:
+        def report(message: str, progress: float) -> None:
+            with self._lock:
+                status.state, status.message, status.progress = "running", message, progress
+
+        ror = RORClient(cache_dir=self.store.cache_dir)
+        try:
+            report("Reading affiliations", 0.02)
+            papers = self.store.affiliations(run_id)
+            params = self.store.geo_params(run_id)
+            geo, summary = build_geo_map(
+                papers, params, ror, progress=lambda msg, f: report(msg, 0.05 + 0.9 * f)
+            )
+            d = self.store.path(run_id)
+            manifest = Manifest.model_validate_json((d / "manifest.json").read_text())
+            manifest.steps = [s for s in manifest.steps if s.name != "Geography"]
+            manifest.warnings = [w for w in manifest.warnings if "eographic view" not in w]
+            if geo is None:
+                manifest.warnings.append(f"Geographic view skipped: {summary['skipped'].lower()}.")
+            else:
+                step, warnings = geo_step(summary, params)
+                manifest.steps.append(step)
+                manifest.warnings.extend(warnings)
+                (d / "geo.json").write_text(json.dumps(geo))
+            (d / "manifest.json").write_text(manifest.model_dump_json(indent=2))
+            with self._lock:
+                status.state, status.message, status.progress = "done", "Done", 1.0
+                if geo is None:
+                    status.state, status.error = "error", summary["skipped"]
+        except Exception as exc:  # noqa: BLE001 - reported to the UI
+            traceback.print_exc()
+            with self._lock:
+                status.state, status.error = "error", str(exc) or type(exc).__name__
+                status.message = "Failed"
+        finally:
             ror.close()
