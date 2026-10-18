@@ -1,0 +1,3795 @@
+{
+"Acibadem Labgen Genetic Diagnosis Center, Istanbul, T\u00fcrkiye": null,
+"Acibadem Labgen Genetic Diagnosis Center, Istanbul, T\u00fcrkiye; Acibadem Maslak Hospital, Istanbul, T\u00fcrkiye": null,
+"Aix Marseille Universit\u00e9, CNRS, INP UMR7051, NeuroCyto, Marseille 13005, France": {
+"city": "Marseille",
+"country": "FR",
+"country_name": "France",
+"kinds": [
+"education",
+"funder"
+],
+"lat": 43.29695,
+"lng": 5.38107,
+"name": "Aix-Marseille Universit\u00e9",
+"region": "Provence-Alpes-C\u00f4te d'Azur",
+"ror": "https://ror.org/035xkbk20",
+"score": 0.98
+},
+"Albert Einstein College of Medicine": {
+"city": "Bronx",
+"country": "US",
+"country_name": "United States",
+"kinds": [
+"education"
+],
+"lat": 40.84985,
+"lng": -73.86641,
+"name": "Albert Einstein College of Medicine",
+"region": "New York",
+"ror": "https://ror.org/05cf8a891",
+"score": 1.0
+},
+"Basic Sciences Division, Fred Hutchinson Cancer Center , Seattle, WA, USA": {
+"city": "Seattle",
+"country": "US",
+"country_name": "United States",
+"kinds": [
+"funder",
+"nonprofit"
+],
+"lat": 47.60621,
+"lng": -122.33207,
+"name": "Fred Hutch Cancer Center",
+"region": "Washington",
+"ror": "https://ror.org/007ps6h72",
+"score": 1.0
+},
+"Berlin Institute of Health, Berlin, Germany": null,
+"BioEclosion SL, Avda. Can Dom\u00e8nech, Edifici Eureka, Universitat Aut\u00f2noma de Barcelona, Bellaterra, Spain": {
+"city": "Cerdanyola del Vall\u00e8s",
+"country": "ES",
+"country_name": "Spain",
+"kinds": [
+"education",
+"funder"
+],
+"lat": 41.49109,
+"lng": 2.14079,
+"name": "Universitat Aut\u00f2noma de Barcelona",
+"region": "Catalonia",
+"ror": "https://ror.org/052g8jq94",
+"score": 1.0
+},
+"BioMol-Lab, Department of Biochemistry and Molecular Biology, Federal University of Cear\u00e1, Fortaleza 60440-970, Cear\u00e1, Brazil": {
+"city": "Fortaleza",
+"country": "BR",
+"country_name": "Brazil",
+"kinds": [
+"education",
+"funder"
+],
+"lat": -3.71722,
+"lng": -38.54306,
+"name": "Universidade Federal do Cear\u00e1",
+"region": "Cear\u00e1",
+"ror": "https://ror.org/03srtnf24",
+"score": 1.0
+},
+"Biosensing and Bioanalysis Group, Institute of Biotechnology and Biomedicine, Universitat Aut\u00f2noma de Barcelona, Spain; Grup de Sensors i Biosensors, Departament de Qu\u00edmica, Universitat Aut\u00f2noma de Barcelona, Bellaterra, Spain": {
+"city": "Cerdanyola del Vall\u00e8s",
+"country": "ES",
+"country_name": "Spain",
+"kinds": [
+"education",
+"funder"
+],
+"lat": 41.49109,
+"lng": 2.14079,
+"name": "Universitat Aut\u00f2noma de Barcelona",
+"region": "Catalonia",
+"ror": "https://ror.org/052g8jq94",
+"score": 1.0
+},
+"Biosensing and Bioanalysis Group, Institute of Biotechnology and Biomedicine, Universitat Aut\u00f2noma de Barcelona, Spain; Immunology Unit, Department of Cell Biology, Physiology, and Immunology, Institute of Biotechnology and Biomedicine, Universitat Aut\u00f2noma de Barcelona, Bellaterra, Spain": {
+"city": "Cerdanyola del Vall\u00e8s",
+"country": "ES",
+"country_name": "Spain",
+"kinds": [
+"education",
+"funder"
+],
+"lat": 41.49109,
+"lng": 2.14079,
+"name": "Universitat Aut\u00f2noma de Barcelona",
+"region": "Catalonia",
+"ror": "https://ror.org/052g8jq94",
+"score": 1.0
+},
+"Brain Assessment and Intervention Laboratory, Tianjin Anding Hospital, Mental Health Center of Tianjin Medical University, Tianjin, China": {
+"city": "Tianjin",
+"country": "CN",
+"country_name": "China",
+"kinds": [
+"education",
+"funder"
+],
+"lat": 39.14222,
+"lng": 117.17667,
+"name": "Tianjin Medical University",
+"region": "Tianjin",
+"ror": "https://ror.org/02mh8wx89",
+"score": 1.0
+},
+"Cancer Neuroscience Program, MD Anderson Cancer Center, Houston, TX, USA": null,
+"Case Western Reserve University School of Medicine, Cleveland, OH, 44106, USA": {
+"city": "Cleveland",
+"country": "US",
+"country_name": "United States",
+"kinds": [
+"education",
+"funder"
+],
+"lat": 41.4995,
+"lng": -81.69541,
+"name": "Case Western Reserve University",
+"region": "Ohio",
+"ror": "https://ror.org/051fd9666",
+"score": 1.0
+},
+"Center for Children's Healthy Lifestyles & Nutrition, Children Mercy Hospital, Kansas City, MO, USA": {
+"city": "La Plata",
+"country": "US",
+"country_name": "United States",
+"kinds": [
+"nonprofit"
+],
+"lat": 38.52929,
+"lng": -76.97525,
+"name": "Center for Children",
+"region": "Maryland",
+"ror": "https://ror.org/00m9f2x37",
+"score": 1.0
+},
+"Center for Excellence in the Neurobiology of Addiction, Pain and Emotion, University of Washington, Seattle, Washington": {
+"city": "Seattle",
+"country": "US",
+"country_name": "United States",
+"kinds": [
+"education",
+"funder"
+],
+"lat": 47.60621,
+"lng": -122.33207,
+"name": "University of Washington",
+"region": "Washington",
+"ror": "https://ror.org/00cvxb145",
+"score": 1.0
+},
+"Center for Precision Medicine, School of Medicine, Wake Forest University, Winston-Salem, North Carolina, USA": {
+"city": "Winston-Salem",
+"country": "US",
+"country_name": "United States",
+"kinds": [
+"education",
+"funder"
+],
+"lat": 36.09986,
+"lng": -80.24422,
+"name": "Wake Forest University",
+"region": "North Carolina",
+"ror": "https://ror.org/0207ad724",
+"score": 1.0
+},
+"Center for Synaptic Brain Dysfunctions, Institute for Basic Science (IBS), Daejeon, Korea": {
+"city": "Daejeon",
+"country": "KR",
+"country_name": "South Korea",
+"kinds": [
+"facility",
+"funder"
+],
+"lat": 36.34913,
+"lng": 127.38493,
+"name": "Institute for Basic Science",
+"region": "Daejeon",
+"ror": "https://ror.org/00y0zf565",
+"score": 1.0
+},
+"Center for Synaptic Brain Dysfunctions, Institute for Basic Science , Daejeon, Korea": {
+"city": "Daejeon",
+"country": "KR",
+"country_name": "South Korea",
+"kinds": [
+"facility",
+"funder"
+],
+"lat": 36.34913,
+"lng": 127.38493,
+"name": "Institute for Basic Science",
+"region": "Daejeon",
+"ror": "https://ror.org/00y0zf565",
+"score": 1.0
+},
+"Center for Systems Neuroscience, Boston University, Boston, MA 02215 USA": {
+"city": "Boston",
+"country": "US",
+"country_name": "United States",
+"kinds": [
+"education",
+"funder"
+],
+"lat": 42.35843,
+"lng": -71.05977,
+"name": "Boston University",
+"region": "Massachusetts",
+"ror": "https://ror.org/05qwgg493",
+"score": 1.0
+},
+"Centre de recherche du Centre hospitalier de l'Universit\u00e9 de Montr\u00e9al (CRCHUM), Montreal, Quebec, Canada": {
+"city": "Montreal",
+"country": "CA",
+"country_name": "Canada",
+"kinds": [
+"healthcare"
+],
+"lat": 45.50884,
+"lng": -73.58781,
+"name": "Centre Hospitalier de l\u2019Universit\u00e9 de Montr\u00e9al",
+"region": "Quebec",
+"ror": "https://ror.org/0410a8y51",
+"score": 1.0
+},
+"Centre de recherches math\u00e9matiques, Universit\u00e9 de Montr\u00e9al, Montreal, Quebec, Canada": {
+"city": "Montreal",
+"country": "CA",
+"country_name": "Canada",
+"kinds": [
+"education",
+"funder"
+],
+"lat": 45.50884,
+"lng": -73.58781,
+"name": "Universit\u00e9 de Montr\u00e9al",
+"region": "Quebec",
+"ror": "https://ror.org/0161xgx34",
+"score": 1.0
+},
+"Centre for Advanced Research in Sleep Medicine, H\u00f4pital du Sacr\u00e9-Coeur de Montr\u00e9al, Centre int\u00e9gr\u00e9 universitaire de sant\u00e9 et de services sociaux du Nord de l'\u00cele-de-Montr\u00e9al, Montreal, Qu\u00e9bec, Canada": {
+"city": "Montreal",
+"country": "CA",
+"country_name": "Canada",
+"kinds": [
+"healthcare"
+],
+"lat": 45.50884,
+"lng": -73.58781,
+"name": "Centre int\u00e9gr\u00e9 universitaire de sant\u00e9 et de services sociaux du Nord-de-l\u2019\u00cele-de-Montr\u00e9al",
+"region": "Quebec",
+"ror": "https://ror.org/03n9mt987",
+"score": 0.98
+},
+"Centre int\u00e9gr\u00e9 universitaire en sant\u00e9 et services sociaux du Nord-de-l'\u00cele-de-Montr\u00e9al (CIUSSS-NIM), Montreal, Quebec, Canada": {
+"city": "Montreal",
+"country": "CA",
+"country_name": "Canada",
+"kinds": [
+"healthcare"
+],
+"lat": 45.50884,
+"lng": -73.58781,
+"name": "Centre int\u00e9gr\u00e9 universitaire de sant\u00e9 et de services sociaux du Nord-de-l\u2019\u00cele-de-Montr\u00e9al",
+"region": "Quebec",
+"ror": "https://ror.org/03n9mt987",
+"score": 0.97
+},
+"Children's Hospital Research Institute of Manitoba, Winnipeg, Manitoba, Canada": {
+"city": "Winnipeg",
+"country": "CA",
+"country_name": "Canada",
+"kinds": [
+"funder",
+"healthcare"
+],
+"lat": 49.8844,
+"lng": -97.14704,
+"name": "Children's Hospital Research Institute of Manitoba",
+"region": "Manitoba",
+"ror": "https://ror.org/00ag0rb94",
+"score": 1.0
+},
+"Clinical Genetics Department, Human Genetics and Genome Research Institute, National Research Centre, Cairo, Egypt": {
+"city": "Giza",
+"country": "EG",
+"country_name": "Egypt",
+"kinds": [
+"facility",
+"funder"
+],
+"lat": 30.00944,
+"lng": 31.20861,
+"name": "National Research Centre",
+"region": "Giza",
+"ror": "https://ror.org/02n85j827",
+"score": 1.0
+},
+"Computational Discovery Research, Institute for Diabetes and Obesity, Helmholtz Munich, Neuherberg, Germany": {
+"city": "Munich",
+"country": "DE",
+"country_name": "Germany",
+"kinds": [
+"facility",
+"funder"
+],
+"lat": 48.13743,
+"lng": 11.57549,
+"name": "Helmholtz Munich",
+"region": "Bavaria",
+"ror": "https://ror.org/00cfam450",
+"score": 1.0
+},
+"Core Unit Bioinformatics (CUBI), Berlin Institute of Health/Charit\u00e9-Universit\u00e4tsmedizin Berlin, corporate member of Freie Universit\u00e4t Berlin, Humboldt-Universit\u00e4t zu Berlin, Berlin, Germany": {
+"city": "Berlin",
+"country": "DE",
+"country_name": "Germany",
+"kinds": [
+"education",
+"funder"
+],
+"lat": 52.52437,
+"lng": 13.41053,
+"name": "Humboldt-Universit\u00e4t zu Berlin",
+"region": "State of Berlin",
+"ror": "https://ror.org/01hcx6992",
+"score": 1.0
+},
+"CytoMorpho Lab, CBI, UMR8132, Universit\u00e9 Paris Sciences et Lettres, CEA/CNRS, \u00c9cole Sup\u00e9rieure de Physique et Chimie Industrielles de la Ville de Paris, Institut Pierre Gilles De Gennes, Paris 75005, France": {
+"city": "Paris",
+"country": "FR",
+"country_name": "France",
+"kinds": [
+"education",
+"funder"
+],
+"lat": 48.85341,
+"lng": 2.3488,
+"name": "Universit\u00e9 Paris Sciences et Lettres",
+"region": "\u00cele-de-France",
+"ror": "https://ror.org/013cjyk83",
+"score": 1.0
+},
+"CytoMorpho Lab, LPCV, UMR5168, Universit\u00e9 Grenoble-Alpes, CEA/INRA/CNRS, Interdisciplinary Research Institute of Grenoble, Grenoble 38054, France": {
+"city": "Saint-Martin-d'H\u00e8res",
+"country": "FR",
+"country_name": "France",
+"kinds": [
+"education",
+"funder"
+],
+"lat": 45.1787,
+"lng": 5.76281,
+"name": "Universit\u00e9 Grenoble Alpes",
+"region": "Rh\u00f4ne-Alpes",
+"ror": "https://ror.org/02rx3b187",
+"score": 0.96
+},
+"Department for Biomedical Engineering, Indian Institute of Technology Ropar, Rupnagar, Punjab, India": {
+"city": "Ropar",
+"country": "IN",
+"country_name": "India",
+"kinds": [
+"education",
+"funder"
+],
+"lat": 30.96896,
+"lng": 76.52695,
+"name": "Indian Institute of Technology Ropar",
+"region": "Punjab",
+"ror": "https://ror.org/02qkhhn56",
+"score": 1.0
+},
+"Department for Pediatric Endocrinology and Diabetology, Charit\u00e9-Universit\u00e4tsmedizin Berlin, corporate member of Freie Universit\u00e4t Berlin, Humboldt-Universit\u00e4t zu Berlin, Berlin, Germany": {
+"city": "Berlin",
+"country": "DE",
+"country_name": "Germany",
+"kinds": [
+"education",
+"funder"
+],
+"lat": 52.52437,
+"lng": 13.41053,
+"name": "Humboldt-Universit\u00e4t zu Berlin",
+"region": "State of Berlin",
+"ror": "https://ror.org/01hcx6992",
+"score": 1.0
+},
+"Department of (Neuro) Pathology, Amsterdam Neuroscience, Amsterdam UMC Location University of Amsterdam, Meibergdreef 9, Amsterdam, Netherlands": {
+"city": "Amsterdam",
+"country": "NL",
+"country_name": "The Netherlands",
+"kinds": [
+"funder",
+"healthcare"
+],
+"lat": 52.37403,
+"lng": 4.88969,
+"name": "Amsterdam UMC Location University of Amsterdam",
+"region": "North Holland",
+"ror": "https://ror.org/03t4gr691",
+"score": 1.0
+},
+"Department of Anatomy, Faculty of Basic Medical Sciences University of Medical Sciences Ondo Nigeria": {
+"city": "Ondo",
+"country": "NG",
+"country_name": "Nigeria",
+"kinds": [
+"education"
+],
+"lat": 7.09316,
+"lng": 4.83528,
+"name": "University of Medical Sciences, Ondo",
+"region": "Ondo State",
+"ror": "https://ror.org/00q898q52",
+"score": 0.97
+},
+"Department of Anatomy, Faculty of Medicine, Hokkaido University, Sapporo, Japan": {
+"city": "Sapporo",
+"country": "JP",
+"country_name": "Japan",
+"kinds": [
+"education",
+"funder"
+],
+"lat": 43.06667,
+"lng": 141.35,
+"name": "Hokkaido University",
+"region": "Hokkaido",
+"ror": "https://ror.org/02e16g702",
+"score": 1.0
+},
+"Department of Anesthesia, Critical Care, and Pain Medicine, Massachusetts General Hospital and Harvard Medical School, Boston, MA, United States": {
+"city": "Boston",
+"country": "US",
+"country_name": "United States",
+"kinds": [
+"funder",
+"healthcare"
+],
+"lat": 42.35843,
+"lng": -71.05977,
+"name": "Massachusetts General Hospital",
+"region": "Massachusetts",
+"ror": "https://ror.org/002pd6e78",
+"score": 1.0
+},
+"Department of Anesthesiology and Pain Medicine, University of Washington, Seattle, Washington": {
+"city": "Seattle",
+"country": "US",
+"country_name": "United States",
+"kinds": [
+"education",
+"funder"
+],
+"lat": 47.60621,
+"lng": -122.33207,
+"name": "University of Washington",
+"region": "Washington",
+"ror": "https://ror.org/00cvxb145",
+"score": 1.0
+},
+"Department of Anesthesiology and Perioperative Medicine, The First Affiliated Hospital of Xi'an Jiaotong University, Xi'an, China": {
+"city": "Xi'an",
+"country": "CN",
+"country_name": "China",
+"kinds": [
+"funder",
+"healthcare"
+],
+"lat": 34.25833,
+"lng": 108.92861,
+"name": "First Affiliated Hospital of Xi'an Jiaotong University",
+"region": "Shaanxi",
+"ror": "https://ror.org/02tbvhh96",
+"score": 1.0
+},
+"Department of Basic Medicine and Forensic Medicine, North Sichuan Medical College, Nanchong, Sichuan, China": {
+"city": "Nanchong",
+"country": "CN",
+"country_name": "China",
+"kinds": [
+"education"
+],
+"lat": 30.79508,
+"lng": 106.08473,
+"name": "North Sichuan Medical University",
+"region": "Sichuan",
+"ror": "https://ror.org/05k3sdc46",
+"score": 1.0
+},
+"Department of Bioactive Material Sciences and Research Center of Bioactive Materials, Jeonbuk National University, Jeonju, Republic of Korea": {
+"city": "Jeonju",
+"country": "KR",
+"country_name": "South Korea",
+"kinds": [
+"education",
+"funder"
+],
+"lat": 35.82194,
+"lng": 127.14889,
+"name": "Jeonbuk National University",
+"region": "Jeollabuk-do",
+"ror": "https://ror.org/05q92br09",
+"score": 1.0
+},
+"Department of Biochemistry and Medical Genetics, University of Manitoba, Winnipeg, Manitoba, Canada": {
+"city": "Winnipeg",
+"country": "CA",
+"country_name": "Canada",
+"kinds": [
+"education",
+"funder"
+],
+"lat": 49.8844,
+"lng": -97.14704,
+"name": "University of Manitoba",
+"region": "Manitoba",
+"ror": "https://ror.org/02gfys938",
+"score": 1.0
+},
+"Department of Biochemistry, Molecular Biology, and Biophysics, University of Minnesota, Minneapolis, MN, USA": {
+"city": "Minneapolis",
+"country": "US",
+"country_name": "United States",
+"kinds": [
+"education",
+"funder"
+],
+"lat": 44.97997,
+"lng": -93.26384,
+"name": "University of Minnesota",
+"region": "Minnesota",
+"ror": "https://ror.org/017zqws13",
+"score": 1.0
+},
+"Department of Biochemistry, National University, Gazipur 1704, Bangladesh": null,
+"Department of Biological Sciences, Korea Advanced Institute for Science and Technology (KAIST), Daejeon, Korea": {
+"city": "Daejeon",
+"country": "KR",
+"country_name": "South Korea",
+"kinds": [
+"education",
+"funder"
+],
+"lat": 36.34913,
+"lng": 127.38493,
+"name": "Korea Advanced Institute of Science and Technology",
+"region": "Daejeon",
+"ror": "https://ror.org/05apxxy63",
+"score": 0.96
+},
+"Department of Biological Sciences, Korea Advanced Institute of Science and Technology, Daejeon, Korea": {
+"city": "Daejeon",
+"country": "KR",
+"country_name": "South Korea",
+"kinds": [
+"education",
+"funder"
+],
+"lat": 36.34913,
+"lng": 127.38493,
+"name": "Korea Advanced Institute of Science and Technology",
+"region": "Daejeon",
+"ror": "https://ror.org/05apxxy63",
+"score": 1.0
+},
+"Department of Biological Sciences, Tokyo College of Biotechnology, Ota, Tokyo 157-8535, Japan": null,
+"Department of Biological Sciences, University of Lethbridge, 4401 University Drive, Lethbridge, Alberta, T1K 3M4": {
+"city": "Lethbridge",
+"country": "CA",
+"country_name": "Canada",
+"kinds": [
+"education",
+"funder"
+],
+"lat": 49.69999,
+"lng": -112.81856,
+"name": "University of Lethbridge",
+"region": "Alberta",
+"ror": "https://ror.org/044j76961",
+"score": 1.0
+},
+"Department of Biology, Boston University, Boston, MA 02215 USA": {
+"city": "Boston",
+"country": "US",
+"country_name": "United States",
+"kinds": [
+"education",
+"funder"
+],
+"lat": 42.35843,
+"lng": -71.05977,
+"name": "Boston University",
+"region": "Massachusetts",
+"ror": "https://ror.org/05qwgg493",
+"score": 1.0
+},
+"Department of Biology, University of Western Ontario, 1151 Richmond Street, London, Ontario, Canada N6A 5B7": {
+"city": "London",
+"country": "CA",
+"country_name": "Canada",
+"kinds": [
+"education",
+"funder"
+],
+"lat": 42.98339,
+"lng": -81.23304,
+"name": "Western University",
+"region": "Ontario",
+"ror": "https://ror.org/02grkyz14",
+"score": 1.0
+},
+"Department of Biophysics and Neuroscience, Wroclaw Medical University, Wroclaw 50-368, Poland": {
+"city": "Wroclaw",
+"country": "PL",
+"country_name": "Poland",
+"kinds": [
+"education",
+"funder"
+],
+"lat": 51.1,
+"lng": 17.03333,
+"name": "Wroclaw Medical University",
+"region": "Lower Silesia",
+"ror": "https://ror.org/01qpw1b93",
+"score": 1.0
+},
+"Department of Biophysics, University of Texas Southwestern Medical Center, Dallas, TX, USA": {
+"city": "Dallas",
+"country": "US",
+"country_name": "United States",
+"kinds": [
+"education",
+"funder",
+"healthcare"
+],
+"lat": 32.78306,
+"lng": -96.80667,
+"name": "The University of Texas Southwestern Medical Center",
+"region": "Texas",
+"ror": "https://ror.org/05byvp690",
+"score": 1.0
+},
+"Department of Biostatistics and Data Science, Section of Molecular Medicine, School of Medicine, Wake Forest University, Winston-Salem, North Carolina, USA": {
+"city": "Winston-Salem",
+"country": "US",
+"country_name": "United States",
+"kinds": [
+"education",
+"funder"
+],
+"lat": 36.09986,
+"lng": -80.24422,
+"name": "Wake Forest University",
+"region": "North Carolina",
+"ror": "https://ror.org/0207ad724",
+"score": 1.0
+},
+"Department of Biotechnology, Mahatma Gandhi Central University, Motihari, Bihar, India": {
+"city": "Moth\u012bh\u0101ri",
+"country": "IN",
+"country_name": "India",
+"kinds": [
+"education"
+],
+"lat": 26.64862,
+"lng": 84.91656,
+"name": "Mahatma Gandhi Central University",
+"region": "Bihar",
+"ror": "https://ror.org/013f9hb65",
+"score": 1.0
+},
+"Department of Brain Sciences, Daegu Gyeongbuk Institute of Science and Technology (DGIST), Daegu 42988, Korea; Center for Synapse Diversity and Specificity, DGIST, Daegu 42988, Korea": {
+"city": "Daegu",
+"country": "KR",
+"country_name": "South Korea",
+"kinds": [
+"education",
+"funder"
+],
+"lat": 35.87028,
+"lng": 128.59111,
+"name": "Daegu Gyeongbuk Institute of Science and Technology",
+"region": "Daegu",
+"ror": "https://ror.org/03frjya69",
+"score": 1.0
+},
+"Department of Cardiology, The Second Affiliated Hospital of Soochow University, Suzhou, 215000, Jiangsu, China": {
+"city": "Suzhou",
+"country": "CN",
+"country_name": "China",
+"kinds": [
+"funder",
+"healthcare"
+],
+"lat": 31.30408,
+"lng": 120.59538,
+"name": "Second Affiliated Hospital of Soochow University",
+"region": "Jiangsu",
+"ror": "https://ror.org/02xjrkt08",
+"score": 1.0
+},
+"Department of Cell Biology & Physiology, University of Kansas Medical Center, Kansas City, KS, USA": {
+"city": "Kansas City",
+"country": "US",
+"country_name": "United States",
+"kinds": [
+"funder",
+"healthcare"
+],
+"lat": 39.11417,
+"lng": -94.62746,
+"name": "University of Kansas Medical Center",
+"region": "Kansas",
+"ror": "https://ror.org/036c9yv20",
+"score": 1.0
+},
+"Department of Cell Biology & Physiology, University of Kansas Medical Center, Kansas City, KS, USA; Kansas Center for Metabolism and Obesity Research, Kansas City, KS, USA; Center for Children's Healthy Lifestyles & Nutrition, Children Mercy Hospital, Kansas City, MO, USA; University of Kansas Diabetes Institute, University of Kansas Medical Center, Kansas City, KS, USA": {
+"city": "Lawrence",
+"country": "US",
+"country_name": "United States",
+"kinds": [
+"education",
+"funder"
+],
+"lat": 38.97167,
+"lng": -95.23525,
+"name": "University of Kansas",
+"region": "Kansas",
+"ror": "https://ror.org/001tmjg57",
+"score": 1.0
+},
+"Department of Cell Biology & Physiology, University of Kansas Medical Center, Kansas City, KS, USA; Research Service, Kansas City Veterans Affairs Medical Center, Kansas City, KS, USA": {
+"city": "Kansas City",
+"country": "US",
+"country_name": "United States",
+"kinds": [
+"funder",
+"healthcare"
+],
+"lat": 39.11417,
+"lng": -94.62746,
+"name": "University of Kansas Medical Center",
+"region": "Kansas",
+"ror": "https://ror.org/036c9yv20",
+"score": 1.0
+},
+"Department of Cell Biology & Physiology, University of Kansas Medical Center, Kansas City, KS, USA; Research Service, Kansas City Veterans Affairs Medical Center, Kansas City, KS, USA; Kansas Center for Metabolism and Obesity Research, Kansas City, KS, USA; Center for Children's Healthy Lifestyles & Nutrition, Children Mercy Hospital, Kansas City, MO, USA; Department of Internal Medicine, Division of Endocrinology and Metabolism, University of Kansas Medical Center, Kansas City, KS, USA; University of Kansas Diabetes Institute, University of Kansas Medical Center, Kansas City, KS, USA": {
+"city": "Lawrence",
+"country": "US",
+"country_name": "United States",
+"kinds": [
+"education",
+"funder"
+],
+"lat": 38.97167,
+"lng": -95.23525,
+"name": "University of Kansas",
+"region": "Kansas",
+"ror": "https://ror.org/001tmjg57",
+"score": 1.0
+},
+"Department of Cell Biology, Duke University Medical Center, Durham, NC, USA": {
+"city": "Durham",
+"country": "US",
+"country_name": "United States",
+"kinds": [
+"healthcare"
+],
+"lat": 35.99403,
+"lng": -78.89862,
+"name": "Duke Medical Center",
+"region": "North Carolina",
+"ror": "https://ror.org/03njmea73",
+"score": 1.0
+},
+"Department of Cell, Developmental, and Integrative Biology, University of Alabama at Birmingham, Birmingham, United States": {
+"city": "Birmingham",
+"country": "US",
+"country_name": "United States",
+"kinds": [
+"education",
+"funder"
+],
+"lat": 33.52066,
+"lng": -86.80249,
+"name": "University of Alabama at Birmingham",
+"region": "Alabama",
+"ror": "https://ror.org/008s83205",
+"score": 1.0
+},
+"Department of Cellular and Molecular Physiology, Department of Neuroscience, CNNR Program, Yale University School of Medicine, New Haven, CT, USA": null,
+"Department of Chemical and Pharmaceutical Engineering, College of Chemical Engineering, Huaqiao University, Xiamen, Fujian, China": {
+"city": "Xiamen",
+"country": "CN",
+"country_name": "China",
+"kinds": [
+"education",
+"funder"
+],
+"lat": 24.47979,
+"lng": 118.08187,
+"name": "Huaqiao University",
+"region": "Fujian",
+"ror": "https://ror.org/03frdh605",
+"score": 1.0
+},
+"Department of Chemical and Pharmaceutical Engineering, College of Chemical Engineering, Huaqiao University, Xiamen, Fujian, China; Department of Biochemistry, School of Medicine, Case Western Reserve University, Cleveland, OH, USA": {
+"city": "Cleveland",
+"country": "US",
+"country_name": "United States",
+"kinds": [
+"education",
+"funder"
+],
+"lat": 41.4995,
+"lng": -81.69541,
+"name": "Case Western Reserve University",
+"region": "Ohio",
+"ror": "https://ror.org/051fd9666",
+"score": 1.0
+},
+"Department of Chemical and Pharmaceutical Engineering, College of Chemical Engineering, Huaqiao University, Xiamen, Fujian, China; Institute of Pharmaceutical Engineering, Huaqiao University, Xiamen, Fujian, China; Fujian Provincial Key Laboratory of Biochemical Technology, Huaqiao University, Xiamen, Fujian, China": {
+"city": "Xiamen",
+"country": "CN",
+"country_name": "China",
+"kinds": [
+"education",
+"funder"
+],
+"lat": 24.47979,
+"lng": 118.08187,
+"name": "Huaqiao University",
+"region": "Fujian",
+"ror": "https://ror.org/03frdh605",
+"score": 1.0
+},
+"Department of Chemistry and Biotechnology, School of Engineering, The University of Tokyo, Tokyo, Japan": {
+"city": "Tokyo",
+"country": "JP",
+"country_name": "Japan",
+"kinds": [
+"education",
+"funder"
+],
+"lat": 35.6895,
+"lng": 139.69171,
+"name": "The University of Tokyo",
+"region": "Tokyo",
+"ror": "https://ror.org/057zh3y96",
+"score": 1.0
+},
+"Department of Chemistry and Biotechnology, School of Engineering, The University of Tokyo, Tokyo, Japan; Department of Bioengineering, School of Engineering, The University of Tokyo, Tokyo, Japan": {
+"city": "Tokyo",
+"country": "JP",
+"country_name": "Japan",
+"kinds": [
+"education",
+"funder"
+],
+"lat": 35.6895,
+"lng": 139.69171,
+"name": "The University of Tokyo",
+"region": "Tokyo",
+"ror": "https://ror.org/057zh3y96",
+"score": 1.0
+},
+"Department of Chemistry and Biotechnology, School of Engineering, The University of Tokyo, Tokyo, Japan; Department of Bioengineering, School of Engineering, The University of Tokyo, Tokyo, Japan; Medical Device Development and Regulation Research Center, School of Engineering, The University of Tokyo, Tokyo, Japan; The Institute of Medical Science, The University of Tokyo, Tokyo, Japan": {
+"city": "Tokyo",
+"country": "JP",
+"country_name": "Japan",
+"kinds": [
+"education",
+"funder"
+],
+"lat": 35.6895,
+"lng": 139.69171,
+"name": "The University of Tokyo",
+"region": "Tokyo",
+"ror": "https://ror.org/057zh3y96",
+"score": 1.0
+},
+"Department of Chemistry and Biotechnology, School of Engineering, The University of Tokyo, Tokyo, Japan; Human Biology-Microbiome-Quantum Research Center (Bio2Q), Keio University, Tokyo, Japan": {
+"city": "Tokyo",
+"country": "JP",
+"country_name": "Japan",
+"kinds": [
+"education",
+"funder"
+],
+"lat": 35.6895,
+"lng": 139.69171,
+"name": "The University of Tokyo",
+"region": "Tokyo",
+"ror": "https://ror.org/057zh3y96",
+"score": 1.0
+},
+"Department of Child Neurology, Brain Center University Medical Center, Member of ERN EpiCare, 3584 BA, Utrecht, Netherlands": null,
+"Department of Clinical Pharmacology and Therapeutics, Kyoto University Hospital, Kyoto, Japan": {
+"city": "Kyoto",
+"country": "JP",
+"country_name": "Japan",
+"kinds": [
+"healthcare"
+],
+"lat": 35.02107,
+"lng": 135.75385,
+"name": "Kyoto University Hospital",
+"region": "Kyoto",
+"ror": "https://ror.org/04k6gr834",
+"score": 1.0
+},
+"Department of Clinical and Movement Neurosciences, UCL Queen Square Institute of Neurology, Queen Square, London WC1N 3BG, UK": {
+"city": "London",
+"country": "GB",
+"country_name": "United Kingdom",
+"kinds": [
+"healthcare"
+],
+"lat": 51.50853,
+"lng": -0.12574,
+"name": "National Hospital for Neurology and Neurosurgery",
+"region": "England",
+"ror": "https://ror.org/048b34d51",
+"score": 1.0
+},
+"Department of Computer Science and Engineering, Shanghai Jiao Tong University, Shanghai, China": {
+"city": "Shanghai",
+"country": "CN",
+"country_name": "China",
+"kinds": [
+"education",
+"funder"
+],
+"lat": 31.22222,
+"lng": 121.45806,
+"name": "Shanghai Jiao Tong University",
+"region": "Shanghai",
+"ror": "https://ror.org/0220qvk04",
+"score": 1.0
+},
+"Department of Endocrinology, The Second Affiliated Hospital of Soochow University, Suzhou, 215000, Jiangsu, China": {
+"city": "Suzhou",
+"country": "CN",
+"country_name": "China",
+"kinds": [
+"funder",
+"healthcare"
+],
+"lat": 31.30408,
+"lng": 120.59538,
+"name": "Second Affiliated Hospital of Soochow University",
+"region": "Jiangsu",
+"ror": "https://ror.org/02xjrkt08",
+"score": 1.0
+},
+"Department of Genetics, University of Pennsylvania, 415 Curie Blvd, Philadelphia, PA 19104, United States": {
+"city": "Philadelphia",
+"country": "US",
+"country_name": "United States",
+"kinds": [
+"education",
+"funder"
+],
+"lat": 39.95238,
+"lng": -75.16362,
+"name": "University of Pennsylvania",
+"region": "Pennsylvania",
+"ror": "https://ror.org/00b30xv10",
+"score": 1.0
+},
+"Department of Human Anatomy and Cell Science, Rady Faculty of Health Sciences, Max Rady College of Medicine, University of Manitoba, Winnipeg, MB R3E 0J9, Canada": {
+"city": "Winnipeg",
+"country": "CA",
+"country_name": "Canada",
+"kinds": [
+"education",
+"funder"
+],
+"lat": 49.8844,
+"lng": -97.14704,
+"name": "University of Manitoba",
+"region": "Manitoba",
+"ror": "https://ror.org/02gfys938",
+"score": 1.0
+},
+"Department of Human Genetics, Medical Research Institute, Alexandria University, Alexandria, Egypt": {
+"city": "Alexandria",
+"country": "EG",
+"country_name": "Egypt",
+"kinds": [
+"education",
+"funder"
+],
+"lat": 31.20176,
+"lng": 29.91582,
+"name": "Alexandria University",
+"region": "Alexandria",
+"ror": "https://ror.org/00mzz1w90",
+"score": 1.0
+},
+"Department of Integrative Biology and Physiology, University of Minnesota, Minneapolis, MN, USA": {
+"city": "Minneapolis",
+"country": "US",
+"country_name": "United States",
+"kinds": [
+"education",
+"funder"
+],
+"lat": 44.97997,
+"lng": -93.26384,
+"name": "University of Minnesota",
+"region": "Minnesota",
+"ror": "https://ror.org/017zqws13",
+"score": 1.0
+},
+"Department of Internal Medicine, Division of Endocrinology and Metabolism, University of Kansas Medical Center, Kansas City, KS, USA": {
+"city": "Kansas City",
+"country": "US",
+"country_name": "United States",
+"kinds": [
+"funder",
+"healthcare"
+],
+"lat": 39.11417,
+"lng": -94.62746,
+"name": "University of Kansas Medical Center",
+"region": "Kansas",
+"ror": "https://ror.org/036c9yv20",
+"score": 1.0
+},
+"Department of Internal Medicine, Section of Molecular Medicine, School of Medicine, Wake Forest University, Winston-Salem, North Carolina, USA": null,
+"Department of KM Science Research, Korea Institute of Oriental Medicine (KIOM), Daejeon 34054, Republic of Korea": {
+"city": "Daejeon",
+"country": "KR",
+"country_name": "South Korea",
+"kinds": [
+"facility",
+"funder"
+],
+"lat": 36.34913,
+"lng": 127.38493,
+"name": "Korea Institute of Oriental Medicine",
+"region": "Daejeon",
+"ror": "https://ror.org/005rpmt10",
+"score": 1.0
+},
+"Department of Laboratory Medicine and Pathology, University of Washington, Seattle, WA, USA": {
+"city": "Seattle",
+"country": "US",
+"country_name": "United States",
+"kinds": [
+"education",
+"funder"
+],
+"lat": 47.60621,
+"lng": -122.33207,
+"name": "University of Washington",
+"region": "Washington",
+"ror": "https://ror.org/00cvxb145",
+"score": 1.0
+},
+"Department of Medical Education, Lake Erie College of Osteopathic Medicine, Elmira, NY, United States": {
+"city": "Erie",
+"country": "US",
+"country_name": "United States",
+"kinds": [
+"education"
+],
+"lat": 42.12922,
+"lng": -80.08506,
+"name": "Lake Erie College of Osteopathic Medicine",
+"region": "Pennsylvania",
+"ror": "https://ror.org/04679fh62",
+"score": 1.0
+},
+"Department of Medical Education, Touro College of Osteopathic Medicine, Great Falls, MT, United States": {
+"city": "New York",
+"country": "US",
+"country_name": "United States",
+"kinds": [
+"education"
+],
+"lat": 40.71427,
+"lng": -74.00597,
+"name": "Touro College",
+"region": "New York",
+"ror": "https://ror.org/05hwfvk38",
+"score": 1.0
+},
+"Department of Medicine, Duke University, Durham, NC, USA": {
+"city": "Durham",
+"country": "US",
+"country_name": "United States",
+"kinds": [
+"education",
+"funder"
+],
+"lat": 35.99403,
+"lng": -78.89862,
+"name": "Duke University",
+"region": "North Carolina",
+"ror": "https://ror.org/00py81415",
+"score": 1.0
+},
+"Department of Molecular Biology, Faculty of Medicine, Universit\u00e9 de Montr\u00e9al, Montreal, Quebec H3T 1J4, Canada": {
+"city": "Montreal",
+"country": "CA",
+"country_name": "Canada",
+"kinds": [
+"education",
+"funder"
+],
+"lat": 45.50884,
+"lng": -73.58781,
+"name": "Universit\u00e9 de Montr\u00e9al",
+"region": "Quebec",
+"ror": "https://ror.org/0161xgx34",
+"score": 1.0
+},
+"Department of Molecular Neurobiology, Max Planck Institute for Multidisciplinary Sciences, G\u00f6ttingen, Germany": {
+"city": "G\u00f6ttingen",
+"country": "DE",
+"country_name": "Germany",
+"kinds": [
+"education"
+],
+"lat": 51.53443,
+"lng": 9.93228,
+"name": "Max Planck Institute for Multidisciplinary Sciences",
+"region": "Lower Saxony",
+"ror": "https://ror.org/03av75f26",
+"score": 1.0
+},
+"Department of Molecular Neurobiology, Max Planck Institute of Multidisciplinary Sciences, Hermann-Rein-Str. 3, 37075, G\u00f6ttingen, Germany": {
+"city": "G\u00f6ttingen",
+"country": "DE",
+"country_name": "Germany",
+"kinds": [
+"education"
+],
+"lat": 51.53443,
+"lng": 9.93228,
+"name": "Max Planck Institute for Multidisciplinary Sciences",
+"region": "Lower Saxony",
+"ror": "https://ror.org/03av75f26",
+"score": 0.96
+},
+"Department of Molecular Pharmacology Albert Einstein College of Medicine Bronx New York USA": {
+"city": "Bronx",
+"country": "US",
+"country_name": "United States",
+"kinds": [
+"education"
+],
+"lat": 40.84985,
+"lng": -73.86641,
+"name": "Albert Einstein College of Medicine",
+"region": "New York",
+"ror": "https://ror.org/05cf8a891",
+"score": 1.0
+},
+"Department of Molecular and Cellular Physiology, Howard Hughes Medical Institute, Stanford University School of Medicine, Stanford, CA, USA": {
+"city": "Stanford",
+"country": "US",
+"country_name": "United States",
+"kinds": [
+"education",
+"funder"
+],
+"lat": 37.42411,
+"lng": -122.16608,
+"name": "Stanford University",
+"region": "California",
+"ror": "https://ror.org/00f54p054",
+"score": 1.0
+},
+"Department of Molecular and Cellular Physiology, Stanford University School of Medicine, Stanford, United States": {
+"city": "Stanford",
+"country": "US",
+"country_name": "United States",
+"kinds": [
+"education",
+"funder"
+],
+"lat": 37.42411,
+"lng": -122.16608,
+"name": "Stanford University",
+"region": "California",
+"ror": "https://ror.org/00f54p054",
+"score": 1.0
+},
+"Department of Molecular and Cellular Physiology, Stanford University, Stanford, CA, USA": {
+"city": "Stanford",
+"country": "US",
+"country_name": "United States",
+"kinds": [
+"education",
+"funder"
+],
+"lat": 37.42411,
+"lng": -122.16608,
+"name": "Stanford University",
+"region": "California",
+"ror": "https://ror.org/00f54p054",
+"score": 1.0
+},
+"Department of Molecular and Human Genetics, Baylor College of Medicine, Houston, Texas, USA": {
+"city": "Houston",
+"country": "US",
+"country_name": "United States",
+"kinds": [
+"education",
+"funder"
+],
+"lat": 29.76328,
+"lng": -95.36327,
+"name": "Baylor College of Medicine",
+"region": "Texas",
+"ror": "https://ror.org/02pttbw34",
+"score": 1.0
+},
+"Department of Molecular and Human Genetics, Baylor College of Medicine, Houston, Texas, United States of America": {
+"city": "Houston",
+"country": "US",
+"country_name": "United States",
+"kinds": [
+"education",
+"funder"
+],
+"lat": 29.76328,
+"lng": -95.36327,
+"name": "Baylor College of Medicine",
+"region": "Texas",
+"ror": "https://ror.org/02pttbw34",
+"score": 1.0
+},
+"Department of Neuro-Oncology, MD Anderson Cancer Center, Houston, TX, USA": null,
+"Department of Neurobiology and Biophysics, University of Washington, Seattle, WA, USA": {
+"city": "Seattle",
+"country": "US",
+"country_name": "United States",
+"kinds": [
+"education",
+"funder"
+],
+"lat": 47.60621,
+"lng": -122.33207,
+"name": "University of Washington",
+"region": "Washington",
+"ror": "https://ror.org/00cvxb145",
+"score": 1.0
+},
+"Department of Neurobiology and Biophysics, University of Washington, Seattle, Washington": {
+"city": "Seattle",
+"country": "US",
+"country_name": "United States",
+"kinds": [
+"education",
+"funder"
+],
+"lat": 47.60621,
+"lng": -122.33207,
+"name": "University of Washington",
+"region": "Washington",
+"ror": "https://ror.org/00cvxb145",
+"score": 1.0
+},
+"Department of Neurobiology, Duke University Medical Center, Durham, NC, USA": {
+"city": "Durham",
+"country": "US",
+"country_name": "United States",
+"kinds": [
+"healthcare"
+],
+"lat": 35.99403,
+"lng": -78.89862,
+"name": "Duke Medical Center",
+"region": "North Carolina",
+"ror": "https://ror.org/03njmea73",
+"score": 1.0
+},
+"Department of Neurobiology, University of California San Diego, La Jolla, United States": {
+"city": "San Diego",
+"country": "US",
+"country_name": "United States",
+"kinds": [
+"education",
+"funder"
+],
+"lat": 32.71571,
+"lng": -117.16472,
+"name": "University of California San Diego",
+"region": "California",
+"ror": "https://ror.org/0168r3w48",
+"score": 1.0
+},
+"Department of Neurology, Affiliated Hospital of North Sichuan Medical College, Institute of Neurological Diseases, North Sichuan Medical College, Nanchong, Sichuan, China": {
+"city": "Nanchong",
+"country": "CN",
+"country_name": "China",
+"kinds": [
+"education"
+],
+"lat": 30.79508,
+"lng": 106.08473,
+"name": "North Sichuan Medical University",
+"region": "Sichuan",
+"ror": "https://ror.org/05k3sdc46",
+"score": 1.0
+},
+"Department of Neurology, Baylor College of Medicine, Houston, Texas, USA": {
+"city": "Houston",
+"country": "US",
+"country_name": "United States",
+"kinds": [
+"education",
+"funder"
+],
+"lat": 29.76328,
+"lng": -95.36327,
+"name": "Baylor College of Medicine",
+"region": "Texas",
+"ror": "https://ror.org/02pttbw34",
+"score": 1.0
+},
+"Department of Neurology, Baylor College of Medicine, Houston, Texas, United States of America": {
+"city": "Houston",
+"country": "US",
+"country_name": "United States",
+"kinds": [
+"education",
+"funder"
+],
+"lat": 29.76328,
+"lng": -95.36327,
+"name": "Baylor College of Medicine",
+"region": "Texas",
+"ror": "https://ror.org/02pttbw34",
+"score": 1.0
+},
+"Department of Neurology, Stanford University, Stanford, CA, USA": {
+"city": "Stanford",
+"country": "US",
+"country_name": "United States",
+"kinds": [
+"education",
+"funder"
+],
+"lat": 37.42411,
+"lng": -122.16608,
+"name": "Stanford University",
+"region": "California",
+"ror": "https://ror.org/00f54p054",
+"score": 1.0
+},
+"Department of Neuromuscular Diseases, UCL Institute of Neurology, University College London, Queen Square, London WC1N 3BG, UK": {
+"city": "London",
+"country": "GB",
+"country_name": "United Kingdom",
+"kinds": [
+"education",
+"funder"
+],
+"lat": 51.50853,
+"lng": -0.12574,
+"name": "University College London",
+"region": "England",
+"ror": "https://ror.org/02jx3x895",
+"score": 1.0
+},
+"Department of Neuromuscular Diseases, UCL Institute of Neurology, University College London, Queen Square, London WC1N 3BG, UK; Department of Human Genetics, Medical Research Institute, Alexandria University, Alexandria, Egypt": {
+"city": "Alexandria",
+"country": "EG",
+"country_name": "Egypt",
+"kinds": [
+"education",
+"funder"
+],
+"lat": 31.20176,
+"lng": 29.91582,
+"name": "Alexandria University",
+"region": "Alexandria",
+"ror": "https://ror.org/00mzz1w90",
+"score": 1.0
+},
+"Department of Neuromuscular Diseases, UCL Institute of Neurology, University College London, Queen Square, London WC1N 3BG, UK; Palindrome, Isfahan, Iran": {
+"city": "London",
+"country": "GB",
+"country_name": "United Kingdom",
+"kinds": [
+"education",
+"funder"
+],
+"lat": 51.50853,
+"lng": -0.12574,
+"name": "University College London",
+"region": "England",
+"ror": "https://ror.org/02jx3x895",
+"score": 1.0
+},
+"Department of Neuroscience, Baylor College of Medicine, Houston, Texas, United States of America": {
+"city": "Houston",
+"country": "US",
+"country_name": "United States",
+"kinds": [
+"education",
+"funder"
+],
+"lat": 29.76328,
+"lng": -95.36327,
+"name": "Baylor College of Medicine",
+"region": "Texas",
+"ror": "https://ror.org/02pttbw34",
+"score": 1.0
+},
+"Department of Neuroscience, Faculty of medicine, Universit\u00e9 de Montr\u00e9al, Montreal, Quebec H3T 1J4, Canada": {
+"city": "Montreal",
+"country": "CA",
+"country_name": "Canada",
+"kinds": [
+"education",
+"funder"
+],
+"lat": 45.50884,
+"lng": -73.58781,
+"name": "Universit\u00e9 de Montr\u00e9al",
+"region": "Quebec",
+"ror": "https://ror.org/0161xgx34",
+"score": 1.0
+},
+"Department of Neuroscience, Facult\u00e9 de m\u00e9decine, Universit\u00e9 de Montr\u00e9al, Montreal, Quebec, Canada": {
+"city": "Montreal",
+"country": "CA",
+"country_name": "Canada",
+"kinds": [
+"education",
+"funder"
+],
+"lat": 45.50884,
+"lng": -73.58781,
+"name": "Universit\u00e9 de Montr\u00e9al",
+"region": "Quebec",
+"ror": "https://ror.org/0161xgx34",
+"score": 1.0
+},
+"Department of Neuroscience, UConn Health, Farmington, Connecticut, USA": {
+"city": "Farmington",
+"country": "US",
+"country_name": "United States",
+"kinds": [
+"funder",
+"healthcare"
+],
+"lat": 41.71982,
+"lng": -72.83204,
+"name": "UConn Health",
+"region": "Connecticut",
+"ror": "https://ror.org/02kzs4y22",
+"score": 1.0
+},
+"Department of Neurosciences, University of California San Diego, La Jolla, United States": {
+"city": "San Diego",
+"country": "US",
+"country_name": "United States",
+"kinds": [
+"education",
+"funder"
+],
+"lat": 32.71571,
+"lng": -117.16472,
+"name": "University of California San Diego",
+"region": "California",
+"ror": "https://ror.org/0168r3w48",
+"score": 1.0
+},
+"Department of Neurosciences, University of California, San Diego, La Jolla CA 92093, USA": {
+"city": "San Diego",
+"country": "US",
+"country_name": "United States",
+"kinds": [
+"education",
+"funder"
+],
+"lat": 32.71571,
+"lng": -117.16472,
+"name": "University of California San Diego",
+"region": "California",
+"ror": "https://ror.org/0168r3w48",
+"score": 1.0
+},
+"Department of Neurosurgery, Jichi Medical University, Shimotsuke, Japan": {
+"city": "Shimotsuke",
+"country": "JP",
+"country_name": "Japan",
+"kinds": [
+"education",
+"funder"
+],
+"lat": 36.41323,
+"lng": 139.86622,
+"name": "Jichi Medical University",
+"region": "Tochigi",
+"ror": "https://ror.org/010hz0g26",
+"score": 1.0
+},
+"Department of Neurosurgery, Stanford University, Stanford, CA, USA": {
+"city": "Stanford",
+"country": "US",
+"country_name": "United States",
+"kinds": [
+"education",
+"funder"
+],
+"lat": 37.42411,
+"lng": -122.16608,
+"name": "Stanford University",
+"region": "California",
+"ror": "https://ror.org/00f54p054",
+"score": 1.0
+},
+"Department of Neurosurgery, The Second Affiliated Hospital of Kunming Medical University, Kunming, China": {
+"city": "Kunming",
+"country": "CN",
+"country_name": "China",
+"kinds": [
+"education",
+"funder"
+],
+"lat": 25.03889,
+"lng": 102.71833,
+"name": "Kunming Medical University",
+"region": "Yunnan",
+"ror": "https://ror.org/038c3w259",
+"score": 1.0
+},
+"Department of Neurosurgery, The Second People's Hospital of Yibin, Yibin, Sichuan, China": {
+"city": "Yibin",
+"country": "CN",
+"country_name": "China",
+"kinds": [
+"healthcare"
+],
+"lat": 28.7593,
+"lng": 104.63994,
+"name": "Second People\u2019s Hospital of Yibin",
+"region": "Sichuan",
+"ror": "https://ror.org/05xceke97",
+"score": 1.0
+},
+"Department of Nutrition, Chung Shan Medical University, 110, Section 1, Jianguo North Road, Taichung 40201, Taiwan": {
+"city": "Taichung",
+"country": "TW",
+"country_name": "Taiwan",
+"kinds": [
+"education",
+"funder"
+],
+"lat": 24.1469,
+"lng": 120.6839,
+"name": "Chung Shan Medical University",
+"region": "Taiwan",
+"ror": "https://ror.org/059ryjv25",
+"score": 1.0
+},
+"Department of Otorhinolaryngology, The Affiliated Hospital to Changchun University of Chinese Medicine, 1478 Gongnong Road, Chaoyang District, Changchun, 130021, Jilin, China": {
+"city": "Changchun",
+"country": "CN",
+"country_name": "China",
+"kinds": [
+"education"
+],
+"lat": 43.88,
+"lng": 125.32278,
+"name": "The Affiliated Hospital to Changchun University of Chinese Medicine",
+"region": "Jilin",
+"ror": "https://ror.org/03ksg3960",
+"score": 1.0
+},
+"Department of Paediatric Neurology, Institute of Child Health, Children's Hospital Lahore, Lahore, Pakistan": null,
+"Department of Paediatrics, Faculty of Medicine, Beni-Suef University, Beni-Suef, Egypt": {
+"city": "Ban\u012b Suwayf",
+"country": "EG",
+"country_name": "Egypt",
+"kinds": [
+"education",
+"funder"
+],
+"lat": 29.07441,
+"lng": 31.09785,
+"name": "Beni-Suef University",
+"region": "Beni Suweif",
+"ror": "https://ror.org/05pn4yv70",
+"score": 1.0
+},
+"Department of Pathology, Stanford University School of Medicine, Stanford, United States": {
+"city": "Stanford",
+"country": "US",
+"country_name": "United States",
+"kinds": [
+"education",
+"funder"
+],
+"lat": 37.42411,
+"lng": -122.16608,
+"name": "Stanford University",
+"region": "California",
+"ror": "https://ror.org/00f54p054",
+"score": 1.0
+},
+"Department of Pathology, Stanford University, Stanford, CA, USA": {
+"city": "Stanford",
+"country": "US",
+"country_name": "United States",
+"kinds": [
+"education",
+"funder"
+],
+"lat": 37.42411,
+"lng": -122.16608,
+"name": "Stanford University",
+"region": "California",
+"ror": "https://ror.org/00f54p054",
+"score": 1.0
+},
+"Department of Pathology, University Medical Center Utrecht, Utrecht, Netherlands": {
+"city": "Utrecht",
+"country": "NL",
+"country_name": "The Netherlands",
+"kinds": [
+"funder",
+"healthcare"
+],
+"lat": 52.09083,
+"lng": 5.12222,
+"name": "University Medical Center Utrecht",
+"region": "Utrecht",
+"ror": "https://ror.org/0575yy874",
+"score": 1.0
+},
+"Department of Pathology, University Medical Center Utrecht, Utrecht, The Netherlands": {
+"city": "Utrecht",
+"country": "NL",
+"country_name": "The Netherlands",
+"kinds": [
+"funder",
+"healthcare"
+],
+"lat": 52.09083,
+"lng": 5.12222,
+"name": "University Medical Center Utrecht",
+"region": "Utrecht",
+"ror": "https://ror.org/0575yy874",
+"score": 1.0
+},
+"Department of Pediatrics, Stanford University, Stanford, CA, USA": {
+"city": "Stanford",
+"country": "US",
+"country_name": "United States",
+"kinds": [
+"education",
+"funder"
+],
+"lat": 37.42411,
+"lng": -122.16608,
+"name": "Stanford University",
+"region": "California",
+"ror": "https://ror.org/00f54p054",
+"score": 1.0
+},
+"Department of Pediatrics, Yan'an People's Hospital, Yan'an,, China": null,
+"Department of Pharmaceutical Therapy & Neuropharmacology, Faculty of Pharmaceutical Sciences, University of Toyama, Toyama, Japan": {
+"city": "Toyama",
+"country": "JP",
+"country_name": "Japan",
+"kinds": [
+"education",
+"funder"
+],
+"lat": 36.7,
+"lng": 137.21667,
+"name": "University of Toyama",
+"region": "Toyama",
+"ror": "https://ror.org/0445phv87",
+"score": 1.0
+},
+"Department of Pharmacology and Physiology, Faculty of Medicine, Universit\u00e9 de Montr\u00e9al, Montreal, Qu\u00e9bec, Canada": {
+"city": "Montreal",
+"country": "CA",
+"country_name": "Canada",
+"kinds": [
+"education",
+"funder"
+],
+"lat": 45.50884,
+"lng": -73.58781,
+"name": "Universit\u00e9 de Montr\u00e9al",
+"region": "Quebec",
+"ror": "https://ror.org/0161xgx34",
+"score": 1.0
+},
+"Department of Pharmacology and Toxicology, National Institute of Pharmaceutical Education and Research, S.A.S. Nagar, Punjab, India": null,
+"Department of Pharmacology, Faculty of Medicine, Saitama Medical University, 38 Moro-Hongo, Moroyama-Machi, Iruma-Gun, Saitama 350-0495, Japan": {
+"city": "Morohong\u014d",
+"country": "JP",
+"country_name": "Japan",
+"kinds": [
+"education",
+"funder"
+],
+"lat": 35.93556,
+"lng": 139.30444,
+"name": "Saitama Medical University",
+"region": "Saitama",
+"ror": "https://ror.org/04zb31v77",
+"score": 1.0
+},
+"Department of Pharmacology, National Research Institute for Child Health and Development, Setagaya, Tokyo 157-8535, Japan": null,
+"Department of Pharmacology, Physiology & Biophysics, Boston University School of Medicine, Boston, MA 02118, USA": {
+"city": "Boston",
+"country": "US",
+"country_name": "United States",
+"kinds": [
+"education",
+"funder"
+],
+"lat": 42.35843,
+"lng": -71.05977,
+"name": "Boston University",
+"region": "Massachusetts",
+"ror": "https://ror.org/05qwgg493",
+"score": 1.0
+},
+"Department of Physiology and Biophysics, Institute for Computational Biomedicine, Weill Cornell Medicine, New York, NY, USA": {
+"city": "New York",
+"country": "US",
+"country_name": "United States",
+"kinds": [
+"education",
+"funder"
+],
+"lat": 40.71427,
+"lng": -74.00597,
+"name": "Weill Cornell Medicine",
+"region": "New York",
+"ror": "https://ror.org/02r109517",
+"score": 1.0
+},
+"Department of Physiology and Biophysics, State University of New York at Buffalo, School of Medicine and Biomedical Sciences, Buffalo, NY 14203, USA": {
+"city": "Albany",
+"country": "US",
+"country_name": "United States",
+"kinds": [
+"education",
+"funder"
+],
+"lat": 42.65258,
+"lng": -73.75623,
+"name": "State University of New York",
+"region": "New York",
+"ror": "https://ror.org/01q1z8k08",
+"score": 1.0
+},
+"Department of Physiology and Pharmacology, Sapienza University, and Laboratory of Behavioral Neuropharmacology, IRCCS Fondazione Santa Lucia, Rome, Italy": {
+"city": "Rome",
+"country": "IT",
+"country_name": "Italy",
+"kinds": [
+"education",
+"funder"
+],
+"lat": 41.89193,
+"lng": 12.51133,
+"name": "Sapienza University of Rome",
+"region": "Lazio",
+"ror": "https://ror.org/02be6w209",
+"score": 1.0
+},
+"Department of Physiology, Faculty of Medicine, University of Toronto, Toronto, ON, Canada": {
+"city": "Toronto",
+"country": "CA",
+"country_name": "Canada",
+"kinds": [
+"education",
+"funder"
+],
+"lat": 43.70643,
+"lng": -79.39864,
+"name": "University of Toronto",
+"region": "Ontario",
+"ror": "https://ror.org/03dbr7087",
+"score": 1.0
+},
+"Department of Psychiatry and Behavioral Sciences, Duke University, Durham, NC, USA": {
+"city": "Durham",
+"country": "US",
+"country_name": "United States",
+"kinds": [
+"education",
+"funder"
+],
+"lat": 35.99403,
+"lng": -78.89862,
+"name": "Duke University",
+"region": "North Carolina",
+"ror": "https://ror.org/00py81415",
+"score": 1.0
+},
+"Department of Psychiatry and Behavioral Sciences, Memorial Sloan Kettering Cancer Center, New York, NY, USA": {
+"city": "New York",
+"country": "US",
+"country_name": "United States",
+"kinds": [
+"funder",
+"healthcare"
+],
+"lat": 40.71427,
+"lng": -74.00597,
+"name": "Memorial Sloan Kettering Cancer Center",
+"region": "New York",
+"ror": "https://ror.org/02yrq0923",
+"score": 1.0
+},
+"Department of Psychiatry and Behavioral Sciences, Stanford University, Stanford, CA, USA": {
+"city": "Stanford",
+"country": "US",
+"country_name": "United States",
+"kinds": [
+"education",
+"funder"
+],
+"lat": 37.42411,
+"lng": -122.16608,
+"name": "Stanford University",
+"region": "California",
+"ror": "https://ror.org/00f54p054",
+"score": 1.0
+},
+"Department of Psychiatry and Center for Brain Science, The First Affiliated Hospital of Xi'an Jiaotong University, Xi'an, China": {
+"city": "Xi'an",
+"country": "CN",
+"country_name": "China",
+"kinds": [
+"funder",
+"healthcare"
+],
+"lat": 34.25833,
+"lng": 108.92861,
+"name": "First Affiliated Hospital of Xi'an Jiaotong University",
+"region": "Shaanxi",
+"ror": "https://ror.org/02tbvhh96",
+"score": 1.0
+},
+"Department of Psychiatry, Kaohsiung Chang Gung Memorial Hospital, Chang Gung University College of Medicine, Kaohsiung, Taiwan": {
+"city": "Taoyuan",
+"country": "TW",
+"country_name": "Taiwan",
+"kinds": [
+"education",
+"funder"
+],
+"lat": 24.99368,
+"lng": 121.29696,
+"name": "Chang Gung University",
+"region": "Taiwan",
+"ror": "https://ror.org/00d80zx46",
+"score": 1.0
+},
+"Department of Psychiatry, Seidman Cancer Center, University Hospitals Cleveland Medical Center, 11100 Euclid Avenue, Cleveland, OH, 44106, USA": {
+"city": "Cleveland",
+"country": "US",
+"country_name": "United States",
+"kinds": [
+"healthcare"
+],
+"lat": 41.4995,
+"lng": -81.69541,
+"name": "University Hospitals Cleveland Medical Center",
+"region": "Ohio",
+"ror": "https://ror.org/01gc0wp38",
+"score": 1.0
+},
+"Department of Psychiatry, University of Oxford, Oxford, UK": {
+"city": "Oxford",
+"country": "GB",
+"country_name": "United Kingdom",
+"kinds": [
+"education",
+"funder"
+],
+"lat": 51.75222,
+"lng": -1.25596,
+"name": "University of Oxford",
+"region": "England",
+"ror": "https://ror.org/052gg0110",
+"score": 1.0
+},
+"Department of Psychology, Universit\u00e9 du Qu\u00e9bec \u00e0 Montr\u00e9al, Montreal, Qu\u00e9bec, Canada": {
+"city": "Montreal",
+"country": "CA",
+"country_name": "Canada",
+"kinds": [
+"education",
+"funder"
+],
+"lat": 45.50884,
+"lng": -73.58781,
+"name": "Universit\u00e9 du Qu\u00e9bec \u00e0 Montr\u00e9al",
+"region": "Quebec",
+"ror": "https://ror.org/002rjbv21",
+"score": 1.0
+},
+"Department of Public Health, North South University, Dhaka 1229, Bangladesh": {
+"city": "Dhaka",
+"country": "BD",
+"country_name": "Bangladesh",
+"kinds": [
+"education",
+"funder"
+],
+"lat": 23.7104,
+"lng": 90.40744,
+"name": "North South University",
+"region": "Dhaka Division",
+"ror": "https://ror.org/05wdbfp45",
+"score": 1.0
+},
+"Department of Radiology & Imaging Sciences, Center for Neuroimaging, Indiana Alzheimer's Disease Research Center, Indiana University School of Medicine, Indianapolis, IN, USA": {
+"city": "Indianapolis",
+"country": "US",
+"country_name": "United States",
+"kinds": [
+"education"
+],
+"lat": 39.76838,
+"lng": -86.15804,
+"name": "Indiana University School of Medicine",
+"region": "Indiana",
+"ror": "https://ror.org/02ets8c94",
+"score": 1.0
+},
+"Department of Rheumatology and Immunology, The Fourth Affiliated Hospital of Soochow University, Suzhou, China": {
+"city": "Suzhou",
+"country": "CN",
+"country_name": "China",
+"kinds": [
+"healthcare"
+],
+"lat": 31.30408,
+"lng": 120.59538,
+"name": "The Fourth Affiliated Hospital of Soochow University (Suzhou Dushu Lake Hospital)",
+"region": "Jiangsu",
+"ror": "https://ror.org/04n3e7v86",
+"score": 1.0
+},
+"Department of Science and Environmental Studies, the Education University of Hong Kong, Hong Kong Special Administrative Region, China": {
+"city": "Tai Po",
+"country": "HK",
+"country_name": "Hong Kong",
+"kinds": [
+"education",
+"funder"
+],
+"lat": 22.45007,
+"lng": 114.16877,
+"name": "Education University of Hong Kong",
+"region": "Tai Po",
+"ror": "https://ror.org/000t0f062",
+"score": 1.0
+},
+"Department of Spine Surgery, The Third Affiliated Hospital of Sun Yat-Sen University, Guangzhou, 510630, China": {
+"city": "Guangzhou",
+"country": "CN",
+"country_name": "China",
+"kinds": [
+"healthcare"
+],
+"lat": 23.11667,
+"lng": 113.25,
+"name": "Third Affiliated Hospital of Sun Yat-sen University",
+"region": "Guangdong",
+"ror": "https://ror.org/04tm3k558",
+"score": 1.0
+},
+"Department of Structural Biology, Institute of Science Tokyo, Tokyo 113-8510, Japan": {
+"city": "Tokyo",
+"country": "JP",
+"country_name": "Japan",
+"kinds": [
+"education"
+],
+"lat": 35.6895,
+"lng": 139.69171,
+"name": "Institute of Science Tokyo",
+"region": "Tokyo",
+"ror": "https://ror.org/05dqf9946",
+"score": 1.0
+},
+"Department of Structural Biology, Tokyo Medical and Dental University, Tokyo 113-8510, Japan": null,
+"Department of Symptom Research, MD Anderson Cancer Center, Houston, TX, USA": null,
+"Department of Synthetic Chemistry and Biological Chemistry, Graduate School of Engineering, Kyoto University, Katsura, Nishikyo-ku, Kyoto 615-8510, JAPAN": {
+"city": "Kyoto",
+"country": "JP",
+"country_name": "Japan",
+"kinds": [
+"education",
+"funder"
+],
+"lat": 35.02107,
+"lng": 135.75385,
+"name": "Kyoto University",
+"region": "Kyoto",
+"ror": "https://ror.org/02kpeqv85",
+"score": 1.0
+},
+"Department of Translational Neuroscience, School of Medicine, Wake Forest University, Winston-Salem, North Carolina, USA": {
+"city": "Winston-Salem",
+"country": "US",
+"country_name": "United States",
+"kinds": [
+"education",
+"funder"
+],
+"lat": 36.09986,
+"lng": -80.24422,
+"name": "Wake Forest University",
+"region": "North Carolina",
+"ror": "https://ror.org/0207ad724",
+"score": 1.0
+},
+"Departments of Psychiatry, Neuroscience, Mental Health, Pharmacology, Biomedical Engineering, and Genetic Medicine, Johns Hopkins University School of Medicine and Bloomberg School of Public Health, Johns Hopkins Medicine, Baltimore, MD, United States": {
+"city": "Baltimore",
+"country": "US",
+"country_name": "United States",
+"kinds": [
+"education",
+"funder"
+],
+"lat": 39.29038,
+"lng": -76.61219,
+"name": "Johns Hopkins University",
+"region": "Maryland",
+"ror": "https://ror.org/00za53h95",
+"score": 1.0
+},
+"Division of Experimental Medicine, Department of Medicine, Faculty of Medicine and Health Sciences, Stellenbosch University, Cape Town, South Africa": {
+"city": "Stellenbosch",
+"country": "ZA",
+"country_name": "South Africa",
+"kinds": [
+"education",
+"funder"
+],
+"lat": -33.93462,
+"lng": 18.86676,
+"name": "Stellenbosch University",
+"region": "Western Cape",
+"ror": "https://ror.org/05bk57929",
+"score": 1.0
+},
+"Division of Experimental Medicine, McGill University, Montreal, Quebec H3A 0G4, Canada": {
+"city": "Montreal",
+"country": "CA",
+"country_name": "Canada",
+"kinds": [
+"education",
+"funder"
+],
+"lat": 45.50884,
+"lng": -73.58781,
+"name": "McGill University",
+"region": "Quebec",
+"ror": "https://ror.org/01pxwe438",
+"score": 1.0
+},
+"Division of Molecular Medicine, Department of Medicine, University of Minnesota, Minneapolis, MN, USA": {
+"city": "Minneapolis",
+"country": "US",
+"country_name": "United States",
+"kinds": [
+"education",
+"funder"
+],
+"lat": 44.97997,
+"lng": -93.26384,
+"name": "University of Minnesota",
+"region": "Minnesota",
+"ror": "https://ror.org/017zqws13",
+"score": 1.0
+},
+"Division of Molecular Medicine, Department of Medicine, University of Minnesota, Minneapolis, MN, USA; Department of Biochemistry, Molecular Biology, and Biophysics, University of Minnesota, Minneapolis, MN, USA": {
+"city": "Minneapolis",
+"country": "US",
+"country_name": "United States",
+"kinds": [
+"education",
+"funder"
+],
+"lat": 44.97997,
+"lng": -93.26384,
+"name": "University of Minnesota",
+"region": "Minnesota",
+"ror": "https://ror.org/017zqws13",
+"score": 1.0
+},
+"Division of Molecular Medicine, Department of Medicine, University of Minnesota, Minneapolis, MN, USA; Department of Integrative Biology and Physiology, University of Minnesota, Minneapolis, MN, USA; Department of Biochemistry, Molecular Biology, and Biophysics, University of Minnesota, Minneapolis, MN, USA": {
+"city": "Minneapolis",
+"country": "US",
+"country_name": "United States",
+"kinds": [
+"education",
+"funder"
+],
+"lat": 44.97997,
+"lng": -93.26384,
+"name": "University of Minnesota",
+"region": "Minnesota",
+"ror": "https://ror.org/017zqws13",
+"score": 1.0
+},
+"Division of Neurobiology of Diabetes, TUM School of Medicine and Health, Technical University of Munich, Munich, Germany": {
+"city": "Munich",
+"country": "DE",
+"country_name": "Germany",
+"kinds": [
+"education",
+"funder"
+],
+"lat": 48.13743,
+"lng": 11.57549,
+"name": "Technical University of Munich",
+"region": "Bavaria",
+"ror": "https://ror.org/02kkvpp62",
+"score": 1.0
+},
+"Division of Neurological Gene Therapy, Center for Open Innovation, Jichi Medical University, Shimotsuke, Japan": {
+"city": "Shimotsuke",
+"country": "JP",
+"country_name": "Japan",
+"kinds": [
+"education",
+"funder"
+],
+"lat": 36.41323,
+"lng": 139.86622,
+"name": "Jichi Medical University",
+"region": "Tochigi",
+"ror": "https://ror.org/010hz0g26",
+"score": 1.0
+},
+"Division of Neurosurgery, Henry Ford Health System Providence Hospital, College of Human Medicine, Michigan State University, Southfield, MI, United States": {
+"city": "East Lansing",
+"country": "US",
+"country_name": "United States",
+"kinds": [
+"education",
+"funder"
+],
+"lat": 42.73698,
+"lng": -84.48387,
+"name": "Michigan State University",
+"region": "Michigan",
+"ror": "https://ror.org/05hs6h993",
+"score": 1.0
+},
+"Divisi\u00f3n de Gen\u00f3mica Computacional, Instituto Nacional de Medicina Gen\u00f3mica, M\u00e9xico City 14610, Mexico": {
+"city": "Mexico City",
+"country": "MX",
+"country_name": "Mexico",
+"kinds": [
+"funder",
+"government"
+],
+"lat": 19.42847,
+"lng": -99.12766,
+"name": "National Institute of Genomic Medicine",
+"region": "Mexico City",
+"ror": "https://ror.org/01qjckx08",
+"score": 1.0
+},
+"Dr. ALibakhshi Medical Genetics Laboratory, Kermanshah, Iran; Department of Animal Biology, Faculty of Biological Sciences, Kharazmi University, Tehran, Iran": {
+"city": "Tehran",
+"country": "IR",
+"country_name": "Iran",
+"kinds": [
+"education",
+"funder"
+],
+"lat": 35.69439,
+"lng": 51.42151,
+"name": "Kharazmi University",
+"region": "Tehran",
+"ror": "https://ror.org/05hsgex59",
+"score": 1.0
+},
+"Dr. ALibakhshi Medical Genetics Laboratory, Kermanshah, Iran; Department of Biochemistry, Kermanshah University of Medical Sciences, Kermanshah, Iran": {
+"city": "Kermanshah",
+"country": "IR",
+"country_name": "Iran",
+"kinds": [
+"education",
+"funder"
+],
+"lat": 34.31417,
+"lng": 47.065,
+"name": "Kermanshah University of Medical Sciences",
+"region": "Kermanshah Province",
+"ror": "https://ror.org/05vspf741",
+"score": 1.0
+},
+"Duke Institute of Brain Sciences, Duke University, Durham, NC, USA": {
+"city": "Durham",
+"country": "US",
+"country_name": "United States",
+"kinds": [
+"education",
+"funder"
+],
+"lat": 35.99403,
+"lng": -78.89862,
+"name": "Duke University",
+"region": "North Carolina",
+"ror": "https://ror.org/00py81415",
+"score": 1.0
+},
+"Duke Proteomics and Metabolomics Shared Resource and Duke Center for Genomic and Computational Biology, Duke University Medical School, Durham, North Carolina, USA": {
+"city": "Durham",
+"country": "US",
+"country_name": "United States",
+"kinds": [
+"education",
+"funder"
+],
+"lat": 35.99403,
+"lng": -78.89862,
+"name": "Duke University",
+"region": "North Carolina",
+"ror": "https://ror.org/00py81415",
+"score": 1.0
+},
+"D\u00e9partement de g\u00e9nie \u00e9lectrique, \u00c9cole de technologie sup\u00e9rieure, Montreal, Quebec, Canada": {
+"city": "Montreal",
+"country": "CA",
+"country_name": "Canada",
+"kinds": [
+"education",
+"funder"
+],
+"lat": 45.50884,
+"lng": -73.58781,
+"name": "\u00c9cole de Technologie Sup\u00e9rieure",
+"region": "Quebec",
+"ror": "https://ror.org/0020snb74",
+"score": 1.0
+},
+"Experimental and Clinical Physiopathology Research Group CTS-1039, Department of Health Sciences, School of Health Sciences, University of Ja\u00e9n, 23071 Ja\u00e9n, Spain": null,
+"Experimental and Clinical Physiopathology Research Group CTS-1039, Department of Health Sciences, School of Health Sciences, University of Ja\u00e9n, E23071 Ja\u00e9n, Spain": null,
+"Facultad Mexicana de Medicina, Universidad La Salle, M\u00e9xico City 14100, Mexico": null,
+"Facultad de Educaci\u00f3n, Universidad Alfonso X El Sabio (UAX), Avenida de la Universidad, 1, Villanueva de la Ca\u00f1ada, 28691 Madrid, Spain": {
+"city": "Villanueva de la Ca\u00f1ada",
+"country": "ES",
+"country_name": "Spain",
+"kinds": [
+"education",
+"funder"
+],
+"lat": 40.44689,
+"lng": -4.00428,
+"name": "Universidad Alfonso X el Sabio",
+"region": "Madrid",
+"ror": "https://ror.org/054ewwr15",
+"score": 1.0
+},
+"Faculty of Pharmacy, Laval University, Quebec City, Qu\u00e9bec, Canada": {
+"city": "Qu\u00e9bec",
+"country": "CA",
+"country_name": "Canada",
+"kinds": [
+"education",
+"funder"
+],
+"lat": 46.81228,
+"lng": -71.21454,
+"name": "Universit\u00e9 Laval",
+"region": "Quebec",
+"ror": "https://ror.org/04sjchr03",
+"score": 1.0
+},
+"Focus Program Translational Neurosciences, University Medical Center of the Johannes Gutenberg University Mainz, Duesbergweg 6, 55128, Mainz, Germany": {
+"city": "Mainz",
+"country": "DE",
+"country_name": "Germany",
+"kinds": [
+"funder",
+"healthcare"
+],
+"lat": 49.98185,
+"lng": 8.28008,
+"name": "University Medical Center of the Johannes Gutenberg University Mainz",
+"region": "Rheinland-Pfalz",
+"ror": "https://ror.org/00q1fsf04",
+"score": 1.0
+},
+"Genomics and Bioinformatics Laboratory, Department of Molecular Biology and Biotechnology, Tezpur University, Tezpur, Assam, India": {
+"city": "Tezpur",
+"country": "IN",
+"country_name": "India",
+"kinds": [
+"education",
+"funder"
+],
+"lat": 26.63333,
+"lng": 92.8,
+"name": "Tezpur University",
+"region": "Assam",
+"ror": "https://ror.org/005x56091",
+"score": 1.0
+},
+"German Center for Child and Adolescent Health (DZKJ), Berlin, Germany": null,
+"German Center for Diabetes Research, Neuherberg, Germany": {
+"city": "Munich",
+"country": "DE",
+"country_name": "Germany",
+"kinds": [
+"facility",
+"funder"
+],
+"lat": 48.13743,
+"lng": 11.57549,
+"name": "German Center for Diabetes Research",
+"region": "Bavaria",
+"ror": "https://ror.org/04qq88z54",
+"score": 1.0
+},
+"Graduate School of Biomedical Sciences, Tokushima University, Tokushima, 770-8505, Japan": {
+"city": "Tokushima",
+"country": "JP",
+"country_name": "Japan",
+"kinds": [
+"education",
+"funder"
+],
+"lat": 34.06667,
+"lng": 134.56667,
+"name": "Tokushima University",
+"region": "Tokushima",
+"ror": "https://ror.org/044vy1d05",
+"score": 1.0
+},
+"Guangdong Provincial Center for Engineering and Technology Research of Minimally Invasive Spine Surgery, Guangzhou, 510630, China": null,
+"Guangdong Provincial Center for Quality Control of Minimally Invasive Spine Surgery, Guangzhou, 510630, China": null,
+"Guangdong Provincial Key Laboratory of Bone and Joint Degeneration Diseases, Department of Cell Biology, School of Basic Medical Sciences, Southern Medical University, Guangzhou, 510515, China": {
+"city": "Guangzhou",
+"country": "CN",
+"country_name": "China",
+"kinds": [
+"education",
+"funder"
+],
+"lat": 23.11667,
+"lng": 113.25,
+"name": "Southern Medical University",
+"region": "Guangdong",
+"ror": "https://ror.org/01vjw4z39",
+"score": 1.0
+},
+"Guangdong-Hongkong-Macau Institute of CNS Regeneration, Ministry of Education CNS Regeneration Collaborative Joint Laboratory, Jinan University, Guangzhou, Guangdong Province, China": null,
+"Guangxi Key Laboratory of Biology for Crop Diseases and Insect Pests, Institute of Plant Protection, Guangxi Academy of Agricultural Sciences, Nanning 530007, China": {
+"city": "Nanning",
+"country": "CN",
+"country_name": "China",
+"kinds": [
+"education",
+"funder"
+],
+"lat": 22.81667,
+"lng": 108.31667,
+"name": "Guangxi Academy of Agricultural Science",
+"region": "Guangxi",
+"ror": "https://ror.org/020rkr389",
+"score": 1.0
+},
+"Gynecology and Obstetrics Center, The First Hospital of Jilin University, No.1 Xinmin Street, Changchun, 130021, China": {
+"city": "Changchun",
+"country": "CN",
+"country_name": "China",
+"kinds": [
+"funder",
+"healthcare"
+],
+"lat": 43.88,
+"lng": 125.32278,
+"name": "First Hospital of Jilin University",
+"region": "Jilin",
+"ror": "https://ror.org/034haf133",
+"score": 1.0
+},
+"Head & Neck Oncology Ward, West China Hospital of Sichuan University, Chengdu, China": {
+"city": "Chengdu",
+"country": "CN",
+"country_name": "China",
+"kinds": [
+"funder",
+"healthcare"
+],
+"lat": 30.66667,
+"lng": 104.06667,
+"name": "West China Hospital of Sichuan University",
+"region": "Sichuan",
+"ror": "https://ror.org/007mrxy13",
+"score": 1.0
+},
+"Henan Academy of Architectural Heritage Conservation and Research, Zhengzhou 450011, China": null,
+"Henan International Laboratory for Green Pest Control, Henan Engineering Laboratory of Pest Biological Control, College of Plant Protection, Henan Agricultural University, Zhengzhou 450046, China": {
+"city": "Zhengzhou",
+"country": "CN",
+"country_name": "China",
+"kinds": [
+"education",
+"funder"
+],
+"lat": 34.75778,
+"lng": 113.64861,
+"name": "Henan Agricultural University",
+"region": "Henan",
+"ror": "https://ror.org/04eq83d71",
+"score": 1.0
+},
+"Howard Hughes Medical Institute, Duke University Medical Center , Durham, NC, USA": {
+"city": "Durham",
+"country": "US",
+"country_name": "United States",
+"kinds": [
+"healthcare"
+],
+"lat": 35.99403,
+"lng": -78.89862,
+"name": "Duke Medical Center",
+"region": "North Carolina",
+"ror": "https://ror.org/03njmea73",
+"score": 1.0
+},
+"Howard Hughes Medical Institute, Duke University Medical Center, Durham, NC, USA": {
+"city": "Durham",
+"country": "US",
+"country_name": "United States",
+"kinds": [
+"healthcare"
+],
+"lat": 35.99403,
+"lng": -78.89862,
+"name": "Duke Medical Center",
+"region": "North Carolina",
+"ror": "https://ror.org/03njmea73",
+"score": 1.0
+},
+"Howard Hughes Medical Institute, Stanford University School of Medicine, Stanford, United States": {
+"city": "Stanford",
+"country": "US",
+"country_name": "United States",
+"kinds": [
+"education",
+"funder"
+],
+"lat": 37.42411,
+"lng": -122.16608,
+"name": "Stanford University",
+"region": "California",
+"ror": "https://ror.org/00f54p054",
+"score": 1.0
+},
+"Howard Hughes Medical Institute, Stanford, CA, USA": {
+"city": "Chevy Chase",
+"country": "US",
+"country_name": "United States",
+"kinds": [
+"facility",
+"funder"
+],
+"lat": 39.00287,
+"lng": -77.07115,
+"name": "Howard Hughes Medical Institute",
+"region": "Maryland",
+"ror": "https://ror.org/006w34k90",
+"score": 1.0
+},
+"Hubei Key Laboratory of Cognitive and Affective Disorders, School of Medicine, Jianghan University, Wuhan, 430056, China": {
+"city": "Wuhan",
+"country": "CN",
+"country_name": "China",
+"kinds": [
+"education",
+"funder"
+],
+"lat": 30.58333,
+"lng": 114.26667,
+"name": "Jianghan University",
+"region": "Hubei",
+"ror": "https://ror.org/041c9x778",
+"score": 1.0
+},
+"Hubei Provincial Key Laboratory of Kidney Diseases Occurrence and Intervention, School of Medicine, Hubei Polytechnic University, Huangshi, Hubei Province, China": {
+"city": "Huangshi",
+"country": "CN",
+"country_name": "China",
+"kinds": [
+"education",
+"funder"
+],
+"lat": 30.24706,
+"lng": 115.04814,
+"name": "Hubei Polytechnic University",
+"region": "Hubei",
+"ror": "https://ror.org/01z07eq06",
+"score": 1.0
+},
+"Human Biology-Microbiome-Quantum Research Center (Bio2Q), Keio University, Tokyo, Japan": {
+"city": "Tokyo",
+"country": "JP",
+"country_name": "Japan",
+"kinds": [
+"education",
+"funder"
+],
+"lat": 35.6895,
+"lng": 139.69171,
+"name": "Keio University",
+"region": "Tokyo",
+"ror": "https://ror.org/02kn6nx58",
+"score": 1.0
+},
+"IPREDE-Instituto da Primeira Inf\u00e2ncia, Fortaleza 60821-728, Cear\u00e1, Brazil": null,
+"Institute for Biomedical Research and Innovation, National Research Council, Catania, Italy": {
+"city": "Palermo",
+"country": "IT",
+"country_name": "Italy",
+"kinds": [
+"facility"
+],
+"lat": 38.1166,
+"lng": 13.3636,
+"name": "Institute for Biomedical Research and Innovation",
+"region": "Sicily",
+"ror": "https://ror.org/03byxpq91",
+"score": 1.0
+},
+"Institute for Brain and Intelligence, Southeast University, Nanjing, China": null,
+"Institute for Diabetes and Obesity, Helmholtz Munich, Neuherberg, Germany": {
+"city": "Munich",
+"country": "DE",
+"country_name": "Germany",
+"kinds": [
+"facility",
+"funder"
+],
+"lat": 48.13743,
+"lng": 11.57549,
+"name": "Helmholtz Munich",
+"region": "Bavaria",
+"ror": "https://ror.org/00cfam450",
+"score": 1.0
+},
+"Institute for Stem Cell Biology and Regenerative Medicine, Stanford University School of Medicine, Stanford, United States": {
+"city": "Stanford",
+"country": "US",
+"country_name": "United States",
+"kinds": [
+"education",
+"funder"
+],
+"lat": 37.42411,
+"lng": -122.16608,
+"name": "Stanford University",
+"region": "California",
+"ror": "https://ror.org/00f54p054",
+"score": 1.0
+},
+"Institute of Anatomy and Focus Program Translational Neurosciences, Mainz University Medical Center , Mainz, Germany": null,
+"Institute of Anatomy, University Medical Center of the Johannes Gutenberg University Mainz, Duesbergweg 6, 55128, Mainz, Germany": {
+"city": "Mainz",
+"country": "DE",
+"country_name": "Germany",
+"kinds": [
+"funder",
+"healthcare"
+],
+"lat": 49.98185,
+"lng": 8.28008,
+"name": "University Medical Center of the Johannes Gutenberg University Mainz",
+"region": "Rheinland-Pfalz",
+"ror": "https://ror.org/00q1fsf04",
+"score": 1.0
+},
+"Institute of Biochemistry and Cell Biology, National Research Council, Monterotondo, Italy": null,
+"Institute of Bioengineering, Swiss Federal Institute of Technology Lausanne (EPFL), Lausanne, Switzerland": {
+"city": "Lausanne",
+"country": "CH",
+"country_name": "Switzerland",
+"kinds": [
+"education",
+"funder"
+],
+"lat": 46.516,
+"lng": 6.63282,
+"name": "\u00c9cole Polytechnique F\u00e9d\u00e9rale de Lausanne",
+"region": "Vaud",
+"ror": "https://ror.org/02s376052",
+"score": 1.0
+},
+"Institute of Brain Science and Department of Physiology, School of Basic Medical Sciences, Hangzhou Normal University, Hangzhou, China": {
+"city": "Hangzhou",
+"country": "CN",
+"country_name": "China",
+"kinds": [
+"education",
+"funder"
+],
+"lat": 30.29365,
+"lng": 120.16142,
+"name": "Hangzhou Normal University",
+"region": "Zhejiang",
+"ror": "https://ror.org/014v1mr15",
+"score": 1.0
+},
+"Institute of Brain Science, School of Basic Medical Sciences, Hangzhou Normal University, Hangzhou, 311121, China": {
+"city": "Hangzhou",
+"country": "CN",
+"country_name": "China",
+"kinds": [
+"education",
+"funder"
+],
+"lat": 30.29365,
+"lng": 120.16142,
+"name": "Hangzhou Normal University",
+"region": "Zhejiang",
+"ror": "https://ror.org/014v1mr15",
+"score": 1.0
+},
+"Institute of Computational Biology, Helmholtz Zentrum M\u00fcnchen, German Research Center for Environmental Health, Neuherberg, Munich, Germany": {
+"city": "Munich",
+"country": "DE",
+"country_name": "Germany",
+"kinds": [
+"facility",
+"funder"
+],
+"lat": 48.13743,
+"lng": 11.57549,
+"name": "Helmholtz Munich",
+"region": "Bavaria",
+"ror": "https://ror.org/00cfam450",
+"score": 1.0
+},
+"Institute of Developmental Biology and Neurobiology, Department of Biology, Johannes Gutenberg-University of Mainz, Mainz, Germany": {
+"city": "Mainz",
+"country": "DE",
+"country_name": "Germany",
+"kinds": [
+"education",
+"funder"
+],
+"lat": 49.98185,
+"lng": 8.28008,
+"name": "Johannes Gutenberg University Mainz",
+"region": "Rheinland-Pfalz",
+"ror": "https://ror.org/023b0x485",
+"score": 0.97
+},
+"Institute of Experimental Genetics, Helmholtz Munich, Neuherberg, Germany": {
+"city": "Munich",
+"country": "DE",
+"country_name": "Germany",
+"kinds": [
+"facility",
+"funder"
+],
+"lat": 48.13743,
+"lng": 11.57549,
+"name": "Helmholtz Munich",
+"region": "Bavaria",
+"ror": "https://ror.org/00cfam450",
+"score": 1.0
+},
+"Institute of Medicine, Chung Shan Medical University, 110, Section 1, Jianguo North Road, Taichung 40201, Taiwan": {
+"city": "Taichung",
+"country": "TW",
+"country_name": "Taiwan",
+"kinds": [
+"education",
+"funder"
+],
+"lat": 24.1469,
+"lng": 120.6839,
+"name": "Chung Shan Medical University",
+"region": "Taiwan",
+"ror": "https://ror.org/059ryjv25",
+"score": 1.0
+},
+"Institute of Neurological and Psychiatric Disorders, Shenzhen Bay Laboratory, Shenzhen 518132, China": {
+"city": "Shenzhen",
+"country": "CN",
+"country_name": "China",
+"kinds": [
+"facility",
+"funder"
+],
+"lat": 22.54554,
+"lng": 114.0683,
+"name": "Shenzhen Bay Laboratory",
+"region": "Guangdong",
+"ror": "https://ror.org/00sdcjz77",
+"score": 1.0
+},
+"Institute of Neurological and Psychiatric Disorders, Shenzhen Bay Laboratory, Shenzhen 518132, China; School of Chemical Biology and Biotechnology, Peking University Shenzhen Graduate School, Shenzhen 518055, China": {
+"city": "Shenzhen",
+"country": "CN",
+"country_name": "China",
+"kinds": [
+"facility",
+"funder"
+],
+"lat": 22.54554,
+"lng": 114.0683,
+"name": "Shenzhen Bay Laboratory",
+"region": "Guangdong",
+"ror": "https://ror.org/00sdcjz77",
+"score": 1.0
+},
+"Institute of Neurological and Psychiatric Disorders, Shenzhen Bay Laboratory, Shenzhen 518132, China; School of Chemical Biology and Biotechnology, Peking University Shenzhen Graduate School, Shenzhen 518055, China; Shenzhen Medical Academy of Research and Translation, Shenzhen 518132, China": {
+"city": "Shenzhen",
+"country": "CN",
+"country_name": "China",
+"kinds": [
+"education"
+],
+"lat": 22.54554,
+"lng": 114.0683,
+"name": "Shenzhen Medical Academy of Research and Translation",
+"region": "Guangdong",
+"ror": "https://ror.org/00jsay989",
+"score": 1.0
+},
+"Institute of Traditional Chinese Medicine, Shandong Hongjitang Pharmaceutical Group Co. Ltd, Jinan, Shandong Province, China": null,
+"Instituto de Biomedicina de Sevilla (IBiS), Hospital Universitario Virgen del Roc\u00edo/CSIC/Universidad de Sevilla, Depto. de Fisiolog\u00eda M\u00e9dica y Biof\u00edsica, Facultad de Medicina, Universidad de Sevilla and CIBERNED ISCIII, Sevilla, Spain": {
+"city": "Seville",
+"country": "ES",
+"country_name": "Spain",
+"kinds": [
+"healthcare"
+],
+"lat": 37.38283,
+"lng": -5.97317,
+"name": "Hospital Universitario Virgen del Roc\u00edo",
+"region": "Andalusia",
+"ror": "https://ror.org/04vfhnm78",
+"score": 1.0
+},
+"Integrated Program in Neuroscience, McGill University, Montreal, Quebec H3A 2B2, Canada": {
+"city": "Montreal",
+"country": "CA",
+"country_name": "Canada",
+"kinds": [
+"education",
+"funder"
+],
+"lat": 45.50884,
+"lng": -73.58781,
+"name": "McGill University",
+"region": "Quebec",
+"ror": "https://ror.org/01pxwe438",
+"score": 1.0
+},
+"Investigadores por M\u00e9xico, Secretar\u00eda de Ciencia, Humanidades, Tecnolog\u00eda e Innovaci\u00f3n (SECIHTI), Mexico City 03940, Mexico": {
+"city": "Mexico City",
+"country": "MX",
+"country_name": "Mexico",
+"kinds": [
+"funder",
+"government"
+],
+"lat": 19.42847,
+"lng": -99.12766,
+"name": "Secretar\u00eda de Ciencia, Humanidades, Tecnolog\u00eda e Innovaci\u00f3n",
+"region": "Mexico City",
+"ror": "https://ror.org/059ex5q34",
+"score": 1.0
+},
+"Jan and Dan Duncan Neurological Research Institute, Texas Children's Hospital, Houston, Texas, USA": {
+"city": "Santa Monica",
+"country": "US",
+"country_name": "United States",
+"kinds": [
+"other"
+],
+"lat": 34.01949,
+"lng": -118.49138,
+"name": "Neurological Research Institute",
+"region": "California",
+"ror": "https://ror.org/02ea83075",
+"score": 1.0
+},
+"Jan and Dan Duncan Neurological Research Institute, Texas Children's Hospital, Houston, Texas, United States of America": {
+"city": "Santa Monica",
+"country": "US",
+"country_name": "United States",
+"kinds": [
+"other"
+],
+"lat": 34.01949,
+"lng": -118.49138,
+"name": "Neurological Research Institute",
+"region": "California",
+"ror": "https://ror.org/02ea83075",
+"score": 1.0
+},
+"Jiangsu Co-innovation Center of Neuroregeneration, Southeast University, Nanjing, China": null,
+"Jiangsu Key Laboratory of Neuropsychiatric Diseases Research, Soochow University, Suzhou, 215000, China": null,
+"Kansas Center for Metabolism and Obesity Research, Kansas City, KS, USA": null,
+"Key Laboratory of Intergraded Management on Crops in Northwestern Oasis, Ministry of Agriculture and Rural Affairs, Institute of Plant Protection, Xinjiang Uygur Autonomous Region Academy of Agricultural Sciences/Xinjiang Key Laboratory of Agricultural Biosafety, Urumqi, 830091, China": {
+"city": "\u00dcr\u00fcmqi",
+"country": "CN",
+"country_name": "China",
+"kinds": [
+"funder",
+"other"
+],
+"lat": 43.80096,
+"lng": 87.60046,
+"name": "Xinjiang Academy of Agricultural Sciences",
+"region": "Xinjiang",
+"ror": "https://ror.org/023cbka75",
+"score": 1.0
+},
+"King Fahd Specialist Hospital, Dammam, Saudi Arabia": {
+"city": "Dammam",
+"country": "SA",
+"country_name": "Saudi Arabia",
+"kinds": [
+"healthcare"
+],
+"lat": 26.43442,
+"lng": 50.10326,
+"name": "King Fahad Specialist Hospital",
+"region": "Eastern Province",
+"ror": "https://ror.org/01m1gv240",
+"score": 0.98
+},
+"Klinika Psychiatrii S\u0105dowej, Instytut Psychiatrii i Neurologii w Warszawie": {
+"city": "Warsaw",
+"country": "PL",
+"country_name": "Poland",
+"kinds": [
+"facility"
+],
+"lat": 52.22977,
+"lng": 21.01178,
+"name": "Institute of Psychiatry and Neurology",
+"region": "Mazovia",
+"ror": "https://ror.org/0468k6j36",
+"score": 1.0
+},
+"Kuwait Hospital, Sabah Al-Salem, Block1, Kuwait": null,
+"Laboratory for Experimental and Translational Neurobiology University of Medical Sciences Ondo Nigeria": {
+"city": "Ondo",
+"country": "NG",
+"country_name": "Nigeria",
+"kinds": [
+"education"
+],
+"lat": 7.09316,
+"lng": 4.83528,
+"name": "University of Medical Sciences, Ondo",
+"region": "Ondo State",
+"ror": "https://ror.org/00q898q52",
+"score": 0.97
+},
+"Laboratory of Mathematical Medicine and Pharmaceutical Assessment, Faculty of Pharmaceutical Sciences, University of Toyama, Toyama, Japan": {
+"city": "Toyama",
+"country": "JP",
+"country_name": "Japan",
+"kinds": [
+"education",
+"funder"
+],
+"lat": 36.7,
+"lng": 137.21667,
+"name": "University of Toyama",
+"region": "Toyama",
+"ror": "https://ror.org/0445phv87",
+"score": 1.0
+},
+"Laboratory of Molecular Neuroscience and Neurology, Tokyo University of Pharmacy and Life Sciences, 1432-1 Horinouchi, Hachioji, Tokyo 192-0392, Japan": {
+"city": "Hachi\u014dji",
+"country": "JP",
+"country_name": "Japan",
+"kinds": [
+"education"
+],
+"lat": 35.65583,
+"lng": 139.32389,
+"name": "Tokyo University of Pharmacy and Life Sciences",
+"region": "Tokyo",
+"ror": "https://ror.org/057jm7w82",
+"score": 1.0
+},
+"Laboratory of Neurophysiology and Plasticity, IRCCS Fondazione Santa Lucia, Rome, Italy": {
+"city": "Rome",
+"country": "IT",
+"country_name": "Italy",
+"kinds": [
+"healthcare"
+],
+"lat": 41.89193,
+"lng": 12.51133,
+"name": "Fondazione Santa Lucia",
+"region": "Lazio",
+"ror": "https://ror.org/05rcxtd95",
+"score": 1.0
+},
+"Laboratory of Translational Psychiatry, Affiliated Mental Health Center & Hangzhou Seventh People's, School of Brain Science and Brain Medicine, Zhejiang University School of Medicine, Hangzhou, 310013, China": null,
+"Laboratory of Translational Psychiatry, Affiliated Mental Health Center & Hangzhou Seventh People's, School of Brain Science and Brain Medicine, Zhejiang University School of Medicine, Hangzhou, China": null,
+"Life and Environmental Sciences, University of Tsukuba, Tsukuba, Japan": {
+"city": "Tsukuba",
+"country": "JP",
+"country_name": "Japan",
+"kinds": [
+"education",
+"funder"
+],
+"lat": 36.08333,
+"lng": 140.11667,
+"name": "University of Tsukuba",
+"region": "Ibaraki",
+"ror": "https://ror.org/02956yf07",
+"score": 1.0
+},
+"Lifera Omics, Riyadh 13519, Saudi Arabia": null,
+"Lifera Omics, Riyadh 13519, Saudi Arabia; Department of Translational Genomics, Genomic Medicine Centre of Excellence, King Faisal Specialist Hospital and Research Centre, Riyadh 11211, Saudi Arabia; College of Medicine, Alfaisal University, Riyadh, Saudi Arabia": {
+"city": "Riyadh",
+"country": "SA",
+"country_name": "Saudi Arabia",
+"kinds": [
+"education",
+"funder"
+],
+"lat": 24.68773,
+"lng": 46.72185,
+"name": "Alfaisal University",
+"region": "Riyadh Region",
+"ror": "https://ror.org/00cdrtq48",
+"score": 1.0
+},
+"London Health Sciences Centre Research Institute, 800 Commissioners Rd E, London, ON, N6A 5W9": null,
+"Lukasiewicz Research Network - PORT Polish Center for Technology Development, Wroc\u0142aw 54-066, Poland": {
+"city": "Wroclaw",
+"country": "PL",
+"country_name": "Poland",
+"kinds": [
+"facility"
+],
+"lat": 51.1,
+"lng": 17.03333,
+"name": "\u0141ukasiewicz Research Network \u2013 PORT Polish Center for Technology Development",
+"region": "Lower Silesia",
+"ror": "https://ror.org/03rvn3n08",
+"score": 1.0
+},
+"Lyda Hill Department of Bioinformatics, University of Texas Southwestern Medical Center, Dallas, TX, USA": {
+"city": "Dallas",
+"country": "US",
+"country_name": "United States",
+"kinds": [
+"education",
+"funder",
+"healthcare"
+],
+"lat": 32.78306,
+"lng": -96.80667,
+"name": "The University of Texas Southwestern Medical Center",
+"region": "Texas",
+"ror": "https://ror.org/05byvp690",
+"score": 1.0
+},
+"Medical College, Hubei University for Nationalities, Enshi, 445000, Hubei Province, China": {
+"city": "Enshi",
+"country": "CN",
+"country_name": "China",
+"kinds": [
+"education"
+],
+"lat": 30.3,
+"lng": 109.48333,
+"name": "Hubei University for Nationalities",
+"region": "Hubei",
+"ror": "https://ror.org/01q349q17",
+"score": 1.0
+},
+"Metabolic Disease Biology Laboratory, Department of Molecular Biology and Biotechnology, Tezpur University, Tezpur, Assam, India": {
+"city": "Tezpur",
+"country": "IN",
+"country_name": "India",
+"kinds": [
+"education",
+"funder"
+],
+"lat": 26.63333,
+"lng": 92.8,
+"name": "Tezpur University",
+"region": "Assam",
+"ror": "https://ror.org/005x56091",
+"score": 1.0
+},
+"NHC Key Laboratory of Drug Addiction Medicine, Kunming Medical University, Kunming, China": {
+"city": "Kunming",
+"country": "CN",
+"country_name": "China",
+"kinds": [
+"education",
+"funder"
+],
+"lat": 25.03889,
+"lng": 102.71833,
+"name": "Kunming Medical University",
+"region": "Yunnan",
+"ror": "https://ror.org/038c3w259",
+"score": 1.0
+},
+"National Institute of Technology, Kisarazu College, 11-1, Kiyomidaihigashi 2-Chome, Kisarazu, Chiba 292-0041, Japan": {
+"city": "Kisarazu",
+"country": "JP",
+"country_name": "Japan",
+"kinds": [
+"education"
+],
+"lat": 35.38329,
+"lng": 139.93254,
+"name": "National Institute of Technology, Kisarazu College",
+"region": "Chiba",
+"ror": "https://ror.org/01ta2g450",
+"score": 1.0
+},
+"Neuro-Oncology Center and Brain Tumor Institute, University Hospitals of Cleveland Medical Center, Seidman Cancer Center, Hanna House 5th Floor, 11100 Euclid Avenue, Cleveland, OH, 44106, USA": {
+"city": "Cleveland",
+"country": "US",
+"country_name": "United States",
+"kinds": [
+"funder",
+"healthcare"
+],
+"lat": 41.4995,
+"lng": -81.69541,
+"name": "University Hospitals of Cleveland",
+"region": "Ohio",
+"ror": "https://ror.org/0130jk839",
+"score": 1.0
+},
+"Neurology Unit, Department of Paediatrics, Faculty of Medicine, Alexandria University, Alexandria, Egypt": {
+"city": "Alexandria",
+"country": "EG",
+"country_name": "Egypt",
+"kinds": [
+"education",
+"funder"
+],
+"lat": 31.20176,
+"lng": 29.91582,
+"name": "Alexandria University",
+"region": "Alexandria",
+"ror": "https://ror.org/00mzz1w90",
+"score": 1.0
+},
+"Neurology and Neurosurgery, UMC Utrecht Brain Center, University Medical Center Utrecht, Utrecht, The Netherlands": null,
+"Neuroradiology Unit, IRCCS Istituto Giannina Gaslini, 16147 Genoa, Italy": {
+"city": "Genoa",
+"country": "IT",
+"country_name": "Italy",
+"kinds": [
+"healthcare"
+],
+"lat": 44.40478,
+"lng": 8.94439,
+"name": "Istituto Giannina Gaslini",
+"region": "Liguria",
+"ror": "https://ror.org/0424g0k78",
+"score": 1.0
+},
+"Neuroscience Axis CHU de Qu\u00e9bec Research Center, Laval University, Quebec City, Qu\u00e9bec, Canada": {
+"city": "Qu\u00e9bec",
+"country": "CA",
+"country_name": "Canada",
+"kinds": [
+"education",
+"funder"
+],
+"lat": 46.81228,
+"lng": -71.21454,
+"name": "Universit\u00e9 Laval",
+"region": "Quebec",
+"ror": "https://ror.org/04sjchr03",
+"score": 1.0
+},
+"Neuroscience Centre of Excellence, KFSH&RC, Riyadh, Saudi Arabia": null,
+"Neuroscience Graduate Group, University of Pennsylvania, 415 Curie Blvd, Philadelphia, PA 19104, United States": {
+"city": "Philadelphia",
+"country": "US",
+"country_name": "United States",
+"kinds": [
+"education",
+"funder"
+],
+"lat": 39.95238,
+"lng": -75.16362,
+"name": "University of Pennsylvania",
+"region": "Pennsylvania",
+"ror": "https://ror.org/00b30xv10",
+"score": 1.0
+},
+"Neuroscience Research Center, National Key Laboratory for High Energy Pulsed Power, Key Laboratory of Biomedical Information Engineering of Ministry of Education, School of Life Science and Technology, Xi'an Jiaotong University, Xi'an, 710049, China": {
+"city": "Xi'an",
+"country": "CN",
+"country_name": "China",
+"kinds": [
+"education",
+"funder"
+],
+"lat": 34.25833,
+"lng": 108.92861,
+"name": "Xi'an Jiaotong University",
+"region": "Shaanxi",
+"ror": "https://ror.org/017zhmm22",
+"score": 1.0
+},
+"Neurosciences & Mental Health, The Hospital for Sick Children, Toronto, ON, Canada": null,
+"Nuffield Department of Population Health, University of Oxford, Oxford, UK": {
+"city": "Oxford",
+"country": "GB",
+"country_name": "United Kingdom",
+"kinds": [
+"education",
+"funder"
+],
+"lat": 51.75222,
+"lng": -1.25596,
+"name": "University of Oxford",
+"region": "England",
+"ror": "https://ror.org/052gg0110",
+"score": 1.0
+},
+"Nursing Department, West China Hospital of Sichuan University, Chengdu, China": {
+"city": "Chengdu",
+"country": "CN",
+"country_name": "China",
+"kinds": [
+"funder",
+"healthcare"
+],
+"lat": 30.66667,
+"lng": 104.06667,
+"name": "West China Hospital of Sichuan University",
+"region": "Sichuan",
+"ror": "https://ror.org/007mrxy13",
+"score": 1.0
+},
+"Nxera Pharma UK Limited, Cambridge, UK": null,
+"Outpatient Department, West China Hospital of Sichuan University, Chengdu, China": {
+"city": "Chengdu",
+"country": "CN",
+"country_name": "China",
+"kinds": [
+"funder",
+"healthcare"
+],
+"lat": 30.66667,
+"lng": 104.06667,
+"name": "West China Hospital of Sichuan University",
+"region": "Sichuan",
+"ror": "https://ror.org/007mrxy13",
+"score": 1.0
+},
+"Palindrome, Isfahan, Iran; Department of Neurodegenerative Diseases, UCL Queen Square Institute of Neurology, University College London, London, UK": {
+"city": "London",
+"country": "GB",
+"country_name": "United Kingdom",
+"kinds": [
+"education",
+"funder"
+],
+"lat": 51.50853,
+"lng": -0.12574,
+"name": "University College London",
+"region": "England",
+"ror": "https://ror.org/02jx3x895",
+"score": 1.0
+},
+"Pillar of STEM Education, College of Education Sciences, Hong Kong University of Science and Technology (Guangzhou), Guangzhou, China": {
+"city": "Guangzhou",
+"country": "CN",
+"country_name": "China",
+"kinds": [
+"education"
+],
+"lat": 23.11667,
+"lng": 113.25,
+"name": "The Hong Kong University of Science and Technology (Guangzhou)",
+"region": "Guangdong",
+"ror": "https://ror.org/050h0vm43",
+"score": 1.0
+},
+"Programa de Doctorado en Ciencias Biom\u00e9dicas, Universidad Nacional Aut\u00f3noma de M\u00e9xico, M\u00e9xico City 04510, Mexico": {
+"city": "Mexico City",
+"country": "MX",
+"country_name": "Mexico",
+"kinds": [
+"education",
+"funder"
+],
+"lat": 19.42847,
+"lng": -99.12766,
+"name": "Universidad Nacional Aut\u00f3noma de M\u00e9xico",
+"region": "Mexico City",
+"ror": "https://ror.org/01tmp8f25",
+"score": 1.0
+},
+"Proteomics and Metabolomics Core Facility, Duke University School of Medicine, Durham, NC, USA": {
+"city": "Durham",
+"country": "US",
+"country_name": "United States",
+"kinds": [
+"education",
+"funder"
+],
+"lat": 35.99403,
+"lng": -78.89862,
+"name": "Duke University",
+"region": "North Carolina",
+"ror": "https://ror.org/00py81415",
+"score": 1.0
+},
+"Proteomics and Metabolomics Unit, IRCCS Fondazione Santa Lucia, Rome, Italy": {
+"city": "Rome",
+"country": "IT",
+"country_name": "Italy",
+"kinds": [
+"healthcare"
+],
+"lat": 41.89193,
+"lng": 12.51133,
+"name": "Fondazione Santa Lucia",
+"region": "Lazio",
+"ror": "https://ror.org/05rcxtd95",
+"score": 1.0
+},
+"Psychiatry, Cheung Ngo Medical Limited, Hong Kong, HKG": null,
+"REVAL Rehabilitation Research Center, Faculty of Rehabilitation Sciences, Hasselt, Belgium": null,
+"Research Center and Memory Clinic, Ace Alzheimer Center Barcelona, Barcelona, Spain; Biomedical Research Networking Centre in Neurodegenerative Diseases (CIBERNED), Madrid, Spain": {
+"city": "Madrid",
+"country": "ES",
+"country_name": "Spain",
+"kinds": [
+"facility",
+"funder"
+],
+"lat": 40.4165,
+"lng": -3.70256,
+"name": "Biomedical Research Networking Center on Neurodegenerative Diseases",
+"region": "Madrid",
+"ror": "https://ror.org/00zca7903",
+"score": 0.97
+},
+"Research Center and Memory Clinic, Ace Alzheimer Center Barcelona, Barcelona, Spain; Biomedical Research Networking Centre in Neurodegenerative Diseases (CIBERNED), Madrid, Spain; Glenn Biggs Institute for Alzheimer's & Neurodegenerative Diseases, The University of Texas at San Antonio, San Antonio, TX, USA": {
+"city": "San Antonio",
+"country": "US",
+"country_name": "United States",
+"kinds": [
+"education",
+"funder"
+],
+"lat": 29.42412,
+"lng": -98.49363,
+"name": "The University of Texas at San Antonio",
+"region": "Texas",
+"ror": "https://ror.org/01kd65564",
+"score": 1.0
+},
+"Research Service, Kansas City Veterans Affairs Medical Center, Kansas City, KS, USA": null,
+"Research Unit NeuroBiology of Diabetes, Helmholtz Munich, Neuherberg, Germany": {
+"city": "Munich",
+"country": "DE",
+"country_name": "Germany",
+"kinds": [
+"facility",
+"funder"
+],
+"lat": 48.13743,
+"lng": 11.57549,
+"name": "Helmholtz Munich",
+"region": "Bavaria",
+"ror": "https://ror.org/00cfam450",
+"score": 1.0
+},
+"Research and Academy Division, BIRDEM General Hospital, Dhaka 1000, Bangladesh": null,
+"Saint Camillus International University of Health and Medical Sciences, Rome, Italy": {
+"city": "Rome",
+"country": "IT",
+"country_name": "Italy",
+"kinds": [
+"education"
+],
+"lat": 41.89193,
+"lng": 12.51133,
+"name": "Saint Camillus International University of Health and Medical Sciences",
+"region": "Lazio",
+"ror": "https://ror.org/00qvkm315",
+"score": 1.0
+},
+"School of Aerospace Engineering, Xi'an Jiaotong University, Xi'an, China": {
+"city": "Xi'an",
+"country": "CN",
+"country_name": "China",
+"kinds": [
+"education",
+"funder"
+],
+"lat": 34.25833,
+"lng": 108.92861,
+"name": "Xi'an Jiaotong University",
+"region": "Shaanxi",
+"ror": "https://ror.org/017zhmm22",
+"score": 1.0
+},
+"School of Basic Medicine, Tongji Medical College, Huazhong University of Science and Technology, Wuhan, 430030, China": {
+"city": "Wuhan",
+"country": "CN",
+"country_name": "China",
+"kinds": [
+"education",
+"funder"
+],
+"lat": 30.58333,
+"lng": 114.26667,
+"name": "Huazhong University of Science and Technology",
+"region": "Hubei",
+"ror": "https://ror.org/00p991c53",
+"score": 1.0
+},
+"School of Computation, Information and Technology, Technical University of Munich, Munich, Germany": {
+"city": "Munich",
+"country": "DE",
+"country_name": "Germany",
+"kinds": [
+"education",
+"funder"
+],
+"lat": 48.13743,
+"lng": 11.57549,
+"name": "Technical University of Munich",
+"region": "Bavaria",
+"ror": "https://ror.org/02kkvpp62",
+"score": 1.0
+},
+"School of Computation, Information and Technology, Technical University of Munich, Munich, Germany; Computational Health Center, Helmholtz Munich, Neuherberg, Germany; Institute of Human Genetics, School of Medicine and Health, Technical University of Munich, Munich, Germany": {
+"city": "Munich",
+"country": "DE",
+"country_name": "Germany",
+"kinds": [
+"education",
+"funder"
+],
+"lat": 48.13743,
+"lng": 11.57549,
+"name": "Technical University of Munich",
+"region": "Bavaria",
+"ror": "https://ror.org/02kkvpp62",
+"score": 1.0
+},
+"School of Life and Health Sciences, Fuyao University of Science and Technology, Fuzhou, China": {
+"city": "Fuzhou",
+"country": "CN",
+"country_name": "China",
+"kinds": [
+"education"
+],
+"lat": 26.06139,
+"lng": 119.30611,
+"name": "Fuyao University of Science and Technology",
+"region": "Fujian",
+"ror": "https://ror.org/05aak3d90",
+"score": 1.0
+},
+"School of Medical Technology and Information Engineering, Zhejiang Chinese Medical University, Hangzhou, Zhejiang, China": {
+"city": "Hangzhou",
+"country": "CN",
+"country_name": "China",
+"kinds": [
+"education",
+"funder"
+],
+"lat": 30.29365,
+"lng": 120.16142,
+"name": "Zhejiang Chinese Medical University",
+"region": "Zhejiang",
+"ror": "https://ror.org/04epb4p87",
+"score": 1.0
+},
+"School of Medicine, Yunnan University, Kunming, Yunnan 650091, China": {
+"city": "Kunming",
+"country": "CN",
+"country_name": "China",
+"kinds": [
+"education",
+"funder"
+],
+"lat": 25.03889,
+"lng": 102.71833,
+"name": "Yunnan University",
+"region": "Yunnan",
+"ror": "https://ror.org/0040axw97",
+"score": 1.0
+},
+"School of Medicine, Yunnan University, Kunming, Yunnan Province, China": {
+"city": "Kunming",
+"country": "CN",
+"country_name": "China",
+"kinds": [
+"education",
+"funder"
+],
+"lat": 25.03889,
+"lng": 102.71833,
+"name": "Yunnan University",
+"region": "Yunnan",
+"ror": "https://ror.org/0040axw97",
+"score": 1.0
+},
+"School of Pharmaceutical Sciences, Shandong University, Jinan, China": {
+"city": "Jinan",
+"country": "CN",
+"country_name": "China",
+"kinds": [
+"education",
+"funder"
+],
+"lat": 36.66833,
+"lng": 116.99722,
+"name": "Shandong University",
+"region": "Shandong",
+"ror": "https://ror.org/0207yh398",
+"score": 1.0
+},
+"Shaanxi Belt and Road Joint Laboratory of Precision Medicine in Psychiatry, The First Affiliated Hospital of Xi'an Jiaotong University, Xi'an, China": {
+"city": "Xi'an",
+"country": "CN",
+"country_name": "China",
+"kinds": [
+"funder",
+"healthcare"
+],
+"lat": 34.25833,
+"lng": 108.92861,
+"name": "First Affiliated Hospital of Xi'an Jiaotong University",
+"region": "Shaanxi",
+"ror": "https://ror.org/02tbvhh96",
+"score": 1.0
+},
+"Shaanxi Provincial Key Laboratory of Biological Psychiatry, The First Affiliated Hospital of Xi'an Jiaotong University, Xi'an, China": {
+"city": "Xi'an",
+"country": "CN",
+"country_name": "China",
+"kinds": [
+"funder",
+"healthcare"
+],
+"lat": 34.25833,
+"lng": 108.92861,
+"name": "First Affiliated Hospital of Xi'an Jiaotong University",
+"region": "Shaanxi",
+"ror": "https://ror.org/02tbvhh96",
+"score": 1.0
+},
+"Shanghai Key Laboratory of Orbital Diseases and Ocular Oncology, Shanghai, China": null,
+"Shenyang Pharmaceutical University, Shenyang, Liaoning Province, China": {
+"city": "Shenyang",
+"country": "CN",
+"country_name": "China",
+"kinds": [
+"education",
+"funder"
+],
+"lat": 41.79222,
+"lng": 123.43278,
+"name": "Shenyang Pharmaceutical University",
+"region": "Liaoning",
+"ror": "https://ror.org/03dnytd23",
+"score": 1.0
+},
+"Stanley Center for Psychiatric Research, Broad Institute of MIT and Harvard, Cambridge, MA, United States": {
+"city": "Cambridge",
+"country": "US",
+"country_name": "United States",
+"kinds": [
+"funder",
+"nonprofit"
+],
+"lat": 42.3751,
+"lng": -71.10561,
+"name": "Broad Institute",
+"region": "Massachusetts",
+"ror": "https://ror.org/05a0ya142",
+"score": 1.0
+},
+"State Key Laboratory of Agricultural and Forestry Biosecurity, College of Plant Protection, Nanjing Agricultural University, Nanjing, 210095, China": {
+"city": "Nanjing",
+"country": "CN",
+"country_name": "China",
+"kinds": [
+"education",
+"funder"
+],
+"lat": 32.06167,
+"lng": 118.77778,
+"name": "Nanjing Agricultural University",
+"region": "Jiangsu",
+"ror": "https://ror.org/05td3s095",
+"score": 1.0
+},
+"State Key Laboratory of Eye Health, Department of Ophthalmology, Shanghai Ninth People's Hospital, Shanghai Jiao Tong University School of Medicine, Shanghai, China": {
+"city": "Shanghai",
+"country": "CN",
+"country_name": "China",
+"kinds": [
+"education",
+"funder"
+],
+"lat": 31.22222,
+"lng": 121.45806,
+"name": "Shanghai Jiao Tong University",
+"region": "Shanghai",
+"ror": "https://ror.org/0220qvk04",
+"score": 1.0
+},
+"Subdirecci\u00f3n de Investigaci\u00f3n Cl\u00ednica, Direcci\u00f3n de Investigaci\u00f3n, Instituto Nacional de Ciencias M\u00e9dicas y Nutrici\u00f3n Salvador Zubir\u00e1n (INCMNSZ), Mexico City, Mexico": {
+"city": "Mexico City",
+"country": "MX",
+"country_name": "Mexico",
+"kinds": [
+"facility"
+],
+"lat": 19.42847,
+"lng": -99.12766,
+"name": "Instituto Nacional de Ciencias M\u00e9dicas y Nutrici\u00f3n Salvador Zubir\u00e1n",
+"region": "Mexico City",
+"ror": "https://ror.org/00xgvev73",
+"score": 1.0
+},
+"Synapse Development and Plasticity Research Unit, Institut de Recherches Cliniques de Montr\u00e9al, Montreal, Quebec H2W 1R7, Canada": {
+"city": "Montreal",
+"country": "CA",
+"country_name": "Canada",
+"kinds": [
+"facility"
+],
+"lat": 45.50884,
+"lng": -73.58781,
+"name": "Montreal Clinical Research Institute",
+"region": "Quebec",
+"ror": "https://ror.org/05m8pzq90",
+"score": 1.0
+},
+"The Children's Hospital Research Institute of Manitoba (CHRIM), Rady Faculty of Health Sciences, University of Manitoba, Winnipeg, MB R3E 3P4, Canada": {
+"city": "Winnipeg",
+"country": "CA",
+"country_name": "Canada",
+"kinds": [
+"education",
+"funder"
+],
+"lat": 49.8844,
+"lng": -97.14704,
+"name": "University of Manitoba",
+"region": "Manitoba",
+"ror": "https://ror.org/02gfys938",
+"score": 1.0
+},
+"The First Affiliated Hospital of Zhejiang Chinese Medical University (Zhejiang Provincial Hospital of Chinese Medicine), Hangzhou, Zhejiang, China": {
+"city": "Hangzhou",
+"country": "CN",
+"country_name": "China",
+"kinds": [
+"education",
+"funder"
+],
+"lat": 30.29365,
+"lng": 120.16142,
+"name": "Zhejiang Chinese Medical University",
+"region": "Zhejiang",
+"ror": "https://ror.org/04epb4p87",
+"score": 1.0
+},
+"The Key Laboratory of Biomedical Information Engineering of Ministry of Education, Department of Biomedical Engineering, School of Life Science and Technology, Xi'an Jiaotong University, Xi'an, China": {
+"city": "Xi'an",
+"country": "CN",
+"country_name": "China",
+"kinds": [
+"education",
+"funder"
+],
+"lat": 34.25833,
+"lng": 108.92861,
+"name": "Xi'an Jiaotong University",
+"region": "Shaanxi",
+"ror": "https://ror.org/017zhmm22",
+"score": 1.0
+},
+"The Key Laboratory of Developmental Genes and Human Disease, The School of Life Science and Technology, Southeast University, Nanjing, China": null,
+"The National Clinical Research Center for Mental Disorders and Beijing Key Laboratory of Mental Disorders, Beijing Anding Hospital, Capital Medical University, Beijing 100088, China": {
+"city": "Beijing",
+"country": "CN",
+"country_name": "China",
+"kinds": [
+"healthcare"
+],
+"lat": 39.9075,
+"lng": 116.39723,
+"name": "Beijing Anding Hospital",
+"region": "Beijing",
+"ror": "https://ror.org/021ky1s64",
+"score": 1.0
+},
+"The Picower Institute for Learning and Memory, Department of Brain and Cognitive Sciences, Massachusetts Institute of Technology (MIT), Cambridge, MA, United States": {
+"city": "Cambridge",
+"country": "US",
+"country_name": "United States",
+"kinds": [
+"education",
+"funder"
+],
+"lat": 42.3751,
+"lng": -71.10561,
+"name": "Massachusetts Institute of Technology",
+"region": "Massachusetts",
+"ror": "https://ror.org/042nb2s44",
+"score": 1.0
+},
+"Translational Proteomics Laboratory, Institut de Recherches Cliniques de Montr\u00e9al, Montreal, Qu\u00e9bec, Canada": {
+"city": "Montreal",
+"country": "CA",
+"country_name": "Canada",
+"kinds": [
+"facility"
+],
+"lat": 45.50884,
+"lng": -73.58781,
+"name": "Montreal Clinical Research Institute",
+"region": "Quebec",
+"ror": "https://ror.org/05m8pzq90",
+"score": 1.0
+},
+"Undergraduate Program in Neuroscience, University of Washington, Seattle, Washington": {
+"city": "Seattle",
+"country": "US",
+"country_name": "United States",
+"kinds": [
+"education",
+"funder"
+],
+"lat": 47.60621,
+"lng": -122.33207,
+"name": "University of Washington",
+"region": "Washington",
+"ror": "https://ror.org/00cvxb145",
+"score": 1.0
+},
+"Unidad de Investigaci\u00f3n en Obesidad, Facultad de Medicina, Universidad Nacional Aut\u00f3noma de M\u00e9xico (UNAM), Mexico City, Mexico": {
+"city": "Mexico City",
+"country": "MX",
+"country_name": "Mexico",
+"kinds": [
+"education",
+"funder"
+],
+"lat": 19.42847,
+"lng": -99.12766,
+"name": "Universidad Nacional Aut\u00f3noma de M\u00e9xico",
+"region": "Mexico City",
+"ror": "https://ror.org/01tmp8f25",
+"score": 1.0
+},
+"University of Kansas Diabetes Institute, University of Kansas Medical Center, Kansas City, KS, USA": {
+"city": "Kansas City",
+"country": "US",
+"country_name": "United States",
+"kinds": [
+"funder",
+"healthcare"
+],
+"lat": 39.11417,
+"lng": -94.62746,
+"name": "University of Kansas Medical Center",
+"region": "Kansas",
+"ror": "https://ror.org/036c9yv20",
+"score": 1.0
+},
+"Walther-Straub-Institute for Pharmacology and Toxicology, Ludwig-Maximilian University Munich (LMU), Munich, Germany": {
+"city": "Munich",
+"country": "DE",
+"country_name": "Germany",
+"kinds": [
+"education",
+"funder"
+],
+"lat": 48.13743,
+"lng": 11.57549,
+"name": "Ludwig-Maximilians-Universit\u00e4t M\u00fcnchen",
+"region": "Bavaria",
+"ror": "https://ror.org/05591te55",
+"score": 0.97
+},
+"Xi'an TCM Hospital of Encephalopathy, Shaanxi University of Chinese Medicine, Xi'an, China": {
+"city": "Xianyang",
+"country": "CN",
+"country_name": "China",
+"kinds": [
+"education",
+"funder"
+],
+"lat": 34.33778,
+"lng": 108.70261,
+"name": "Shaanxi University of Chinese Medicine",
+"region": "Shaanxi",
+"ror": "https://ror.org/021r98132",
+"score": 1.0
+},
+"Zak\u0142ad Genetyki, Instytut Psychiatrii i Neurologii w Warszawie": {
+"city": "Warsaw",
+"country": "PL",
+"country_name": "Poland",
+"kinds": [
+"facility"
+],
+"lat": 52.22977,
+"lng": 21.01178,
+"name": "Institute of Psychiatry and Neurology",
+"region": "Mazovia",
+"ror": "https://ror.org/0468k6j36",
+"score": 1.0
+},
+"Zhejiang Key Laboratory of Organ Development and Regeneration, College of Life and Environmental Sciences, Hangzhou Normal University, Hangzhou, 311121, China": {
+"city": "Hangzhou",
+"country": "CN",
+"country_name": "China",
+"kinds": [
+"education",
+"funder"
+],
+"lat": 30.29365,
+"lng": 120.16142,
+"name": "Hangzhou Normal University",
+"region": "Zhejiang",
+"ror": "https://ror.org/014v1mr15",
+"score": 1.0
+},
+"\u00dcsk\u00fcdar University, Faculty of Engineering and Natural Sciences, Department of Molecular Biology and Genetics, Istanbul, T\u00fcrkiye": {
+"city": "\u00dcsk\u00fcdar",
+"country": "TR",
+"country_name": "T\u00fcrkiye",
+"kinds": [
+"education"
+],
+"lat": 41.02274,
+"lng": 29.01366,
+"name": "\u00dcsk\u00fcdar University",
+"region": "Istanbul",
+"ror": "https://ror.org/02dzjmc73",
+"score": 1.0
+}
+}

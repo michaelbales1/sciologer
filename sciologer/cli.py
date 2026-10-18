@@ -10,6 +10,7 @@ from typing import Annotated
 import typer
 
 from .citations import ICiteClient
+from .geo import RORClient
 from .pipeline import DEFAULT_TYPES, RunParams, run_pipeline
 from .pubmed import PubMedClient
 from .records import EntityType
@@ -39,17 +40,20 @@ def search(
     )
     client = PubMedClient(cache_dir=None if no_cache else store.cache_dir)
     icite = ICiteClient(cache_dir=None if no_cache else store.cache_dir)
+    ror = RORClient(cache_dir=None if no_cache else store.cache_dir)
     try:
         out = run_pipeline(
             params,
             new_run_id(query),
             client=client,
             icite_client=icite,
+            ror_client=ror,
             progress=lambda msg, frac: typer.echo(f"[{frac:4.0%}] {msg}", err=True),
         )
     finally:
         client.close()
         icite.close()
+        ror.close()
     path = store.save(out)
     m = out.manifest
     typer.echo(

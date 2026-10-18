@@ -2,7 +2,7 @@
 
 Sciologer maps the relationships in a set of PubMed search results. Search PubMed, and it shows how the MeSH terms, authors, journals, substances, institutions, grants and keywords in the results connect. Entities that appear on the same papers are linked and drawn near each other.
 
-Michael Bales created Sciologer in 2008 as a Java/Tomcat app that wrote KML files for Google Earth. Version 0.2 rebuilds it as a local Python app with an interactive web map. The original code is kept in [`legacy/`](legacy/).
+Michael Bales created Sciologer in 2008 as a Java/Tomcat app. It wrote its sociograms as KML so that Google Earth, with its native rendering of 3D vector graphics, could display them as 3D networks you could fly through with a 3D mouse. The KML held each node's XYZ position in the network layout, not a geographic location. Version 0.2 rebuilds it as a local Python app with an interactive web map. The original code is kept in [`legacy/`](legacy/).
 
 ## Quick start
 
@@ -51,6 +51,7 @@ export NCBI_EMAIL=you@example.org
 | Layout | ForceAtlas2 with LinLog attraction (the successor to CCVisu's LinLog), run with 5 seeds to score stability | [`layout.py`](sciologer/layout.py) |
 | Text map | Embeds each title + abstract, clusters papers in the full embedding space, names clusters by distinctive terms, projects with t-SNE (see below) | [`semantic.py`](sciologer/semantic.py) |
 | Citation map | Links papers by direct citation and shared references using NIH iCite, clusters them, sizes them by Relative Citation Ratio (see below) | [`citations.py`](sciologer/citations.py) |
+| Geography | Matches each affiliation to an institution in the Research Organization Registry (ROR), places it at its city, links institutions that share papers (see below) | [`geo.py`](sciologer/geo.py) |
 
 Every run writes a **manifest** with the query, PubMed's interpretation of it, how many records matched and how many were fetched, all parameters, software versions, seeds and the full name-matching log. The app shows it under **How this map was made**. You can download it with the map as JSON, GEXF (for Gephi), GraphML (for Cytoscape) or CSV.
 
@@ -66,11 +67,12 @@ By default, authors are counted **fractionally** (Perianes-Rodriguez, Waltman & 
 
 Without this, a few large consortium papers (80+ authors) can fill the author slots and bind their authors into one block that dominates the map. On a test map of one researcher's 92 papers, full counting gave 55 of the 60 author slots to consortium members. Fractional counting gave 24, and the researcher's regular collaborators moved to the top. Ranking matters as much as links: association strength largely cancels fractional links on their own. To count every author in full, use **Options → Count authors → In full**. The author's credit is shown in the details panel.
 
-### Three views
+### Four views
 
 - **Entities** links MeSH terms, authors, journals and so on when they share papers.
 - **Papers by text** places each paper by what its title and abstract say.
 - **Papers by citation** links papers that cite each other or share references.
+- **Geography** places institutions from author affiliations on a world map, linked when they share papers.
 
 They answer different questions, so they are separate, linked views rather than one blended map. Co-occurrence shows how indexed concepts and people connect. Text shows what papers are about, including themes that cut across the indexing. Citations show intellectual communities: who builds on whom.
 
@@ -87,7 +89,15 @@ How the citation map is made:
 - **Clusters:** Leiden, with groups under 3 papers left unclustered. Names come from distinctive terms in the papers' titles and abstracts.
 - **Layout:** two candidates are computed, ForceAtlas2 and a spectral embedding laid out with t-SNE, and the one that agrees better with the clusters is kept. Each won on one kind of network during development: ForceAtlas2 on a researcher's 82 linked papers (agreement 0.90 vs 0.40), t-SNE on 379 papers about one topic (0.70 vs 0.40). Both scores are recorded.
 - **Size** shows RCR. Papers without one (too recent, or not covered) are drawn smallest. Selecting a paper lists what it cites and what cites it within the set, and the papers it shares the most references with.
-- If iCite can't be reached, the other two views are still built and the run notes why the citation view is missing.
+- If iCite can't be reached, the other views are still built and the run notes why the citation view is missing.
+
+How the geographic view is made:
+- **Matching.** Each distinct affiliation string (without emails and URLs) is sent to the [ROR](https://ror.org) affiliation-matching service. Only results ROR marks as *chosen*, meaning confident, are placed. Everything else is counted and listed under "not placed" rather than guessed. On test data, 84% of distinct affiliations got a confident match. Full strings match better than shortened ones (35 vs 31 of 40 in a sample), so they are sent whole.
+- **Institutions** are identified by their ROR ID, so different spellings of one institution become one mark. The details panel lists the affiliation strings that matched it and links to its ROR record.
+- **Location** is the city ROR records for the institution, so institutions in the same city share a point. The map spreads them around it, largest in the middle. The projection is Equal Earth, which keeps areas true, and the outlines are Natural Earth's (public domain).
+- **Size** is the number of papers with an author at the institution. **Links** join institutions that appear on the same paper; their weight is the number of shared papers. The 300 institutions with the most papers are drawn, and the side panel lists papers by country.
+- **Rate limits.** ROR allows 2,000 requests per 5 minutes without registration and has announced a lower limit (50 per 5 minutes) for unregistered clients later. Requests go through a shared rate limiter that honors Retry-After, the most frequent affiliations are looked up first (up to 2,500 per map), and every answer is cached, so overlapping queries reuse earlier lookups. A first map of 400 papers needs a few hundred to about 1,500 lookups, roughly 1–5 minutes. To use a registered ROR client ID, set `ROR_CLIENT_ID`.
+- In batch studies the view is off unless `geography` is listed under `views`.
 
 The views link to each other: a paper lists its entities, and any paper list links to that paper's place on the text and citation maps.
 
@@ -191,4 +201,4 @@ legacy/      the original 2008 Java implementation, for reference
 - Co-citation as an alternative citation link, for older literature
 - Cluster labels from a language model, grounded in the cluster's papers and checked against them
 - Multilevel clusters with Leiden: zoom from broad areas into specialties
-- A geographic view: institutions from author affiliations placed on a world map, sized by papers and linked by collaboration, with the same filters, details panel and provenance as the other views. It revives the 2008 Sciologer's Google Earth output in the browser. Geocoding would match institutions against a registry such as ROR, with uncertain matches flagged as name matches are today
+- Geographic view: optionally aggregate institutions into cities or countries when zoomed out

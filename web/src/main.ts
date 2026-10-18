@@ -5,6 +5,7 @@ import { esc, NetworkMap, truncate } from "./map";
 import { StudiesPage } from "./studies";
 import { Timeline } from "./timeline";
 import { buildCitationGraph, citationOverviewHtml, citationPaperDetailHtml } from "./citeview";
+import { buildGeoGraph, geoOverviewHtml, loadBasemap } from "./geoview";
 import { buildTextGraph, paperDetailHtml, paperTableHtml, textClusterHtml, textOverviewHtml } from "./textview";
 import type { Defaults, EntityType, Graph, GraphNode, LogEntry, MarkType, Run } from "./types";
 
@@ -45,15 +46,19 @@ let run: Run | null = null;
 let selected: GraphNode | null = null;
 let focusCluster: number | null = null;
 const shownTypes = new Set<MarkType>(TYPE_ORDER);
-type Mode = "entities" | "text" | "citations";
+type Mode = "entities" | "text" | "citations" | "geo";
 let mode: Mode = "entities";
 let textGraph: Graph | null = null;
 let citeGraph: Graph | null = null;
+let geoGraph: Graph | null = null;
 // Each view keeps its own link setting; the paper maps start with links hidden.
-const linkShare: Record<Mode, number> = { entities: 0.1, text: 0, citations: 0 };
+const linkShare: Record<Mode, number> = { entities: 0.1, text: 0, citations: 0, geo: 0.25 };
 let paperSort: "year" | "title" | "cluster" | "rcr" = "year";
 const paperMode = () => mode === "text" || mode === "citations";
-const graphFor = (m: Mode): Graph | null => (m === "text" ? textGraph : m === "citations" ? citeGraph : run?.graph ?? null);
+const graphFor = (m: Mode): Graph | null =>
+  m === "text" ? textGraph : m === "citations" ? citeGraph : m === "geo" ? geoGraph : run?.graph ?? null;
+/** Entity marks the list and search work on: the entity map's shown types, or the institutions on the world map. */
+const entityNodes = (): GraphNode[] => (mode === "geo" ? geoGraph!.nodes : run!.graph.nodes.filter((n) => shownTypes.has(n.type)));
 let years: [number, number] | null = null;
 let showAllPapers = false;
 let uncertainOnly = true;
@@ -253,6 +258,7 @@ async function loadRun(id: string) {
   for (const t of TYPE_ORDER) if (present.has(t)) shownTypes.add(t);
   textGraph = buildTextGraph(run);
   citeGraph = buildCitationGraph(run);
+  geoGraph = buildGeoGraph(run);
   timeline.setPapers(run.papers);
   setMode("entities");
   $("year-range").textContent = "Drag across years to filter the map";
@@ -274,7 +280,7 @@ function setMode(next: Mode, selectId?: string) {
   showAllPapers = false;
   map.setData(graphFor(next)!, run.papers);
   map.setFilter({
-    types: paperMode() ? new Set<MarkType>(["paper"]) : new Set(shownTypes),
+    types: paperMode() ? new Set<MarkType>(["paper"]) : next === "geo" ? new Set<MarkType>(["institution"]) : new Set(shownTypes),
     years,
     linkShare: linkShare[next],
     search: ($("find") as HTMLInputElement).value,
@@ -282,7 +288,12 @@ function setMode(next: Mode, selectId?: string) {
   const slider = $("link-share") as HTMLInputElement;
   slider.value = String(linkShare[next]);
   updateLinkLabel();
-  $("mode").hidden = !textGraph && !citeGraph;
+  $("mode").hidden = !textGraph && !citeGraph && !geoGraph;
+  if (next === "geo") {
+    // World outlines load on first use: coarse first, then the finer ones for zooming in.
+    loadBasemap("110m").then((b) => map.setBasemap("coarse", b));
+    loadBasemap("50m").then((b) => map.setBasemap("fine", b));
+  }
   $("mode").querySelectorAll<HTMLButtonElement>("button").forEach((b) => {
     b.setAttribute("aria-checked", String(b.dataset.mode === next));
     b.hidden = !graphFor(b.dataset.mode as Mode);
@@ -290,7 +301,12 @@ function setMode(next: Mode, selectId?: string) {
   $("map-note-entities").hidden = next !== "entities";
   $("map-note-text").hidden = next !== "text";
   $("map-note-citations").hidden = next !== "citations";
-  ($("find") as HTMLInputElement).placeholder = paperMode() ? "Find title, author, journal  ( / )" : "Find on map  ( / )";
+  $("map-note-geo").hidden = next !== "geo";
+  ($("find") as HTMLInputElement).placeholder = paperMode()
+    ? "Find title, author, journal  ( / )"
+    : next === "geo"
+      ? "Find institution, city, country  ( / )"
+      : "Find on map  ( / )";
   renderLegend();
   renderList();
   if (selectId) {
@@ -307,6 +323,12 @@ $("mode").querySelectorAll<HTMLButtonElement>("button").forEach((b) =>
 
 function renderLegend() {
   if (!run) return;
+  if (mode === "geo") {
+    $("legend").innerHTML =
+      `<span class="legend-item static">${iconHtml("institution", 18)}<span>Institutions</span><span class="muted num">${geoGraph!.nodes.length}</span></span>` +
+      `<span class="legend-note small muted">Size: papers · placed with ROR</span>`;
+    return;
+  }
   if (paperMode()) {
     const n = graphFor(mode)!.nodes.length;
     $("legend").innerHTML =
@@ -350,7 +372,7 @@ $("find").addEventListener("input", (e) => map.setFilter({ search: (e.target as 
 $("find").addEventListener("keydown", (e) => {
   if (e.key !== "Enter" || !run) return;
   const q = (e.target as HTMLInputElement).value.trim().toLowerCase();
-  const nodes = paperMode() ? graphFor(mode)!.nodes : run.graph.nodes.filter((n) => shownTypes.has(n.type));
+  const nodes = paperMode() ? graphFor(mode)!.nodes : entityNodes();
   const hit = nodes
     .filter((n) => (n.search ?? n.label.toLowerCase()).includes(q))
     .sort((a, b) => b.count - a.count)[0];
@@ -426,8 +448,19 @@ function renderDetails() {
   if (mode === "text") return renderText(el);
   if (mode === "citations") return renderCitations(el);
   if (selected) return renderNode(el, selected);
+  if (mode === "geo") return renderGeoOverview(el);
   if (focusCluster !== null) return renderCluster(el, focusCluster);
   renderOverview(el);
+}
+
+function renderGeoOverview(el: HTMLElement) {
+  el.innerHTML = geoOverviewHtml(run!);
+  el.querySelectorAll<HTMLButtonElement>("[data-country]").forEach((b) =>
+    b.addEventListener("click", () => {
+      const ids = geoGraph!.nodes.filter((n) => run!.geo!.institutions.find((i) => i.id === n.id)?.country === b.dataset.country).map((n) => n.id);
+      map.zoomToNodes(ids);
+    }),
+  );
 }
 
 function renderCitations(el: HTMLElement) {
@@ -583,13 +616,13 @@ function renderNode(el: HTMLElement, n: GraphNode) {
     ${ext ? `<p class="small"><a href="${esc(ext.url)}" target="_blank" rel="noopener">${esc(ext.text)}</a></p>` : ""}
     <dl class="stats">
       <div><dt>Papers${years ? " in range" : ""}</dt><dd>${fmt(pmids.length)}</dd></div>
-      <div><dt>Linked entities</dt><dd>${fmt(neighbors.length)}</dd></div>
-      <div><dt>Layout stability</dt><dd>${n.stability.toFixed(2)}</dd></div>
+      <div><dt>Linked ${n.place ? "institutions" : "entities"}</dt><dd>${fmt(neighbors.length)}</dd></div>
+      ${n.place ? `<div><dt>Location</dt><dd class="small">${esc(n.place)}</dd></div>` : `<div><dt>Layout stability</dt><dd>${n.stability.toFixed(2)}</dd></div>`}
       ${n.credit != null ? `<div><dt title="Sum of 1/(number of authors) over this author's papers">Fractional credit</dt><dd>${n.credit.toFixed(1)}</dd></div>` : ""}
     </dl>
     ${n.stability < map.lowStability ? `<div class="banner note">This node's position changed between layout runs. Its links are reliable; its exact location is not.</div>` : ""}
     ${cluster ? `<p class="small">Cluster: <button type="button" class="link" data-goto-cluster="${cluster.id}">${esc(cluster.label)}</button></p>` : ""}
-    ${n.variants.length ? `<details class="small"><summary>Also written as (${n.variants.length})</summary><p>${n.variants.map(esc).join("; ")}</p></details>` : ""}
+    ${n.variants.length ? `<details class="small"><summary>${n.place ? "Affiliations matched" : "Also written as"} (${n.variants.length})</summary><p>${n.variants.map(esc).join("; ")}</p></details>` : ""}
     <h3>Most linked</h3>
     <p class="muted small">Shared papers, most first.</p>
     ${entityList(neighbors.slice(0, 12).map((x) => x.node), (m) => String(neighbors.find((x) => x.node.id === m.id)!.shared.length))}
@@ -612,6 +645,7 @@ function renderNode(el: HTMLElement, n: GraphNode) {
 
 function externalLink(n: GraphNode): { url: string; text: string } | null {
   if (n.type === "mesh" && n.ui) return { url: `https://meshb.nlm.nih.gov/record/ui?ui=${n.ui}`, text: `MeSH record ${n.ui}` };
+  if (n.type === "institution" && n.id.startsWith("https://ror.org/")) return { url: n.id, text: "ROR record" };
   if (n.type === "author" && n.orcid) return { url: `https://orcid.org/${n.orcid}`, text: `ORCID ${n.orcid}` };
   if (n.type === "grant") {
     const id = n.id.replace(/^grant:/, "");
@@ -658,8 +692,8 @@ function renderList() {
     wireEntityButtons(el);
     return;
   }
-  const rows = run.graph.nodes
-    .filter((n) => shownTypes.has(n.type) && map.visibleCount(n.id) > 0)
+  const rows = entityNodes()
+    .filter((n) => map.visibleCount(n.id) > 0)
     .sort((a, b) =>
       listSort === "label"
         ? a.label.localeCompare(b.label)
@@ -761,6 +795,7 @@ function renderMethod() {
       <li><a href="${api.exportUrl(id, "nodes.csv")}">Entities (CSV)</a> · <a href="${api.exportUrl(id, "edges.csv")}">Links (CSV)</a></li>
       ${run.text ? `<li><a href="${api.exportUrl(id, "text.csv")}">Text map (CSV)</a>: papers, clusters, positions, nearest by text</li>` : ""}
       ${run.citations ? `<li><a href="${api.exportUrl(id, "citations.csv")}">Citation map (CSV)</a>: papers, clusters, positions, RCR, citations within the set</li>` : ""}
+      ${run.geo ? `<li><a href="${api.exportUrl(id, "geo.csv")}">Institutions (CSV)</a>: ROR IDs, locations, papers, affiliations matched</li>` : ""}
     </ul>`;
   el.querySelector("#uncertain-only")!.addEventListener("change", (e) => {
     uncertainOnly = (e.target as HTMLInputElement).checked;

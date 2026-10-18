@@ -10,11 +10,13 @@
 // - Positions are approximate. Nodes whose neighborhood changed across layout runs
 //   are drawn hollow with a dashed outline.
 
+import { geoEqualEarth, geoPath, type GeoProjection } from "d3-geo";
 import { polygonHull } from "d3-polygon";
 import { quadtree, type Quadtree } from "d3-quadtree";
 import { select } from "d3-selection";
 import { zoom, zoomIdentity, type ZoomBehavior, type ZoomTransform } from "d3-zoom";
 import { cssVar, drawIcon, ICON_SCALE, iconHtml, loadIcons, MIN_ICON_PX, mix, TYPE_STYLES, tracePath, typeColor } from "./encoding";
+import type { Basemap } from "./geoview";
 import type { Graph, GraphEdge, GraphNode, MarkType, PaperInfo } from "./types";
 
 export const LOW_STABILITY = 0.5;
@@ -40,6 +42,10 @@ interface NodeView {
   sy: number;
   r: number;
   match: boolean;
+  /** Geographic view: place among institutions sharing a location (0 = center). */
+  slot: number;
+  /** Geographic view: the institutions sharing this one's location, largest first. */
+  site: NodeView[] | null;
 }
 
 interface EdgeView {
@@ -78,6 +84,9 @@ export class NetworkMap {
   private paperMap = false;
   /** Text map: each cluster split into spatially connected islands (graph coords). */
   private islands: { cluster: number; members: NodeView[] }[] | null = null;
+  /** Geographic view: projection (unzoomed canvas coordinates) and world outlines. */
+  private projection: GeoProjection | null = null;
+  private basemaps: { coarse: Basemap | null; fine: Basemap | null } = { coarse: null, fine: null };
 
   constructor(private container: HTMLElement, private cb: MapCallbacks) {
     this.canvas = document.createElement("canvas");
@@ -119,7 +128,7 @@ export class NetworkMap {
   setData(graph: Graph, papers: Record<string, PaperInfo>) {
     this.graph = graph;
     this.papers = papers;
-    this.nodes = graph.nodes.map((node) => ({ node, visible: true, count: node.count, sx: 0, sy: 0, r: 0, match: false }));
+    this.nodes = graph.nodes.map((node) => ({ node, visible: true, count: node.count, sx: 0, sy: 0, r: 0, match: false, slot: 0, site: null }));
     this.byId = new Map(this.nodes.map((v) => [v.node.id, v]));
     this.maxCount = Math.max(1e-9, ...graph.nodes.map((n) => n.size ?? n.count));
     const sorted = [...graph.edges].sort((a, b) => b.weight - a.weight);
@@ -139,6 +148,27 @@ export class NetworkMap {
     }
     this.islands = graph.regions === "islands" || graph.uniform_size ? findIslands(this.nodes) : null;
     this.paperMap = graph.nodes.length > 0 && graph.nodes.every((n) => n.type === "paper");
+    // Geographic view: zoom in as far as a city; institutions sharing a location are
+    // spread around it, largest in the middle.
+    this.zoomer.scaleExtent(graph.geo ? [0.8, 60] : [0.5, 12]);
+    this.projection = graph.geo ? geoEqualEarth() : null;
+    if (graph.geo) {
+      const sites = new Map<string, NodeView[]>();
+      for (const v of this.nodes) {
+        const key = `${v.node.x.toFixed(3)},${v.node.y.toFixed(3)}`;
+        const list = sites.get(key) ?? [];
+        list.push(v);
+        sites.set(key, list);
+      }
+      for (const list of sites.values()) {
+        list.sort((a, b) => b.node.count - a.node.count);
+        list.forEach((v, i) => {
+          v.slot = i;
+          v.site = list;
+        });
+      }
+      this.fitProjection();
+    }
     this.selected = null;
     this.hovered = null;
     this.focusCluster = null;
@@ -222,6 +252,36 @@ export class NetworkMap {
     select(this.canvas).call(this.zoomer.transform, t);
   }
 
+  /** World outlines for the geographic view: coarse for the world, fine when zoomed in. */
+  setBasemap(detail: "coarse" | "fine", map: Basemap) {
+    this.basemaps[detail] = map;
+    this.requestDraw();
+  }
+
+  private fitProjection() {
+    const pad = 24;
+    this.projection?.fitExtent(
+      [
+        [pad, pad],
+        [this.width - pad, this.height - pad],
+      ],
+      { type: "Sphere" },
+    );
+  }
+
+  /** Fit the view to a set of nodes (e.g. a country's institutions). */
+  zoomToNodes(ids: string[]) {
+    const pts = ids.map((id) => this.byId.get(id)).filter((v): v is NodeView => !!v).map((v) => this.world(v.node));
+    if (!pts.length) return;
+    const xs = pts.map((p) => p[0]);
+    const ys = pts.map((p) => p[1]);
+    const [x0, x1, y0, y1] = [Math.min(...xs), Math.max(...xs), Math.min(...ys), Math.max(...ys)];
+    const pad = 80;
+    const k = Math.min(20, Math.max(1, Math.min((this.width - pad) / Math.max(x1 - x0, 1), (this.height - pad) / Math.max(y1 - y0, 1))));
+    const t = zoomIdentity.translate(this.width / 2 - ((x0 + x1) / 2) * k, this.height / 2 - ((y0 + y1) / 2) * k).scale(k);
+    select(this.canvas).call(this.zoomer.transform, t);
+  }
+
   resetView() {
     select(this.canvas).call(this.zoomer.transform, zoomIdentity);
   }
@@ -235,6 +295,7 @@ export class NetworkMap {
     this.canvas.height = Math.round(this.height * this.dpr);
     this.canvas.style.width = `${this.width}px`;
     this.canvas.style.height = `${this.height}px`;
+    if (this.projection) this.fitProjection();
     this.requestDraw();
   }
 
@@ -248,6 +309,7 @@ export class NetworkMap {
 
   /** Graph coordinates ([-1, 1]) to unzoomed canvas coordinates. */
   private world(n: GraphNode): [number, number] {
+    if (this.projection) return this.projection([n.x, n.y]) ?? [0, 0];
     const pad = 48;
     const s = Math.min(this.width, this.height) / 2 - pad;
     return [this.width / 2 + n.x * s, this.height / 2 - n.y * s];
@@ -268,6 +330,9 @@ export class NetworkMap {
     // Text map: small dots at the overview so cluster labels stay readable; they grow
     // as you zoom in and become paper icons once there's room.
     if (this.graph?.uniform_size) return Math.min(8, 2.5 * Math.sqrt(Math.max(1, this.transform.k)));
+    // World map: smaller marks, since many institutions share a few dense regions;
+    // they grow as you zoom in.
+    if (this.graph?.geo) return (2 + 8 * Math.sqrt(count / this.maxCount)) * zoomGrow;
     const rMax = Math.max(10, Math.min(22, base / 40));
     return (2.5 + (rMax - 2.5) * Math.sqrt(count / this.maxCount)) * zoomGrow;
   }
@@ -310,6 +375,7 @@ export class NetworkMap {
       // also makes it easy to move from a node onto one of its neighbors.
       if (hood?.has(v.node.id)) v.r = Math.max(v.r * (v === focus ? 1.6 : 1.35), v === focus ? 6 : 4.5);
     }
+    if (this.projection) this.spreadSites();
     const visible = this.nodes.filter((v) => v.visible);
     this.tree = quadtree<NodeView>()
       .x((v) => v.sx)
@@ -319,6 +385,9 @@ export class NetworkMap {
     const focusC = this.focusCluster;
     const dimmed = (v: NodeView) =>
       (hood !== null && !hood.has(v.node.id)) || (focusC !== null && v.node.cluster !== focusC);
+
+    // 0. Geographic view: land and borders under everything else.
+    if (this.projection) this.drawBasemap(surface);
 
     // 1. Cluster regions: a thick, round-joined hull stroke reads as a soft area.
     //    Entity map: one region per cluster, around its core members (hubs and bridging
@@ -391,7 +460,14 @@ export class NetworkMap {
       ctx.globalAlpha = Math.min(1, alpha);
       ctx.beginPath();
       ctx.moveTo(e.a.sx, e.a.sy);
-      ctx.lineTo(e.b.sx, e.b.sy);
+      if (this.projection) {
+        // Gentle arcs, so links between nearby places don't run along one line.
+        const mx = (e.a.sx + e.b.sx) / 2;
+        const my = (e.a.sy + e.b.sy) / 2;
+        const dx = e.b.sx - e.a.sx;
+        const dy = e.b.sy - e.a.sy;
+        ctx.quadraticCurveTo(mx - dy * 0.18, my + dx * 0.18, e.b.sx, e.b.sy);
+      } else ctx.lineTo(e.b.sx, e.b.sy);
       ctx.stroke();
     }
     ctx.globalAlpha = 1;
@@ -558,6 +634,45 @@ export class NetworkMap {
     }
   }
 
+  /** Spread institutions that share a location on a sunflower spiral around it. */
+  private spreadSites() {
+    const grow = Math.min(2, Math.sqrt(Math.max(1, this.transform.k)));
+    for (const v of this.nodes) {
+      if (!v.site || v.slot === 0) continue;
+      const center = v.site.find((x) => x.visible) ?? v.site[0];
+      const order = v.site.filter((x) => x.visible).indexOf(v);
+      if (order <= 0) continue;
+      const dist = center.r * 0.8 + 6 * grow * Math.sqrt(order);
+      const angle = order * 2.399963; // golden angle
+      v.sx += Math.cos(angle) * dist;
+      v.sy += Math.sin(angle) * dist;
+    }
+  }
+
+  private drawBasemap(surface: string) {
+    const { ctx, transform: t } = this;
+    const map = (t.k >= 2.5 && this.basemaps.fine) || this.basemaps.coarse || this.basemaps.fine;
+    ctx.save();
+    ctx.setTransform(this.dpr * t.k, 0, 0, this.dpr * t.k, this.dpr * t.x, this.dpr * t.y);
+    const path = geoPath(this.projection!, ctx);
+    ctx.beginPath();
+    path({ type: "Sphere" });
+    ctx.fillStyle = cssVar("--geo-ocean");
+    ctx.fill();
+    if (map) {
+      ctx.beginPath();
+      path(map.land);
+      ctx.fillStyle = cssVar("--geo-land");
+      ctx.fill();
+      ctx.beginPath();
+      path(map.borders);
+      ctx.lineWidth = 0.75 / t.k;
+      ctx.strokeStyle = surface;
+      ctx.stroke();
+    }
+    ctx.restore();
+  }
+
   private hit(e: PointerEvent | MouseEvent): NodeView | null {
     if (!this.tree) return null;
     const rect = this.canvas.getBoundingClientRect();
@@ -640,7 +755,7 @@ export class NetworkMap {
       if (unstable)
         note = "Its map neighbors change between layout runs. Use its nearest papers by text, in the side panel, instead of its location.";
     } else {
-      row = `<span>${style.label}</span><span>${v.count} paper${v.count === 1 ? "" : "s"} · ${links} link${links === 1 ? "" : "s"}</span>`;
+      row = `<span>${n.place ? esc(n.place) : style.label}</span><span>${v.count} paper${v.count === 1 ? "" : "s"} · ${links} link${links === 1 ? "" : "s"}</span>`;
       if (unstable)
         note = `Position varies between layout runs (stability ${n.stability.toFixed(2)}). Read its links, not its location.`;
     }

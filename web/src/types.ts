@@ -32,6 +32,8 @@ export interface GraphNode {
   size?: number;
   /** Text map only: how many of the paper's nearest papers by text are near it on the map. */
   neighbors_kept?: number;
+  /** Geographic view: where the institution is (x = longitude, y = latitude). */
+  place?: string;
 }
 
 export interface GraphEdge {
@@ -61,6 +63,31 @@ export interface Graph {
   /** "islands": one labeled region per spatially connected piece of a cluster (t-SNE
    *  maps); default: one region per cluster around its core. */
   regions?: "islands" | "clusters";
+  /** Geographic view: x and y are longitude and latitude, drawn on a world map. */
+  geo?: boolean;
+}
+
+export interface GeoInstitution {
+  id: string; // ROR ID (https://ror.org/…)
+  label: string;
+  city: string | null;
+  region: string | null;
+  country: string | null; // ISO 3166 alpha-2
+  country_name: string | null;
+  lat: number;
+  lng: number;
+  kinds: string[];
+  pmids: string[];
+  count: number;
+  variants: string[];
+}
+
+export interface GeoMap {
+  institutions: GeoInstitution[];
+  edges: { source: string; target: string; count: number; weight: number }[];
+  countries: { code: string | null; name: string | null; institutions: number; papers: number }[];
+  unplaced: { affiliation: string; count: number }[];
+  unplaced_countries: Record<string, number>;
 }
 
 export interface CitationMapPaper {
@@ -158,6 +185,7 @@ export interface Run {
   manifest: Manifest;
   text: TextMap | null;
   citations: CitationMap | null;
+  geo?: GeoMap | null;
 }
 
 export interface RunSummary {

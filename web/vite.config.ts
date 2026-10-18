@@ -4,5 +4,7 @@ import { defineConfig } from "vite";
 // `npm run build` writes into the Python package so `sciologer serve` can serve it.
 export default defineConfig({
   server: { proxy: { "/api": "http://127.0.0.1:8765" } },
-  build: { outDir: "../sciologer/static", emptyOutDir: true },
+  // The 1:50m world outlines (~760 kB) are a separate chunk, loaded only by the
+  // geographic view.
+  build: { outDir: "../sciologer/static", emptyOutDir: true, chunkSizeWarningLimit: 800 },
 });
