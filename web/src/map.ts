@@ -297,12 +297,18 @@ export class NetworkMap {
     const regionFill = cssVar("--region");
     const regionFocus = cssVar("--region-focus");
 
+    const hood = this.neighborhood();
+    const focus = this.selected ?? this.hovered;
     for (const v of this.nodes) {
       const [wx, wy] = this.world(v.node);
       [v.sx, v.sy] = t.apply([wx, wy]);
       // Size by the mark's own measure when it has one (citation map: RCR, which the
       // year filter doesn't change); otherwise by papers within the year filter.
       v.r = this.radius(v.node.size ?? v.count);
+      // The focused node and its neighbors grow (tiny dots to a readable minimum), so
+      // the neighborhood stands out by size as well as by contrast. The larger hit area
+      // also makes it easy to move from a node onto one of its neighbors.
+      if (hood?.has(v.node.id)) v.r = Math.max(v.r * (v === focus ? 1.6 : 1.35), v === focus ? 6 : 4.5);
     }
     const visible = this.nodes.filter((v) => v.visible);
     this.tree = quadtree<NodeView>()
@@ -310,7 +316,6 @@ export class NetworkMap {
       .y((v) => v.sy)
       .addAll(visible);
 
-    const hood = this.neighborhood();
     const focusC = this.focusCluster;
     const dimmed = (v: NodeView) =>
       (hood !== null && !hood.has(v.node.id)) || (focusC !== null && v.node.cluster !== focusC);
@@ -364,7 +369,7 @@ export class NetworkMap {
       }
       trace();
       ctx.fillStyle = ctx.strokeStyle = focusC === grp.cluster ? regionFocus : regionFill;
-      ctx.globalAlpha = focusC !== null && focusC !== grp.cluster ? 0.4 : 1;
+      ctx.globalAlpha = hood !== null ? 0.45 : focusC !== null && focusC !== grp.cluster ? 0.4 : 1;
       ctx.lineWidth = regionPad * 2;
       ctx.stroke();
       ctx.fill();
@@ -393,7 +398,9 @@ export class NetworkMap {
 
     // 3. Nodes, small on top of large so small ones stay reachable. Marks big enough
     //    for their pictogram to read get it; smaller ones get the matching shape.
-    const order = [...visible].sort((a, b) => b.r - a.r);
+    //    The focused neighborhood is drawn last, on top of everything else.
+    const layer = (v: NodeView) => (v === focus ? 2 : hood?.has(v.node.id) ? 1 : 0);
+    const order = [...visible].sort((a, b) => layer(a) - layer(b) || b.r - a.r);
     for (const v of order) {
       const style = TYPE_STYLES[v.node.type];
       const color = typeColor(v.node.type);
@@ -402,7 +409,7 @@ export class NetworkMap {
       // switches to icons sooner (from ~2.25× zoom) than the entity map does.
       const iconSize = this.graph.uniform_size ? v.r * 3.2 : v.r * ICON_SCALE;
       const iconMin = this.graph.uniform_size ? 12 : MIN_ICON_PX;
-      ctx.globalAlpha = dimmed(v) ? 0.18 : 1;
+      ctx.globalAlpha = dimmed(v) ? (hood !== null ? 0.12 : 0.18) : 1;
       let drewIcon = false;
       if (iconSize >= iconMin) {
         // A surface disc behind the pictogram hides links passing underneath.
@@ -443,11 +450,18 @@ export class NetworkMap {
           ctx.stroke();
         }
       }
-      if (v === this.selected || v.match) {
+      if (v === focus || v === this.selected || v.match) {
         ctx.beginPath();
         ctx.arc(v.sx, v.sy, (drewIcon ? iconSize * 0.5 : v.r * 1.3) + 3, 0, Math.PI * 2);
         ctx.lineWidth = 2;
         ctx.strokeStyle = ink;
+        ctx.stroke();
+      } else if (hood?.has(v.node.id)) {
+        // Neighbors: a thin ring in the node's own color, so they read as a set.
+        ctx.beginPath();
+        ctx.arc(v.sx, v.sy, (drewIcon ? iconSize * 0.5 : v.r * 1.3) + 2, 0, Math.PI * 2);
+        ctx.lineWidth = 1.25;
+        ctx.strokeStyle = color;
         ctx.stroke();
       }
     }
