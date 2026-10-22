@@ -28,6 +28,7 @@ export function buildCitationGraph(run: Run): Graph | null {
       x: p.x,
       y: p.y,
       stability: p.stability,
+      island: p.island,
       search: [title, info?.journal, info?.year, ...(info?.authors ?? [])].filter(Boolean).join(" ").toLowerCase(),
     };
   });
@@ -44,6 +45,7 @@ export function buildCitationGraph(run: Run): Graph | null {
     })),
     low_stability: cm.low_stability,
     regions: cm.layout_method === "spectral_tsne" ? "islands" : "clusters",
+    islands: cm.islands,
   };
 }
 

@@ -4,7 +4,7 @@
 
 import { iconHtml, TYPE_STYLES } from "./encoding";
 import { esc } from "./map";
-import type { Graph, GraphNode, Run, TextMapCluster } from "./types";
+import type { Graph, GraphNode, MapIsland, Run, TextMapCluster } from "./types";
 
 const fmt = (n: number) => n.toLocaleString();
 
@@ -26,6 +26,7 @@ export function buildTextGraph(run: Run): Graph | null {
       y: p.y,
       stability: p.stability,
       neighbors_kept: p.neighbors_kept,
+      island: p.island,
       search: [title, info?.journal, info?.year, ...(info?.authors ?? [])].filter(Boolean).join(" ").toLowerCase(),
     };
   });
@@ -47,6 +48,7 @@ export function buildTextGraph(run: Run): Graph | null {
     })),
     low_stability: text.low_stability,
     uniform_size: true,
+    islands: text.islands,
   };
 }
 
@@ -95,12 +97,18 @@ export function textClusterHtml(
   members: string[] = run.text!.papers.filter((p) => p.cluster === cl.id).map((p) => p.pmid),
   back = "← All text clusters",
   centralNote = "the most central papers",
+  islands: MapIsland[] = run.text?.islands ?? [],
 ): string {
   const max = Math.max(...cl.terms.map(([, w]) => w), 1e-9);
+  const parts = islands.filter((i) => i.cluster === cl.id && i.label);
   return `
     <button type="button" class="link back">${back}</button>
     <h2 class="panel-title">${esc(cl.label)}</h2>
     <p class="muted small">${cl.size} papers. The name is the top three terms below, from the papers' titles and abstracts; check them against ${centralNote}.</p>
+    ${parts.length
+      ? `<div class="banner note small">This cluster is drawn in ${parts.length} places on the map. The papers are grouped together by their text, but the 2D layout separated them, which often means the cluster holds distinct subtopics. Each part is labeled on the map by its own distinctive terms:
+          <ul>${parts.map((i) => `<li><strong>${esc(i.label!)}</strong> <span class="muted">(${i.size} papers)</span></li>`).join("")}</ul></div>`
+      : ""}
     <h3>Distinctive terms</h3>
     <ul class="term-list small">${cl.terms
       .map(

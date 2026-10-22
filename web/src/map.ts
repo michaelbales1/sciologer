@@ -83,7 +83,7 @@ export class NetworkMap {
   /** Every mark is a paper (text and citation maps). */
   private paperMap = false;
   /** Text map: each cluster split into spatially connected islands (graph coords). */
-  private islands: { cluster: number; members: NodeView[] }[] | null = null;
+  private islands: { cluster: number; members: NodeView[]; label?: string }[] | null = null;
   /** Geographic view: projection (unzoomed canvas coordinates) and world outlines. */
   private projection: GeoProjection | null = null;
   private basemaps: { coarse: Basemap | null; fine: Basemap | null } = { coarse: null, fine: null };
@@ -146,7 +146,12 @@ export class NetworkMap {
         this.adjacency.set(end.node.id, list);
       }
     }
-    this.islands = graph.regions === "islands" || graph.uniform_size ? findIslands(this.nodes) : null;
+    this.islands =
+      graph.regions === "islands" || graph.uniform_size
+        ? graph.islands && graph.nodes.some((n) => n.island != null)
+          ? serverIslands(this.nodes, graph)
+          : findIslands(this.nodes)
+        : null;
     this.paperMap = graph.nodes.length > 0 && graph.nodes.every((n) => n.type === "paper");
     // Geographic view: zoom in as far as a city; institutions sharing a location are
     // spread around it, largest in the middle.
@@ -401,11 +406,11 @@ export class NetworkMap {
       list.push(v);
       members.set(v.node.cluster, list);
     }
-    const groups: { cluster: number; members: NodeView[] }[] = [];
+    const groups: { cluster: number; members: NodeView[]; label?: string }[] = [];
     if (this.islands) {
       for (const isl of this.islands) {
         const vis = isl.members.filter((v) => v.visible);
-        if (vis.length >= 3) groups.push({ cluster: isl.cluster, members: vis });
+        if (vis.length >= 3) groups.push({ cluster: isl.cluster, members: vis, label: isl.label });
       }
     } else {
       for (const [cid, list] of members) {
@@ -568,7 +573,8 @@ export class NetworkMap {
         const cx = list.reduce((s, v) => s + v.sx, 0) / list.length;
         const cy = list.reduce((s, v) => s + v.sy, 0) / list.length;
         const top = Math.min(...list.map((v) => v.sy - v.r));
-        const text = truncate(cluster.label, this.islands ? 34 : 46);
+        // A part of a split cluster carries its own name (from its own papers).
+        const text = truncate(grp.label ?? cluster.label, this.islands ? 34 : 46);
         const w = ctx.measureText(text).width + 12;
         const box = this.islands
           ? { x: cx - w / 2, y: cy - 10, w, h: 20 }
@@ -743,6 +749,7 @@ export class NetworkMap {
     const n = v.node;
     const style = TYPE_STYLES[n.type];
     const cluster = n.cluster >= 0 ? this.graph?.clusters[n.cluster] : undefined;
+    const part = n.island != null ? this.graph?.islands?.find((i) => i.id === n.island)?.label : undefined;
     const links = this.neighbors(n.id).length;
     const unstable = n.stability < this.lowStability;
     let row: string;
@@ -762,7 +769,7 @@ export class NetworkMap {
     this.tooltip.innerHTML = `
       <div class="tt-title">${iconHtml(n.type, 16)} ${esc(truncate(n.label, 120))}</div>
       <div class="tt-row">${row}</div>
-      ${cluster ? `<div class="tt-muted">Cluster: ${esc(truncate(cluster.label, 60))}</div>` : n.type === "paper" ? `<div class="tt-muted">Not in a cluster</div>` : ""}
+      ${cluster ? `<div class="tt-muted">Cluster: ${esc(truncate(cluster.label, 60))}${part ? ` · this part: ${esc(truncate(part, 40))}` : ""}</div>` : n.type === "paper" ? `<div class="tt-muted">Not in a cluster</div>` : ""}
       ${note ? `<div class="tt-note">${note}</div>` : ""}`;
     this.tooltip.hidden = false;
     const rect = this.container.getBoundingClientRect();
@@ -795,6 +802,20 @@ export function truncate(s: string, n: number): string {
 
 export function esc(s: string): string {
   return s.replace(/[&<>"']/g, (c) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" })[c]!);
+}
+
+/** Islands as computed with the map (by the same rule as findIslands), with names
+ *  for the parts of split clusters. */
+function serverIslands(nodes: NodeView[], graph: Graph): { cluster: number; members: NodeView[]; label?: string }[] {
+  const byId = new Map((graph.islands ?? []).map((i) => [i.id, i]));
+  const groups = new Map<number, NodeView[]>();
+  for (const v of nodes) {
+    if (v.node.island == null || v.node.island < 0) continue;
+    const list = groups.get(v.node.island) ?? [];
+    list.push(v);
+    groups.set(v.node.island, list);
+  }
+  return [...groups].map(([id, members]) => ({ cluster: members[0].node.cluster, members, label: byId.get(id)?.label }));
 }
 
 /** Split each cluster into islands: members within a data-derived distance of each

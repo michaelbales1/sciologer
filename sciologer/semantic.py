@@ -239,6 +239,74 @@ def _ctfidf(
     return out
 
 
+# Islands with at least this many papers get a label on the map (as in the browser).
+ISLAND_MIN_LABEL = 6
+
+
+def find_islands(xy: np.ndarray, labels: np.ndarray) -> np.ndarray:
+    """Split each cluster into spatially connected islands on the 2D map.
+
+    t-SNE can place one cluster in several places. Members of a cluster are joined when
+    they are within 1.8× the median distance to a point's 4th-nearest neighbor (the
+    same rule the map uses to draw regions). Returns an island id per paper; -1 for
+    unclustered papers.
+    """
+    n = len(xy)
+    islands = np.full(n, -1)
+    if n < 3:
+        return islands
+    d = np.linalg.norm(xy[:, None] - xy[None], axis=-1)
+    np.fill_diagonal(d, np.inf)
+    kth = np.sort(np.sort(d, axis=1)[:, min(3, n - 2)])
+    tau = kth[n // 2] * 1.8
+    parent = list(range(n))
+
+    def find(i: int) -> int:
+        while parent[i] != i:
+            parent[i] = parent[parent[i]]
+            i = parent[i]
+        return i
+
+    for i in range(n):
+        if labels[i] < 0:
+            continue
+        for j in range(i + 1, n):
+            if labels[j] == labels[i] and d[i, j] <= tau:
+                parent[find(i)] = find(j)
+    roots: dict[int, int] = {}
+    for i in range(n):
+        if labels[i] >= 0:
+            islands[i] = roots.setdefault(find(i), len(roots))
+    return islands
+
+
+def name_islands(
+    texts: list[str], labels: np.ndarray, islands: np.ndarray, exclude: set[str] = frozenset()
+) -> list[dict]:
+    """Islands with their cluster, size and, for a cluster drawn in several places, a
+    name of their own.
+
+    A cluster's name comes from all its papers, so when t-SNE splits it, the name may
+    fit one part and not the other. Each labeled part (ISLAND_MIN_LABEL papers or more)
+    of a split cluster is named by class-based TF-IDF over the map's islands, so its
+    terms are distinctive against every other part, including its sibling.
+    """
+    ids = sorted(int(i) for i in set(islands) if i >= 0)
+    info = []
+    for i in ids:
+        members = islands == i
+        info.append({"id": i, "cluster": int(labels[members][0]), "size": int(members.sum())})
+    big = [x for x in info if x["size"] >= ISLAND_MIN_LABEL]
+    split = {c for c in {x["cluster"] for x in big} if sum(x["cluster"] == c for x in big) > 1}
+    if split:
+        terms = _ctfidf(texts, islands, exclude=exclude)
+        for x in big:
+            if x["cluster"] in split and terms.get(x["id"]):
+                x["terms"] = terms[x["id"]]
+                x["label"] = " · ".join(t for t, _ in terms[x["id"]][:3])
+    return info
+
+
 def build_text_map(
     papers: list[Paper],
     p: SemanticParams,
@@ -331,6 +399,13 @@ def build_text_map(
         }
         for i in range(len(usable))
     ]
+    xy_out = np.array([[q["x"], q["y"]] for q in out_papers])
+    islands = find_islands(xy_out, labels)
+    for q, isl in zip(out_papers, islands, strict=True):
+        q["island"] = int(isl)
+    island_info = name_islands(texts, labels, islands, exclude=excluded)
+    summary["islands"] = len(island_info)
+    summary["clusters_split"] = len({x["cluster"] for x in island_info if x.get("label")})
     edges = {}
     for i in range(len(usable)):
         for j, s in zip(idx[i], sims[i], strict=True):
@@ -354,6 +429,7 @@ def build_text_map(
     return {
         "papers": out_papers,
         "clusters": clusters,
+        "islands": island_info,
         "edges": [
             {"source": a, "target": b, "similarity": round(s, 3)} for (a, b), s in edges.items()
         ],
