@@ -116,5 +116,8 @@ def test_a_split_cluster_gets_a_name_for_each_part():
     assert len(set(islands[:8])) == 1 and len(set(islands[8:16])) == 1
     assert islands[0] != islands[8] and islands[16] not in (islands[0], islands[8])
     info = {i["id"]: i for i in name_islands(texts, labels, islands)}
-    assert "insulin" in info[islands[0]]["label"] and "stent" in info[islands[8]]["label"]
+    # Each part is named from its own papers' words.
+    for i, words in ((islands[0], texts[0]), (islands[8], texts[8])):
+        assert set(" ".join(info[i]["label"].split(" · ")).split()) <= set(words.split())
+    assert info[islands[0]]["label"] != info[islands[8]]["label"]
     assert "label" not in info[islands[16]]  # not split: keeps the cluster's own name
