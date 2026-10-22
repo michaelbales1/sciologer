@@ -108,13 +108,13 @@ def test_a_split_cluster_gets_a_name_for_each_part():
     xy = np.vstack([left, right, other])
     labels = np.array([0] * 16 + [1] * 8)
     texts = (
-        ["titan haze organic chemistry nitrile"] * 8
-        + ["helium interior hydrogen demixing pressure"] * 8
-        + ["magnetic plasma waves magnetosphere"] * 8
+        ["insulin glucose pancreas islet secretion"] * 8
+        + ["stent artery coronary plaque angioplasty"] * 8
+        + ["cortex neurons synapse dendrite"] * 8
     )
     islands = find_islands(xy, labels)
     assert len(set(islands[:8])) == 1 and len(set(islands[8:16])) == 1
     assert islands[0] != islands[8] and islands[16] not in (islands[0], islands[8])
     info = {i["id"]: i for i in name_islands(texts, labels, islands)}
-    assert "titan" in info[islands[0]]["label"] and "helium" in info[islands[8]]["label"]
+    assert "insulin" in info[islands[0]]["label"] and "stent" in info[islands[8]]["label"]
     assert "label" not in info[islands[16]]  # not split: keeps the cluster's own name
