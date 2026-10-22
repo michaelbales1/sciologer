@@ -34,6 +34,18 @@ export interface GraphNode {
   neighbors_kept?: number;
   /** Geographic view: where the institution is (x = longitude, y = latitude). */
   place?: string;
+  /** t-SNE maps: which island (connected piece of its cluster) the mark is in. */
+  island?: number;
+}
+
+/** A connected piece of a cluster on a t-SNE map. When a cluster is drawn in several
+ *  places, each sizable piece has its own name from its own papers. */
+export interface MapIsland {
+  id: number;
+  cluster: number;
+  size: number;
+  label?: string;
+  terms?: [string, number][];
 }
 
 export interface GraphEdge {
@@ -65,6 +77,8 @@ export interface Graph {
   regions?: "islands" | "clusters";
   /** Geographic view: x and y are longitude and latitude, drawn on a world map. */
   geo?: boolean;
+  /** Islands computed with the map (newer runs); otherwise found in the browser. */
+  islands?: MapIsland[];
 }
 
 export interface GeoInstitution {
@@ -113,6 +127,7 @@ export interface CitationMapPaper {
   cites: string[];
   cited_by: string[];
   coupled: { pmid: string; shared: number; cosine: number }[];
+  island?: number;
 }
 
 export interface CitationMap {
@@ -121,6 +136,7 @@ export interface CitationMap {
   edges: { source: string; target: string; weight: number; shared: number; direct: boolean }[];
   low_stability: number;
   layout_method: "forceatlas2" | "spectral_tsne";
+  islands?: MapIsland[];
 }
 
 export interface TextMapPaper {
@@ -133,6 +149,7 @@ export interface TextMapPaper {
   similarity: number[];
   neighbors_kept: number;
   title_only: boolean;
+  island?: number;
 }
 
 export interface TextMapCluster {
@@ -146,6 +163,7 @@ export interface TextMapCluster {
 export interface TextMap {
   papers: TextMapPaper[];
   clusters: TextMapCluster[];
+  islands?: MapIsland[];
   edges: { source: string; target: string; similarity: number }[];
   low_stability: number;
 }

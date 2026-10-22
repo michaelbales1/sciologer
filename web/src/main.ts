@@ -548,7 +548,7 @@ function renderCitations(el: HTMLElement) {
   } else if (focusCluster !== null && cm.clusters[focusCluster]) {
     const cl = cm.clusters[focusCluster];
     const members = cm.papers.filter((p) => p.cluster === cl.id).map((p) => p.pmid);
-    el.innerHTML = textClusterHtml(run!, cl, paperItem, members, "← All citation clusters", "the papers most linked within the cluster");
+    el.innerHTML = textClusterHtml(run!, cl, paperItem, members, "← All citation clusters", "the papers most linked within the cluster", cm.islands ?? []);
     el.querySelector(".back")!.addEventListener("click", () => {
       focusCluster = null;
       map.setFocusCluster(null);

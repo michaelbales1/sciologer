@@ -8,7 +8,13 @@ from sklearn.feature_extraction.text import HashingVectorizer
 from sciologer.parse import parse_batches
 from sciologer.pipeline import RunParams, run_pipeline
 from sciologer.pubmed import SearchResult
-from sciologer.semantic import SemanticParams, build_text_map, query_words
+from sciologer.semantic import (
+    SemanticParams,
+    build_text_map,
+    find_islands,
+    name_islands,
+    query_words,
+)
 
 FIXTURES = Path(__file__).parent / "fixtures"
 _HASH = HashingVectorizer(n_features=256, stop_words="english", alternate_sign=False)
@@ -79,3 +85,39 @@ def test_pipeline_adds_text_map_step():
     assert out.text and out.text["papers"]
     assert "Text map" in [s.name for s in out.manifest.steps]
     assert all(p["pmid"] in out.papers for p in out.text["papers"])
+
+
+def test_text_map_records_islands_consistent_with_clusters():
+    out, summary = build_text_map(papers(), SemanticParams(stability_runs=2), embed=fake_embed)
+    for p in out["papers"]:
+        assert (p["island"] < 0) == (p["cluster"] < 0)
+    by_id = {i["id"]: i for i in out["islands"]}
+    for p in out["papers"]:
+        if p["island"] >= 0:
+            assert by_id[p["island"]]["cluster"] == p["cluster"]
+    assert sum(i["size"] for i in out["islands"]) == sum(p["cluster"] >= 0 for p in out["papers"])
+    assert summary["islands"] == len(out["islands"])
+
+
+def test_a_split_cluster_gets_a_name_for_each_part():
+    # Cluster 0 sits in two places with different vocabulary; cluster 1 is in one place.
+    rng = np.random.default_rng(0)
+    left = rng.normal([-5, 0], 0.3, (8, 2))
+    right = rng.normal([5, 0], 0.3, (8, 2))
+    other = rng.normal([0, 6], 0.3, (8, 2))
+    xy = np.vstack([left, right, other])
+    labels = np.array([0] * 16 + [1] * 8)
+    texts = (
+        ["insulin glucose pancreas islet secretion"] * 8
+        + ["stent artery coronary plaque angioplasty"] * 8
+        + ["cortex neurons synapse dendrite"] * 8
+    )
+    islands = find_islands(xy, labels)
+    assert len(set(islands[:8])) == 1 and len(set(islands[8:16])) == 1
+    assert islands[0] != islands[8] and islands[16] not in (islands[0], islands[8])
+    info = {i["id"]: i for i in name_islands(texts, labels, islands)}
+    # Each part is named from its own papers' words.
+    for i, words in ((islands[0], texts[0]), (islands[8], texts[8])):
+        assert set(" ".join(info[i]["label"].split(" · ")).split()) <= set(words.split())
+    assert info[islands[0]]["label"] != info[islands[8]]["label"]
+    assert "label" not in info[islands[16]]  # not split: keeps the cluster's own name

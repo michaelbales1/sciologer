@@ -49,7 +49,7 @@ from pydantic import BaseModel, Field
 from .cluster import leiden_communities
 from .layout import LayoutParams, compute_layout
 from .records import Paper
-from .semantic import _ctfidf, paper_text, query_words
+from .semantic import _ctfidf, find_islands, name_islands, paper_text, query_words
 
 ICITE = "https://icite.od.nih.gov/api/pubs"
 # PMIDs go in the URL; 200 keeps it near 2,000 characters (400 got 413 Too Large).
@@ -315,6 +315,15 @@ def build_citation_map(
                 "representative": top,
             }
         )
+    # t-SNE layouts can split a cluster; name each part of a split cluster on its own.
+    island_info = None
+    if chosen["method"] == "spectral_tsne":
+        xy = np.array([[q["x"], q["y"]] for q in out_papers])
+        islands = find_islands(xy, labels)
+        for q, isl in zip(out_papers, islands, strict=True):
+            q["island"] = int(isl)
+        texts = [paper_text(by_pmid[n]) for n in nodes]
+        island_info = name_islands(texts, labels, islands, exclude=query_words(query))
     edges = [
         {
             "source": a,
@@ -331,6 +340,7 @@ def build_citation_map(
         "edges": edges,
         "low_stability": chosen["low_stability"],
         "layout_method": chosen["method"],
+        **({"islands": island_info} if island_info is not None else {}),
     }, summary
 
 
